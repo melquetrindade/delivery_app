@@ -28,7 +28,7 @@ class HamburguerRepository {
         13.99),
     Produto(
         'Duplo Burger Bacon',
-        'assets/hamburguer/duploBurgerBacon',
+        'assets/hamburguer/duploBurgerBacon.png',
         'Dois hambúrgueres (carne 100% bovina), queijo processado sabor cheddar, cebola, fatias de bacon, ketchup, mostarda e pão com gergelim.',
         'Hambúrguer',
         15.99),

@@ -1,34 +1,34 @@
 import 'package:delivery_app/models/produto.dart';
 
-class HamburguerRepository {
+class PizzaRepository {
   final List<Produto> _pizzas = [
     Produto(
         'Calabresa',
-        'assets/hamburguer/mcNificoBacon.png',
+        'assets/pizza/calabresa.jpg',
         'Molho de tomates frescos, cebola, calabresa curada, azeitonas pretas e salpicada de orégano.',
         'Pizza',
         32.99),
     Produto(
         'Catupiry',
-        'assets/hamburguer/bigMac.png',
+        'assets/pizza/catupiry.jpg',
         'Molho de tomates frescos, coberta com catupiry e salpicada de orégano.',
         'Pizza',
         32.99),
     Produto(
         'Mussarela',
-        'assets/hamburguer/duploQuarterao.png',
+        'assets/pizza/mussarela.jpg',
         'Molho de tomates frescos, mussarela e salpicada de orégano.',
         'Pizza',
         32.99),
     Produto(
         'Napolitana',
-        'assets/hamburguer/quarteraoComQueijo.png',
+        'assets/pizza/napolitana.jpg',
         'Molho de tomates frescos, mussarela coberta com molho de tomates frescos e salpicada de parmesão e orégano..',
         'Pizza',
         32.99),
     Produto(
         'Portuguesa',
-        'assets/hamburguer/duploBurgerBacon',
+        'assets/pizza/portuguesa.jpg',
         'Molho de tomates frescos, presunto, ovos, cebola, coberta com mussarela, azeitonas pretas e orégano.',
         'Pizza',
         32.99),

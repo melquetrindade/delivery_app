@@ -1,6 +1,6 @@
 import 'package:delivery_app/models/produto.dart';
 
-class HamburguerRepository {
+class MilkShakersRepository {
   final List<Produto> _milkshakers = [
     Produto(
         'Milk Shake Kopenhagen',
