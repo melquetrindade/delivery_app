@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MySlider extends StatefulWidget {
-  const MySlider({super.key});
+class MyBanners extends StatefulWidget {
+  const MyBanners({super.key});
 
   @override
-  State<MySlider> createState() => _MySliderState();
+  State<MyBanners> createState() => _MyBannersState();
 }
 
-class _MySliderState extends State<MySlider> {
+class _MyBannersState extends State<MyBanners> {
   List<String> banners = [
     'https://img.freepik.com/premium-vector/food-delivery-service-fast-food-delivery-scooter-delivery-service-vector-illustration_67394-1192.jpg?size=626&ext=jpg&ga=GA1.1.523418798.1711497600&semt=ais',
     'https://img.freepik.com/premium-vector/food-delivery-banner-design-flat-design-online-order_42237-696.jpg',
