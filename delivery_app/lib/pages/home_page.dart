@@ -1,4 +1,5 @@
 import 'package:delivery_app/widgets/homePage/leading.dart';
+import 'package:delivery_app/widgets/homePage/lista_produtos.dart';
 import 'package:delivery_app/widgets/homePage/op_produtos.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/widgets/homePage/banners.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
           children: [
             MyBanners(),
             OpProdutos(),
+            ListaProdutos()
           ],
         ),
       )

@@ -18,11 +18,11 @@ class _MyBannersState extends State<MyBanners> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 15),
       child: Column(
         children: [
           SizedBox(
-            height: 200,
+            height: 170,
             width: double.infinity,
             child: PageView.builder(
                 onPageChanged: (index) {
@@ -35,7 +35,7 @@ class _MyBannersState extends State<MyBanners> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(20),
                       child: SizedBox(
                         height: 200,
                         width: double.infinity,
