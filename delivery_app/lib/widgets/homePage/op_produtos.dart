@@ -1,3 +1,4 @@
+import 'package:delivery_app/repository/produtos.dart';
 import 'package:flutter/material.dart';
 
 class Produtos {
@@ -8,7 +9,8 @@ class Produtos {
 }
 
 class OpProdutos extends StatefulWidget {
-  const OpProdutos({super.key});
+  final ProdutosRepository produto;
+  const OpProdutos({super.key, required this.produto});
 
   @override
   State<OpProdutos> createState() => _OpProdutosState();
@@ -18,13 +20,20 @@ class _OpProdutosState extends State<OpProdutos> {
   List<Produtos> produtos = [
     Produtos('Hambúrguer', 'assets/icon_hamburguer.png'),
     Produtos('Pizza', 'assets/icon_pizza.png'),
-    Produtos('Hot-Dog', 'assets/icon_cachorro-quente.png'),
+    Produtos('HotDog', 'assets/icon_cachorro-quente.png'),
     Produtos('Açaí', 'assets/icon_acai.png'),
-    Produtos('Milkshakers', 'assets/icon_milkshakers.png'),
+    Produtos('MilkShaker', 'assets/icon_milkshakers.png'),
     Produtos('Bebidas', 'assets/icon_soda.png'),
   ];
 
   int currentIndex = 0;
+
+  selectOp(int index) {
+    widget.produto.readProdutos(produtos[index].nome);
+    setState(() {
+      currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +57,7 @@ class _OpProdutosState extends State<OpProdutos> {
       padding: const EdgeInsets.symmetric(horizontal: 5),
       child: InkWell(
         onTap: () {
-          setState(() {
-            currentIndex = index;
-          });
+          selectOp(index);
         },
         child: Container(
           decoration: BoxDecoration(
@@ -71,10 +78,9 @@ class _OpProdutosState extends State<OpProdutos> {
               child: Text(
                 produtos[index].nome,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14
-                  ),
+                    color: isSelected ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14),
               ),
               fit: BoxFit.scaleDown,
             ),

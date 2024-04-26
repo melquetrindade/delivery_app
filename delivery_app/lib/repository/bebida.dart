@@ -28,7 +28,7 @@ class BebidaRepository {
         7.50),
     Produto(
         'Fanta Laranja Lata',
-        'assets/bebidas/fata_lata.jpg',
+        'assets/bebidas/fanta_lata.jpg',
         'Refresque-se com a deliciosa Fanta Laranja em uma lata compacta de 330ml, cheia de sabor cítrico e diversão.',
         'Hambúrguer',
         3.00),

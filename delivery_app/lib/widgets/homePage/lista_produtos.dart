@@ -1,9 +1,12 @@
+import 'package:delivery_app/models/produto.dart';
 import 'package:delivery_app/repository/hamburguer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ListaProdutos extends StatefulWidget {
-  const ListaProdutos({super.key});
+  final List<Produto> objProduto;
+  const ListaProdutos({super.key, required this.objProduto});
 
   @override
   State<ListaProdutos> createState() => _ListaProdutosState();
@@ -11,28 +14,32 @@ class ListaProdutos extends StatefulWidget {
 
 class _ListaProdutosState extends State<ListaProdutos> {
   //List<Produto> objs = [];
-  final burger = HamburguerRepository().hamburguer;
+  //final burger = HamburguerRepository().hamburguer;
 
   @override
   Widget build(BuildContext context) {
-    print(burger.length);
+    print(widget.objProduto.length);
     return Padding(
       padding: EdgeInsets.all(10),
       child: Container(
         height: 230,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          children: [for (var i = 0; i < burger.length; i++) listaProduto(i)],
+          children: [for (var i = 0; i < widget.objProduto.length; i++) listaProduto(i)],
         ),
       ),
     );
   }
 
   Widget listaProduto(int index) {
-    print(burger[index].img);
+    double preco = widget.objProduto[index].valor;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 7),
       child: InkWell(
+        onTap: () {
+          print('clicou no details');
+        },
         child: Padding(
           padding: const EdgeInsets.all(4),
           child: Container(
@@ -56,7 +63,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Image.asset(
-                        burger[index].img,
+                        widget.objProduto[index].img,
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -68,7 +75,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
                   padding: const EdgeInsets.all(8),
                   child: FittedBox(
                     child: Text(
-                      burger[index].nome,
+                      widget.objProduto[index].nome,
                       textAlign: TextAlign.start,
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
@@ -80,15 +87,44 @@ class _ListaProdutosState extends State<ListaProdutos> {
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Container(
                     height: 45,
-                    child: Text(burger[index].descricao, 
+                    child: Text(
+                      widget.objProduto[index].descricao,
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 9,
-                        color: Colors.grey
-                      ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 9,
+                          color: Colors.grey),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Container(
+                    height: 35,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'R\$ $preco',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w800, color: Colors.red),
+                        ),
+                        Transform.translate(
+                          offset: Offset(0, -10),
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.add_circle,
+                              color: Colors.red,
+                              size: 40,
+                            ),
+                            onPressed: () {
+                              print('add ao carrinho');
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )

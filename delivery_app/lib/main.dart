@@ -1,9 +1,14 @@
 import 'package:delivery_app/pages/home_page.dart';
+import 'package:delivery_app/repository/produtos.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider<ProdutosRepository>(
+    create: (_) => ProdutosRepository(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
