@@ -1,4 +1,5 @@
 import 'package:delivery_app/models/produto.dart';
+import 'package:delivery_app/pages/produto_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,8 +13,15 @@ class ListaProdutos extends StatefulWidget {
 }
 
 class _ListaProdutosState extends State<ListaProdutos> {
-  //List<Produto> objs = [];
-  //final burger = HamburguerRepository().hamburguer;
+
+  mostrarDetalhes(Produto produtoDtl) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProdutoDetails(produto: produtoDtl,),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +46,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
       child: InkWell(
         onTap: () {
           print('clicou no details');
+          mostrarDetalhes(widget.objProduto[index]);
         },
         child: Padding(
           padding: const EdgeInsets.all(4),
