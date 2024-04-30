@@ -54,17 +54,5 @@ class ProdutosRepository extends ChangeNotifier {
     });
 
     notifyListeners();
-    /*
-    if (categoria == 'Hambúrguer') {
-      final response = HamburguerRepository().hamburguer;
-      response.forEach((item) {
-        _produtos.add(item);
-      });
-    } else if (categoria == 'Pizza') {
-      final response = PizzaRepository().pizzas;
-      response.forEach((item) {
-        _produtos.add(item);
-      });
-    }*/
   }
 }

@@ -1,12 +1,16 @@
 import 'package:delivery_app/pages/home_page.dart';
+import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ChangeNotifierProvider<ProdutosRepository>(
-    create: (_) => ProdutosRepository(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<ProdutosRepository>( create: (_) => ProdutosRepository()),
+      ChangeNotifierProvider<FavoritosRepository>(create: (_) => FavoritosRepository()),
+    ],
     child: MyApp(),
   ));
 }
