@@ -41,8 +41,9 @@ class FavoritosRepository extends ChangeNotifier {
 
   removeProduto(Produto produto) {
     print('clicou para desfavoritar');
-    _dbFirebase.remove(FavoriteProducts(produto.nome, produto.categoria));
-    _produtosFavoritos.remove(FavoriteProducts(produto.nome, produto.categoria));
+    //produtos.removeWhere((produto) => produto.id == idParaRemover);
+    _dbFirebase.removeWhere((item) => item.nome == produto.nome);
+    _produtosFavoritos.removeWhere((item) => item.nome == produto.nome);
 
     notifyListeners();
   }

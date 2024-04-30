@@ -22,7 +22,6 @@ class _MenuState extends State<Menu> {
   Widget build(BuildContext context) {
     produtos = context.watch<ProdutosRepository>();
     objProdutos = produtos.produto;
-    print(objProdutos[0].nome);
 
     return Scaffold(
         appBar: AppBar(
@@ -32,7 +31,7 @@ class _MenuState extends State<Menu> {
           title: Text(
             'Delivery App',
             style: TextStyle(
-                color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
+                color: Colors.white, fontSize: 17, fontWeight: FontWeight.w500),
           ),
         ),
         body: SingleChildScrollView(
