@@ -25,7 +25,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.objProduto.length);
+    //print(widget.objProduto.length);
     return Padding(
       padding: EdgeInsets.all(10),
       child: Container(
@@ -45,7 +45,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
       padding: const EdgeInsets.symmetric(horizontal: 7),
       child: InkWell(
         onTap: () {
-          print('clicou no details');
+          //print('clicou no details');
           mostrarDetalhes(widget.objProduto[index]);
         },
         child: Padding(

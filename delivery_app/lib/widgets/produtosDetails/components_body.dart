@@ -16,20 +16,21 @@ class _MyComponentsState extends State<MyComponents> {
   late FavoritosRepository favoritas;
 
   favoritarProduto() {
+    
     favoritas.saveProduto(widget.objProduto);
   }
 
   desfavoritarProduto() {
+    
     favoritas.removeProduto(widget.objProduto);
   }
 
   @override
   Widget build(BuildContext context) {
     favoritas = context.watch<FavoritosRepository>();
-    favoritas.produtosFavoritos.forEach((element) => {
-      print(element.nome)
-    });
-    
+    //print('no details:\n');
+    //favoritas.produtosFavoritos.forEach((element) => print(element.nome));
+
     double valorProduto = widget.objProduto.valor;
 
     return SliverToBoxAdapter(

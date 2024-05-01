@@ -1,4 +1,5 @@
 import 'package:delivery_app/models/produto.dart';
+import 'package:delivery_app/repository/produtos_favoritos.dart';
 import 'package:flutter/cupertino.dart';
 
 class FavoriteProducts {
@@ -10,6 +11,7 @@ class FavoriteProducts {
 
 class FavoritosRepository extends ChangeNotifier {
   List<FavoriteProducts> _produtosFavoritos = [];
+  ProdutosFavoritosRepository productsFavorites = ProdutosFavoritosRepository();
   final List<FavoriteProducts> _dbFirebase = [
     FavoriteProducts('McNífico Bacon', 'Hambúrguer'),
     FavoriteProducts('Calabresa', 'Pizza'),
@@ -32,18 +34,20 @@ class FavoritosRepository extends ChangeNotifier {
   }
 
   saveProduto(Produto produto) {
-    print('clicou para favoritar');
+    //print('clicou para favoritar');
+    
     _dbFirebase.add(FavoriteProducts(produto.nome, produto.categoria));
     _produtosFavoritos.add(FavoriteProducts(produto.nome, produto.categoria));
-
+    
     notifyListeners();
   }
 
   removeProduto(Produto produto) {
-    print('clicou para desfavoritar');
-    //produtos.removeWhere((produto) => produto.id == idParaRemover);
+    //print('clicou para desfavoritar');
+    
     _dbFirebase.removeWhere((item) => item.nome == produto.nome);
     _produtosFavoritos.removeWhere((item) => item.nome == produto.nome);
+    
 
     notifyListeners();
   }
