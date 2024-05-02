@@ -1,4 +1,5 @@
 import 'package:delivery_app/models/produto.dart';
+import 'package:delivery_app/pages/searchFav.dart';
 import 'package:delivery_app/repository/acai.dart';
 import 'package:delivery_app/repository/bebida.dart';
 import 'package:delivery_app/repository/favoritos.dart';
@@ -71,7 +72,9 @@ class _FavoritosPageState extends State<FavoritosPage> {
             Padding(
               padding: const EdgeInsets.only(right: 20),
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    showSearch(context: context, delegate: SearchFavoritos(objtsProdutos: listaTeste));
+                  },
                   icon: Icon(
                     Icons.search,
                     color: Colors.white,
