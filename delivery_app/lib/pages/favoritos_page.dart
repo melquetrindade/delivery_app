@@ -6,6 +6,7 @@ import 'package:delivery_app/repository/hamburguer.dart';
 import 'package:delivery_app/repository/hotDog.dart';
 import 'package:delivery_app/repository/milkShakers.dart';
 import 'package:delivery_app/repository/pizza.dart';
+import 'package:delivery_app/widgets/favoritos/card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,15 +53,44 @@ class _FavoritosPageState extends State<FavoritosPage> {
     print('no favoritos\n');
 
     return Scaffold(
-        body: ListView.separated(
-      itemBuilder: (BuildContext context, int produto) {
-        return ListTile(
-          title: Text(listaTeste[produto].nome),
-        );
-      },
-      padding: EdgeInsets.all(16),
-      separatorBuilder: (_, ___) => Divider(),
-      itemCount: listaTeste.length,
-    ));
+        appBar: AppBar(
+          backgroundColor: Colors.red,
+          title: Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: Text(
+              'Favoritas',
+              textAlign: TextAlign.start,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  )),
+            )
+          ],
+        ),
+        body: listaTeste.isEmpty
+            ? ListTile(
+                leading: Icon(Icons.favorite),
+                title: Text('Ainda não há produtos favoritos'),
+              )
+            : ListView.separated(
+                itemBuilder: (BuildContext context, int produto) {
+                  return MyCard(produto: listaTeste[produto]);
+                },
+                padding: EdgeInsets.all(16),
+                separatorBuilder: (_, ___) => Divider(),
+                itemCount: listaTeste.length,
+              ));
   }
 }

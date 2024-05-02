@@ -1,5 +1,4 @@
 import 'package:delivery_app/models/produto.dart';
-import 'package:delivery_app/repository/produtos_favoritos.dart';
 import 'package:flutter/cupertino.dart';
 
 class FavoriteProducts {
@@ -11,7 +10,6 @@ class FavoriteProducts {
 
 class FavoritosRepository extends ChangeNotifier {
   List<FavoriteProducts> _produtosFavoritos = [];
-  ProdutosFavoritosRepository productsFavorites = ProdutosFavoritosRepository();
   final List<FavoriteProducts> _dbFirebase = [
     FavoriteProducts('McNífico Bacon', 'Hambúrguer'),
     FavoriteProducts('Calabresa', 'Pizza'),

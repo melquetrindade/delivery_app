@@ -13,12 +13,13 @@ class ListaProdutos extends StatefulWidget {
 }
 
 class _ListaProdutosState extends State<ListaProdutos> {
-
   mostrarDetalhes(Produto produtoDtl) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => ProdutoDetails(produto: produtoDtl,),
+        builder: (_) => ProdutoDetails(
+          produto: produtoDtl,
+        ),
       ),
     );
   }
@@ -32,7 +33,9 @@ class _ListaProdutosState extends State<ListaProdutos> {
         height: 230,
         child: ListView(
           scrollDirection: Axis.horizontal,
-          children: [for (var i = 0; i < widget.objProduto.length; i++) listaProduto(i)],
+          children: [
+            for (var i = 0; i < widget.objProduto.length; i++) listaProduto(i)
+          ],
         ),
       ),
     );
@@ -108,16 +111,22 @@ class _ListaProdutosState extends State<ListaProdutos> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(8),
+                  padding: EdgeInsets.only(left: 8, right: 0),
                   child: Container(
                     height: 35,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'R\$ $preco',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w800, color: Colors.red),
+                        Container(
+                          width: 88,
+                          child: Text(
+                            'R\$ $preco',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              color: Colors.red,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ),
                         Transform.translate(
                           offset: Offset(0, -10),
