@@ -3,7 +3,9 @@ import 'package:delivery_app/pages/favoritos_page.dart';
 import 'package:delivery_app/pages/info_pages.dart';
 import 'package:delivery_app/pages/menu_page.dart';
 import 'package:delivery_app/pages/pedidos_page.dart';
+import 'package:delivery_app/repository/carrinho.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +15,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
+  late int qtdCarrinho;
+  late CarrinhoRepository carrinho;
   int paginaAtual = 0;
   late PageController pc;
 
@@ -31,14 +34,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('no home');
+    carrinho = context.watch<CarrinhoRepository>();
+    qtdCarrinho = carrinho.objCarrinho.length;
+
     return Scaffold(
       body: PageView(
         controller: pc,
         children: [
           Menu(),
           FavoritosPage(),
-          PedidosPage(),
           CarrinhoPage(),
+          PedidosPage(),
           InfoPage(),
         ],
         onPageChanged: setPaginaAtual,
@@ -46,12 +53,18 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: paginaAtual,
         type: BottomNavigationBarType.fixed,
-        items: const[
+        items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Menu'),
           BottomNavigationBarItem(icon: Icon(Icons.star), label: 'Favoritos'),
-          BottomNavigationBarItem(icon: Icon(Icons.playlist_add_check), label: 'Pedidos'),
           BottomNavigationBarItem(
-              icon: Icon(Icons.local_grocery_store_outlined), label: 'Carrinho'),
+              icon: Badge(
+                  label: Text(
+                    qtdCarrinho > 0 ? '$qtdCarrinho' : '0',
+                  ),
+                  child: Icon(Icons.local_grocery_store_outlined)),
+              label: 'Carrinho'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.playlist_add_check), label: 'Pedidos'),
           BottomNavigationBarItem(
               icon: Icon(Icons.info_outline), label: 'Info'),
         ],

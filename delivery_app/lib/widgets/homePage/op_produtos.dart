@@ -35,8 +35,20 @@ class _OpProdutosState extends State<OpProdutos> {
     });
   }
 
+  setIndex() {
+    produtos.asMap().forEach((index, item) {
+      if (widget.produto.produto[0].categoria == item.nome) {
+        setState(() {
+          currentIndex = index;
+        });
+      }
+      ;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    setIndex();
     return Padding(
       padding: EdgeInsets.all(15),
       child: Container(

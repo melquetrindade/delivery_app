@@ -1,8 +1,10 @@
 import 'package:delivery_app/models/produto.dart';
 import 'package:delivery_app/pages/produto_details.dart';
+import 'package:delivery_app/repository/carrinho.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class ListaProdutos extends StatefulWidget {
   final List<Produto> objProduto;
@@ -13,6 +15,9 @@ class ListaProdutos extends StatefulWidget {
 }
 
 class _ListaProdutosState extends State<ListaProdutos> {
+  late CarrinhoRepository carrinho;
+  late Function teste;
+
   mostrarDetalhes(Produto produtoDtl) {
     Navigator.push(
       context,
@@ -24,9 +29,14 @@ class _ListaProdutosState extends State<ListaProdutos> {
     );
   }
 
+  addAoCarrinho(Produto produtoCarrinho) {
+    carrinho.addProduto(produtoCarrinho);
+  }
+
   @override
   Widget build(BuildContext context) {
-    //print(widget.objProduto.length);
+    carrinho = context.read<CarrinhoRepository>();
+
     return Padding(
       padding: EdgeInsets.all(10),
       child: Container(
@@ -137,7 +147,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
                               size: 40,
                             ),
                             onPressed: () {
-                              print('add ao carrinho');
+                              addAoCarrinho(widget.objProduto[index]);
                             },
                           ),
                         ),
