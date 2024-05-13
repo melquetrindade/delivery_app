@@ -16,7 +16,6 @@ class ListaProdutos extends StatefulWidget {
 
 class _ListaProdutosState extends State<ListaProdutos> {
   late CarrinhoRepository carrinho;
-  late Function teste;
 
   mostrarDetalhes(Produto produtoDtl) {
     Navigator.push(
@@ -30,7 +29,14 @@ class _ListaProdutosState extends State<ListaProdutos> {
   }
 
   addAoCarrinho(Produto produtoCarrinho) {
-    carrinho.addProduto(produtoCarrinho);
+    carrinho.addProduto(ItemCarrinho(
+      itemProduto: produtoCarrinho,
+      tamanho: produtoCarrinho.categoria == 'Pizza' ? 'P' : 'null'
+    ));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Produto adicionado ao carrinho!')),
+    );
   }
 
   @override

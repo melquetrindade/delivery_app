@@ -1,4 +1,5 @@
 import 'package:delivery_app/models/produto.dart';
+import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class _MyComponentsState extends State<MyComponents> {
   late FavoritosRepository favoritas;
   int selectedOption = 1;
   double valorProduto = 0;
+  late CarrinhoRepository carrinho;
 
   favoritarProduto() {
     favoritas.saveProduto(widget.objProduto);
@@ -35,10 +37,40 @@ class _MyComponentsState extends State<MyComponents> {
     }
   }
 
+  addAoCarrinho(Produto produtoCarrinho) {
+    String tam = '';
+    if(selectedOption == 1){
+      tam = 'P';
+    }
+    else if(selectedOption == 2){
+      tam = 'M';
+    }
+    else{
+      tam = 'G';
+    }
+
+    carrinho.addProduto(ItemCarrinho(
+      itemProduto: Produto(
+        produtoCarrinho.nome, 
+        produtoCarrinho.img, 
+        produtoCarrinho.descricao, 
+        produtoCarrinho.categoria, 
+        valorProduto
+      ),
+      tamanho: produtoCarrinho.categoria == 'Pizza' ? tam : 'null'
+    ));
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Produto adicionado ao carrinho!')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     favoritas = context.watch<FavoritosRepository>();
     calcPreco();
+    carrinho = context.read<CarrinhoRepository>();
     //double valorProduto = widget.objProduto.valor;
 
     return SliverToBoxAdapter(
@@ -51,7 +83,7 @@ class _MyComponentsState extends State<MyComponents> {
                 'Selecione o Tamanho',
                 style: TextStyle(fontWeight: FontWeight.w400, fontSize: 17),
               ),
-            if(widget.objProduto.categoria == 'Pizza')
+            if (widget.objProduto.categoria == 'Pizza')
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -110,8 +142,7 @@ class _MyComponentsState extends State<MyComponents> {
                   )
                 ],
               ),
-            if(widget.objProduto.categoria == 'Pizza')
-              Divider(),
+            if (widget.objProduto.categoria == 'Pizza') Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -169,7 +200,8 @@ class _MyComponentsState extends State<MyComponents> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.only(top: widget.objProduto.categoria == 'Pizza' ? 80 : 120),
+              padding: EdgeInsets.only(
+                  top: widget.objProduto.categoria == 'Pizza' ? 80 : 120),
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 child: ElevatedButton(
@@ -185,7 +217,7 @@ class _MyComponentsState extends State<MyComponents> {
                     ),
                   ),
                   onPressed: () {
-                    // Respond to button press
+                    addAoCarrinho(widget.objProduto);
                   },
                   child: Padding(
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
