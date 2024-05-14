@@ -67,9 +67,8 @@ class CarrinhoRepository extends ChangeNotifier {
       });
       if (!hasAdd.isEmpty) {
         print('entrou no de pizza');
-        _carrinho[id].qtd ++;
+        _carrinho[id].qtd++;
         _dbFirebase[id].qtd = _carrinho[id].qtd;
-        print(_carrinho[id].qtd);
       } else {
         _dbFirebase.add(produto);
         _carrinho.add(produto);
@@ -83,11 +82,8 @@ class CarrinhoRepository extends ChangeNotifier {
       });
       if (!hasAdd.isEmpty) {
         print('entrou no que não é pizza');
-        _carrinho[id].qtd ++;
+        _carrinho[id].qtd++;
         _dbFirebase[id].qtd = _carrinho[id].qtd;
-        print(_carrinho[id].qtd);
-        //print('add ao carrinho');
-        //print(_carrinho.length);
       } else {
         _dbFirebase.add(produto);
         _carrinho.add(produto);
@@ -98,11 +94,42 @@ class CarrinhoRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  /*
-  deleteProduto(Produto produto) {
-    _dbFirebase.removeWhere((element) => element.nome == produto.nome);
-    _carrinho.removeWhere((element) => element.nome == produto.nome);
+  deleteProduto(ItemCarrinho produto) {
+    //_dbFirebase.removeWhere((element) => element.nome == produto.nome);
+    //_carrinho.removeWhere((element) => element.nome == produto.nome);
+
+    int id = 0;
+    if (produto.itemProduto.categoria == 'Pizza') {
+      _carrinho.asMap().forEach((index, item) {
+        if (item.itemProduto.nome == produto.itemProduto.nome &&
+            item.tamanho == produto.tamanho) {
+          id = index;
+        }
+      });
+
+      _carrinho[id].qtd--;
+      if (_carrinho[id].qtd == 0) {
+        _carrinho.removeAt(id);
+        _dbFirebase.removeAt(id);
+      } else{
+        _dbFirebase[id].qtd = _carrinho[id].qtd;
+      }
+    } else {
+      _carrinho.asMap().forEach((index, item) {
+        if (item.itemProduto.nome == produto.itemProduto.nome) {
+          id = index;
+        }
+      });
+
+      _carrinho[id].qtd--;
+      if (_carrinho[id].qtd == 0) {
+        _carrinho.removeAt(id);
+        _dbFirebase.removeAt(id);
+      } else{
+        _dbFirebase[id].qtd = _carrinho[id].qtd;
+      }
+    }
 
     notifyListeners();
-  }*/
+  }
 }

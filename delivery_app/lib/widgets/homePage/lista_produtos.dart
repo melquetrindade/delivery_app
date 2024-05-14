@@ -29,14 +29,35 @@ class _ListaProdutosState extends State<ListaProdutos> {
   }
 
   addAoCarrinho(Produto produtoCarrinho) {
-    carrinho.addProduto(ItemCarrinho(
-      itemProduto: produtoCarrinho,
-      tamanho: produtoCarrinho.categoria == 'Pizza' ? 'P' : 'null'
-    ));
+    int qtdTotal = 0;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Produto adicionado ao carrinho!')),
-    );
+    carrinho.objCarrinho.forEach((element) {
+      qtdTotal += element.qtd;
+    });
+
+    if (qtdTotal <= 9) {
+      carrinho.addProduto(ItemCarrinho(
+        itemProduto: produtoCarrinho,
+        qtd: 1,
+        tamanho: produtoCarrinho.categoria == 'Pizza' ? 'P' : 'null'));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${produtoCarrinho.nome} adicionado ao carrinho!')),
+      );
+    }
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'A Política do restaurante permite a quantidade máxima de até 10 unidades de produtos por pedido!'),
+          duration: Duration(seconds: 60),
+          action: SnackBarAction(label: 'OK', onPressed: (){
+            
+          }),
+        ),
+      );
+    }
+    
   }
 
   @override

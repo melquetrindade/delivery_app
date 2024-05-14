@@ -57,7 +57,35 @@ class SearchFavoritos extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Text("Resultados para: $query", style: TextStyle(color: Colors.black),);
+    List matchQuery = [];
+    for (var item in objtsProdutos) {
+      if (item.nome.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(item);
+      }
+    }
+
+    if (matchQuery.isEmpty) {
+      return Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off),
+            Text(
+              "Sem Resultados para: $query",
+              style: TextStyle(color: Colors.black),
+            ),
+          ],
+        ),
+      );
+    }
+    return ListView.separated(
+      itemBuilder: (BuildContext context, int produto) {
+        return MyCard(produto: matchQuery[produto]);
+      },
+      padding: EdgeInsets.all(16),
+      separatorBuilder: (_, ___) => Divider(),
+      itemCount: matchQuery.length,
+    );
   }
 
   @override

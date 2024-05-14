@@ -31,15 +31,15 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
               color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(6),
-          child: listaCarrinho.isEmpty
-              ? ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text('Ainda não há produtos favoritos'),
-                )
-              : Column(children: [
+      body: listaCarrinho.isEmpty
+          ? ListTile(
+              leading: Icon(Icons.local_grocery_store),
+              title: Center(child: Text('Ainda não há produtos no carrinho!')),
+            )
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(6),
+                child: Column(children: [
                   loadCarrinho(),
                   Align(
                     alignment: Alignment.bottomCenter,
@@ -61,7 +61,9 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                               ),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            print('pág vendas');
+                          },
                           child: Padding(
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
                             child: Text(
@@ -75,20 +77,15 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                     ),
                   ),
                 ]),
-        ),
-      ),
+              ),
+            ),
     );
   }
 
   loadCarrinho() {
     List<Widget> widgets = [];
-    int qtdProduto = 0;
-    String nome = '';
-    String tam = '';
+
     for (var item in listaCarrinho) {
-      qtdProduto = item.qtd;
-      nome = item.itemProduto.nome;
-      tam = item.tamanho;
 
       widgets.add(Container(
         margin: EdgeInsets.only(bottom: 10),
@@ -100,7 +97,8 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
           leading: SizedBox(
               width: 50,
               child: Image.asset(item.itemProduto.img, fit: BoxFit.fill)),
-          title: Text(item.itemProduto.categoria == 'Pizza' ? '$nome ($tam)' : '$nome',
+          title: Text(
+              item.itemProduto.categoria == 'Pizza' ? '${item.itemProduto.nome} (${item.tamanho})' : '${item.itemProduto.nome}',
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
           subtitle: Text(
             'R\$ ${item.itemProduto.valor}',
@@ -112,7 +110,9 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    carrinho.deleteProduto(item);
+                  },
                   icon: Icon(
                     Icons.remove_circle,
                     color: Colors.red,
@@ -122,11 +122,32 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                 Container(
                     child: Center(
                         child: Text(
-                  '$qtdProduto',
+                  '${item.qtd}',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ))),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      int qtdTotal = 0;
+                      carrinho.objCarrinho.forEach((element) {
+                        qtdTotal += element.qtd;
+                      });
+                      if (qtdTotal <= 9) {
+                        carrinho.addProduto(item);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'A Política do restaurante permite a quantidade máxima de até 10 unidades de produtos por pedido!'),
+                            duration: Duration(seconds: 60),
+                            action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: () {
+                                  //Navigator.pop(context);
+                                }),
+                          ),
+                        );
+                      }
+                    },
                     icon: Icon(Icons.add_circle, color: Colors.red, size: 25))
               ],
             ),

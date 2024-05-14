@@ -85,7 +85,7 @@ class _FavoritosPageState extends State<FavoritosPage> {
         body: listaTeste.isEmpty
             ? ListTile(
                 leading: Icon(Icons.favorite),
-                title: Text('Ainda não há produtos favoritos'),
+                title: Center(child: Text('Ainda não há produtos favoritados')),
               )
             : ListView.separated(
                 itemBuilder: (BuildContext context, int produto) {

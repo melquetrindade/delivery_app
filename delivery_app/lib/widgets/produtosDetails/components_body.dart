@@ -38,32 +38,48 @@ class _MyComponentsState extends State<MyComponents> {
   }
 
   addAoCarrinho(Produto produtoCarrinho) {
-    String tam = '';
-    if(selectedOption == 1){
-      tam = 'P';
-    }
-    else if(selectedOption == 2){
-      tam = 'M';
-    }
-    else{
-      tam = 'G';
-    }
+    int qtdTotal = 0;
 
-    carrinho.addProduto(ItemCarrinho(
-      itemProduto: Produto(
-        produtoCarrinho.nome, 
-        produtoCarrinho.img, 
-        produtoCarrinho.descricao, 
-        produtoCarrinho.categoria, 
-        valorProduto
-      ),
-      tamanho: produtoCarrinho.categoria == 'Pizza' ? tam : 'null'
-    ));
-    Navigator.pop(context);
+    carrinho.objCarrinho.forEach((element) {
+      qtdTotal += element.qtd;
+    });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Produto adicionado ao carrinho!')),
-    );
+    if (qtdTotal <= 9) {
+      String tam = '';
+      if (selectedOption == 1) {
+        tam = 'P';
+      } else if (selectedOption == 2) {
+        tam = 'M';
+      } else {
+        tam = 'G';
+      }
+
+      carrinho.addProduto(ItemCarrinho(
+          itemProduto: Produto(
+              produtoCarrinho.nome,
+              produtoCarrinho.img,
+              produtoCarrinho.descricao,
+              produtoCarrinho.categoria,
+              valorProduto),
+          qtd: 1,
+          tamanho: produtoCarrinho.categoria == 'Pizza' ? tam : 'null'));
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${produtoCarrinho.nome} adicionado ao carrinho!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              'A Política do restaurante permite a quantidade máxima de até 10 unidades de produtos por pedido!'),
+          duration: Duration(seconds: 60),
+          action: SnackBarAction(label: 'OK', onPressed: (){
+            Navigator.pop(context);
+          }),
+        ),
+      );
+    }
   }
 
   @override
