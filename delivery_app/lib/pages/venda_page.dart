@@ -1,7 +1,10 @@
 import 'package:delivery_app/repository/carrinho.dart';
+import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/widgets/vendaPage/endereco.dart';
+import 'package:delivery_app/widgets/vendaPage/revisao.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 
 class VendaPage extends StatefulWidget {
   final List<ItemCarrinho> objItem;
@@ -12,13 +15,16 @@ class VendaPage extends StatefulWidget {
 }
 
 class _VendaPageState extends State<VendaPage> {
+  late EnderecoLoja localizacaoLoja;
+  late EnderecoLojaRepository enderecoDaLoja;
   int qtdTotal = 0;
   double subTotal = 0;
   bool isDelivery = false;
-  double frete = 5;
   double valorTotal = 0;
+  int selectedOption = 1;
 
   calcQuantidade() {
+    qtdTotal = 0;
     widget.objItem.forEach((item) {
       qtdTotal += item.qtd;
     });
@@ -33,21 +39,28 @@ class _VendaPageState extends State<VendaPage> {
   }
 
   calcValorTotal() {
-    if (isDelivery) {
+    if (isDelivery == false) {
       double total = 0;
-      total = subTotal + frete;
+      total = subTotal + localizacaoLoja.frete;
       valorTotal = double.parse(total.toStringAsFixed(2));
     } else {
       valorTotal = subTotal;
     }
   }
 
+  togglerDelivery(bool value) {
+    setState(() {
+      isDelivery = value;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    enderecoDaLoja = context.read<EnderecoLojaRepository>();
+    localizacaoLoja = enderecoDaLoja.enderecoLoja;
     calcQuantidade();
     calcPreco();
     calcValorTotal();
-    frete = double.parse(frete.toStringAsFixed(2));
 
     return Scaffold(
       backgroundColor: Colors.grey[50],
@@ -56,7 +69,7 @@ class _VendaPageState extends State<VendaPage> {
         backgroundColor: Colors.white,
         centerTitle: true,
         title: const Text(
-          'Endereço',
+          'Revisão',
           style: TextStyle(
               color: Colors.red, fontSize: 18, fontWeight: FontWeight.w500),
         ),
@@ -64,51 +77,101 @@ class _VendaPageState extends State<VendaPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border(
-                  bottom: BorderSide(
-                    color: Colors.grey.shade600,
-                    width: 1,
-                  ),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
+            RevisaoPage(
+              qtdTotal: qtdTotal, 
+              subTotal: subTotal, 
+              isDelivery: isDelivery, 
+              frete: localizacaoLoja.frete, 
+              valorTotal: valorTotal
+            ),
+            ComponenteEndereco(
+              isCheck: isDelivery,
+              toggleState: togglerDelivery,
+              localizacaoLoja: localizacaoLoja,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 0, left: 12, right: 12, bottom: 12),
+              child: Container(
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text('Produtos ($qtdTotal)'),
-                        Text('R\$ ${subTotal}')
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 9),
+                      child: Container(
+                        width: double.infinity,
+                        child: Text('Forma de Pagamento', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400), textAlign: TextAlign.start,),
+                      ),
                     ),
-                    isDelivery
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [Text('Frete'), Text('R\$ ${frete}')],
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(1, 2), // mudança de posição da sombra
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.money_rounded),
+                            title: Text('Em Espécie'),
+                            trailing: Radio(
+                              value: 1,
+                              groupValue: selectedOption,
+                              activeColor: Colors.red,
+                              fillColor: MaterialStateProperty.all(Colors.red),
+                              splashRadius: 20,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedOption = value!;
+                                });
+                            }),
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.pix),
+                            title: Text('Pix'),
+                            trailing: Radio(
+                              value: 2,
+                              groupValue: selectedOption,
+                              activeColor: Colors.red,
+                              fillColor: MaterialStateProperty.all(Colors.red),
+                              splashRadius: 20,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedOption = value!;
+                                });
+                            }),
+                          ),
+                          Divider(),
+                          isDelivery == false
+                          ?
+                          ListTile(
+                            leading: Icon(Icons.credit_card),
+                            title: Text('Cartão'),
+                            trailing: Radio(
+                              value: 3,
+                              groupValue: selectedOption,
+                              activeColor: Colors.red,
+                              fillColor: MaterialStateProperty.all(Colors.red),
+                              splashRadius: 20,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedOption = value!;
+                                });
+                            }),
                           )
-                        : Container(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Total',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                        Text(
-                          'R\$ ${valorTotal}',
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        )
-                      ],
+                          : Container(),
+                        ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
-            ComponenteEndereco(),
+            )
           ],
         ),
       ),

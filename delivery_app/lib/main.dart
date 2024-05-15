@@ -1,6 +1,7 @@
 import 'package:delivery_app/pages/home_page.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/endereco.dart';
+import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ void main() {
       ChangeNotifierProvider<ProdutosRepository>( create: (_) => ProdutosRepository()),
       ChangeNotifierProvider<FavoritosRepository>(create: (_) => FavoritosRepository()),
       ChangeNotifierProvider<EnderecoRepository>(create: (_) => EnderecoRepository()),
+      ChangeNotifierProvider<EnderecoLojaRepository>(create: (_) => EnderecoLojaRepository()),
     ],
     child: MyApp(),
   ));
