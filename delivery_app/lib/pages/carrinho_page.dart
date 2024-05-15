@@ -32,14 +32,14 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
     listaCarrinho = carrinho.objCarrinho;
 
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.white,
         centerTitle: true,
         title: Text(
           'Carrinho',
           style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500),
+              color: Colors.red, fontSize: 18, fontWeight: FontWeight.w500),
         ),
       ),
       body: listaCarrinho.isEmpty
@@ -52,36 +52,33 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                 padding: const EdgeInsets.all(6),
                 child: Column(children: [
                   loadCarrinho(),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(left: 12, right: 12, top: 30),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.red.shade400), // Cor de fundo
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(8), // Raio dos cantos
-                                side: BorderSide.none, // Remove a borda
-                              ),
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(left: 12, right: 12, top: 30),
+                    child: Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.red), // Cor de fundo
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius:
+                                  BorderRadius.zero, // Raio dos cantos
+                              side: BorderSide.none, // Remove a borda
                             ),
                           ),
-                          onPressed: () {
-                            navVendaPage();
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 15, bottom: 15),
-                            child: Text(
-                              'Continuar',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 15),
-                            ),
+                        ),
+                        onPressed: () {
+                          navVendaPage();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 15, bottom: 15),
+                          child: Text(
+                            'Continuar',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 15),
                           ),
                         ),
                       ),

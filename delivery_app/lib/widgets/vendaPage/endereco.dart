@@ -144,7 +144,7 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 1,
                     blurRadius: 2,
-                    offset: Offset(1, 2), // mudança de posição da sombra
+                    offset: Offset(1, 2),
                   ),
                 ],
               ),
@@ -226,10 +226,14 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
             CheckboxListTile(
               value: widget.isCheck,
               onChanged: (bool? newValue) {
-                //print('na função: ${newValue}');
                 widget.toggleState(newValue);
               },
+              activeColor: Colors.blue,
+              checkColor: Colors.white, 
               title: Text('Buscar no estabelecimento!',
+                style: TextStyle(
+                  fontSize: 13
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),

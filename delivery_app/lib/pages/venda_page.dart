@@ -1,6 +1,7 @@
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/widgets/vendaPage/endereco.dart';
+import 'package:delivery_app/widgets/vendaPage/formaPagamento.dart';
 import 'package:delivery_app/widgets/vendaPage/revisao.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -51,6 +52,15 @@ class _VendaPageState extends State<VendaPage> {
   togglerDelivery(bool value) {
     setState(() {
       isDelivery = value;
+      if (selectedOption == 3) {
+        selectedOption = 1;
+      }
+    });
+  }
+
+  setCheck(int value) {
+    setState(() {
+      selectedOption = value;
     });
   }
 
@@ -78,169 +88,52 @@ class _VendaPageState extends State<VendaPage> {
         child: Column(
           children: [
             RevisaoPage(
-              qtdTotal: qtdTotal, 
-              subTotal: subTotal, 
-              isDelivery: isDelivery, 
-              frete: localizacaoLoja.frete, 
-              valorTotal: valorTotal
-            ),
+                qtdTotal: qtdTotal,
+                subTotal: subTotal,
+                isDelivery: isDelivery,
+                frete: localizacaoLoja.frete,
+                valorTotal: valorTotal),
             ComponenteEndereco(
               isCheck: isDelivery,
               toggleState: togglerDelivery,
               localizacaoLoja: localizacaoLoja,
             ),
+            FormaPagamento(
+              selectedOption: selectedOption,
+              isDelivery: isDelivery,
+              uptadeState: setCheck,
+            ),
             Padding(
-              padding: const EdgeInsets.only(top: 0, left: 12, right: 12, bottom: 12),
+              padding: const EdgeInsets.only(left: 12, right: 12, top: 20, bottom: 30),
               child: Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 9),
-                      child: Container(
-                        width: double.infinity,
-                        child: Text('Forma de Pagamento', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400), textAlign: TextAlign.start,),
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.zero, // Raio dos cantos
+                        side: BorderSide.none, // Remove a borda
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 2,
-                            offset: Offset(1, 2), // mudança de posição da sombra
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          ListTile(
-                            leading: Icon(Icons.money_rounded),
-                            title: Text('Em Espécie'),
-                            trailing: Radio(
-                              value: 1,
-                              groupValue: selectedOption,
-                              activeColor: Colors.red,
-                              fillColor: MaterialStateProperty.all(Colors.red),
-                              splashRadius: 20,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = value!;
-                                });
-                            }),
-                          ),
-                          Divider(),
-                          ListTile(
-                            leading: Icon(Icons.pix),
-                            title: Text('Pix'),
-                            trailing: Radio(
-                              value: 2,
-                              groupValue: selectedOption,
-                              activeColor: Colors.red,
-                              fillColor: MaterialStateProperty.all(Colors.red),
-                              splashRadius: 20,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = value!;
-                                });
-                            }),
-                          ),
-                          Divider(),
-                          isDelivery == false
-                          ?
-                          ListTile(
-                            leading: Icon(Icons.credit_card),
-                            title: Text('Cartão'),
-                            trailing: Radio(
-                              value: 3,
-                              groupValue: selectedOption,
-                              activeColor: Colors.red,
-                              fillColor: MaterialStateProperty.all(Colors.red),
-                              splashRadius: 20,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = value!;
-                                });
-                            }),
-                          )
-                          : Container(),
-                        ],
-                      ),
+                  ),
+                  onPressed: () {
+                    print('pedido foi enviado');
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 15, bottom: 15),
+                    child: Text(
+                      'Realizar Pedido',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
                     ),
-                  ],
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 }
-
-
-/*
-Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: Offset(2, 0), // mudança de posição da sombra
-                ),
-              ],
-            ),
-            child: const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      Icon(
-                        Icons.motorcycle_rounded,
-                        color: Colors.red,
-                      ),
-                      Text(
-                        'Entrega',
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.red,
-                            fontWeight: FontWeight.w500),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Icon(
-                        Icons.credit_card,
-                        color: Colors.black,
-                      ),
-                      Text('Pagamento',
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Icon(
-                        Icons.list_alt,
-                        color: Colors.black,
-                      ),
-                      Text('Revisão',
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500))
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-*/
