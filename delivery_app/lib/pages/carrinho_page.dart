@@ -1,3 +1,4 @@
+import 'package:delivery_app/pages/venda_page.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,11 +15,21 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
   late List<ItemCarrinho> listaCarrinho;
   late CarrinhoRepository carrinho;
 
+  navVendaPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => VendaPage(
+          objItem: listaCarrinho,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     carrinho = context.watch<CarrinhoRepository>();
     listaCarrinho = carrinho.objCarrinho;
-    //listaCarrinho.forEach((element) => print(element.itemProduto.nome));
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -62,7 +73,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                             ),
                           ),
                           onPressed: () {
-                            print('pág vendas');
+                            navVendaPage();
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(top: 15, bottom: 15),
@@ -86,7 +97,6 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
     List<Widget> widgets = [];
 
     for (var item in listaCarrinho) {
-
       widgets.add(Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -98,7 +108,9 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
               width: 50,
               child: Image.asset(item.itemProduto.img, fit: BoxFit.fill)),
           title: Text(
-              item.itemProduto.categoria == 'Pizza' ? '${item.itemProduto.nome} (${item.tamanho})' : '${item.itemProduto.nome}',
+              item.itemProduto.categoria == 'Pizza'
+                  ? '${item.itemProduto.nome} (${item.tamanho})'
+                  : '${item.itemProduto.nome}',
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
           subtitle: Text(
             'R\$ ${item.itemProduto.valor}',
