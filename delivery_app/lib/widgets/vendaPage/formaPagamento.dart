@@ -75,7 +75,7 @@ class _FormaPagamentoState extends State<FormaPagamento> {
                         }),
                   ),
                   Divider(),
-                  widget.isDelivery == false
+                  widget.isDelivery
                       ? ListTile(
                           leading: Icon(Icons.credit_card),
                           title: Text('Cartão'),

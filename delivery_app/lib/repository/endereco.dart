@@ -5,12 +5,14 @@ class Endereco {
   String bairro;
   String num;
   String complemento;
+  String referencia;
 
   Endereco(
       {required this.rua,
       required this.bairro,
       required this.num,
-      required this.complemento});
+      required this.complemento,
+      required this.referencia});
 }
 
 class EnderecoRepository extends ChangeNotifier {
@@ -19,7 +21,8 @@ class EnderecoRepository extends ChangeNotifier {
       rua: 'Brasilino Gomes Meira',
       bairro: 'Maria Terceira',
       num: '311',
-      complemento: 'Casa');
+      complemento: 'Casa',
+      referencia: 'Por trás da quadra do Maria Terceira');
 
   EnderecoRepository() {
     iniciarState();
@@ -31,10 +34,14 @@ class EnderecoRepository extends ChangeNotifier {
     _endereco = _dbFirebase;
   }
 
-  addEndereco(){}
+  addEndereco() {}
 
-  deleteEndereco(){}
+  deleteEndereco() {}
 
-  updateEndereco(){}
+  updateEndereco(Endereco newEndereco) {
+    _dbFirebase = newEndereco;
+    _endereco = newEndereco;
 
+    notifyListeners();
+  }
 }
