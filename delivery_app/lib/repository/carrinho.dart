@@ -111,7 +111,7 @@ class CarrinhoRepository extends ChangeNotifier {
       if (_carrinho[id].qtd == 0) {
         _carrinho.removeAt(id);
         _dbFirebase.removeAt(id);
-      } else{
+      } else {
         _dbFirebase[id].qtd = _carrinho[id].qtd;
       }
     } else {
@@ -125,10 +125,17 @@ class CarrinhoRepository extends ChangeNotifier {
       if (_carrinho[id].qtd == 0) {
         _carrinho.removeAt(id);
         _dbFirebase.removeAt(id);
-      } else{
+      } else {
         _dbFirebase[id].qtd = _carrinho[id].qtd;
       }
     }
+
+    notifyListeners();
+  }
+
+  clearCarrinho() {
+    _dbFirebase = [];
+    _carrinho = [];
 
     notifyListeners();
   }
