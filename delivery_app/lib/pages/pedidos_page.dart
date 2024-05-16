@@ -27,7 +27,7 @@ class _PedidosPageState extends State<PedidosPage> {
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           backgroundColor: Colors.white,
-          iconTheme: IconThemeData(color: Colors.red),
+          //iconTheme: IconThemeData(color: Colors.red),
           centerTitle: true,
           title: const Text(
             'Meus Pedidos',

@@ -1,4 +1,3 @@
-import 'package:delivery_app/pages/home_page.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/historico.dart';
@@ -93,12 +92,7 @@ class _VendaPageState extends State<VendaPage> {
 
     carrinho.clearCarrinho();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => HomePage(),
-      ),
-    );
+    Navigator.pop(context);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
