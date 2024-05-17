@@ -26,7 +26,7 @@ class _ProdutoDetailsState extends State<ProdutoDetails> {
       slivers: [
         SliverAppBar(
           iconTheme: IconThemeData(color: Colors.white),
-          backgroundColor: Colors.red[400],
+          backgroundColor: Colors.red,
           expandedHeight: 290,
           floating: false,
           pinned: true,

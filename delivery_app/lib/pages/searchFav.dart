@@ -11,15 +11,15 @@ class SearchFavoritos extends SearchDelegate {
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       appBarTheme: const AppBarTheme(
-        color: Colors.red,
+        color: Colors.white,
       ),
       textTheme: const TextTheme(
-        titleLarge: TextStyle(fontSize: 15.0, color: Colors.white),
+        titleLarge: TextStyle(fontSize: 15.0, color: Colors.black),
       ),
       inputDecorationTheme: const InputDecorationTheme(
-        fillColor: Colors.red,
+        fillColor: Colors.white,
         filled: true,
-        hintStyle: TextStyle(fontSize: 15.0, color: Colors.white),
+        hintStyle: TextStyle(fontSize: 15.0, color: Colors.grey),
       ),
     );
   }
@@ -33,7 +33,7 @@ class SearchFavoritos extends SearchDelegate {
       IconButton(
         icon: Icon(
           Icons.clear,
-          color: Colors.white,
+          color: Colors.red,
         ),
         onPressed: () {
           query = "";
@@ -47,7 +47,7 @@ class SearchFavoritos extends SearchDelegate {
     return IconButton(
       icon: Icon(
         Icons.arrow_back,
-        color: Colors.white,
+        color: Colors.red,
       ),
       onPressed: () {
         close(context, "");
@@ -78,12 +78,11 @@ class SearchFavoritos extends SearchDelegate {
         ),
       );
     }
-    return ListView.separated(
+    return ListView.builder(
       itemBuilder: (BuildContext context, int produto) {
         return MyCard(produto: matchQuery[produto]);
       },
       padding: EdgeInsets.all(16),
-      separatorBuilder: (_, ___) => Divider(),
       itemCount: matchQuery.length,
     );
   }
@@ -97,12 +96,11 @@ class SearchFavoritos extends SearchDelegate {
       }
     }
 
-    return ListView.separated(
+    return ListView.builder(
       itemBuilder: (BuildContext context, int produto) {
         return MyCard(produto: matchQuery[produto]);
       },
       padding: EdgeInsets.all(16),
-      separatorBuilder: (_, ___) => Divider(),
       itemCount: matchQuery.length,
     );
   }

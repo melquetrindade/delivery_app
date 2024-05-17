@@ -210,7 +210,7 @@ class _MyComponentsState extends State<MyComponents> {
                 widget.objProduto.descricao,
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w500, height: 1.5),
+                    fontSize: 15, fontWeight: FontWeight.w500, height: 1.5, color: Colors.grey[700]),
                 maxLines: 6,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -219,16 +219,14 @@ class _MyComponentsState extends State<MyComponents> {
               padding: EdgeInsets.only(
                   top: widget.objProduto.categoria == 'Pizza' ? 80 : 120),
               child: Container(
-                width: MediaQuery.of(context).size.width,
+                width: double.infinity,
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(
-                        Colors.red.shade400), // Cor de fundo
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(8), // Raio dos cantos
-                        side: BorderSide.none, // Remove a borda
+                        borderRadius: BorderRadius.zero,
+                        side: BorderSide.none,
                       ),
                     ),
                   ),

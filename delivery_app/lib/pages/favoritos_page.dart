@@ -54,8 +54,9 @@ class _FavoritosPageState extends State<FavoritosPage> {
     print('no favoritos\n');
 
     return Scaffold(
+        backgroundColor: Colors.grey[50],
         appBar: AppBar(
-          backgroundColor: Colors.red,
+          backgroundColor: Colors.white,
           title: Padding(
             padding: const EdgeInsets.only(left: 20),
             child: Text(
@@ -64,7 +65,7 @@ class _FavoritosPageState extends State<FavoritosPage> {
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 18,
-                color: Colors.white,
+                color: Colors.red,
               ),
             ),
           ),
@@ -77,7 +78,7 @@ class _FavoritosPageState extends State<FavoritosPage> {
                   },
                   icon: Icon(
                     Icons.search,
-                    color: Colors.white,
+                    color: Colors.red,
                   )),
             )
           ],
@@ -87,12 +88,11 @@ class _FavoritosPageState extends State<FavoritosPage> {
                 leading: Icon(Icons.favorite),
                 title: Center(child: Text('Ainda não há produtos favoritados')),
               )
-            : ListView.separated(
+            : ListView.builder(
                 itemBuilder: (BuildContext context, int produto) {
                   return MyCard(produto: listaTeste[produto]);
                 },
                 padding: EdgeInsets.all(16),
-                separatorBuilder: (_, ___) => Divider(),
                 itemCount: listaTeste.length,
               ));
   }

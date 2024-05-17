@@ -28,10 +28,6 @@ class _MyCardState extends State<MyCard> {
   Widget build(BuildContext context) {
     double preco = widget.produto.valor;
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10), // Borda arredondada
-      ),
-      margin: EdgeInsets.only(top: 12),
       elevation: 2,
       child: InkWell(
         onTap: () {
@@ -60,7 +56,7 @@ class _MyCardState extends State<MyCard> {
                             widget.produto.nome,
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                color: Colors.grey[800],
                                 fontSize: 15),
                           ),
                           fit: BoxFit.scaleDown,
@@ -71,10 +67,6 @@ class _MyCardState extends State<MyCard> {
                 ),
                 Container(
                     width: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.red[400],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
                     child: FittedBox(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5, bottom: 5),
@@ -83,7 +75,7 @@ class _MyCardState extends State<MyCard> {
                           style: TextStyle(
                               fontWeight: FontWeight.w800,
                               fontSize: 15,
-                              color: Colors.white),
+                              color: Colors.red),
                         ),
                       ),
                       fit: BoxFit.scaleDown,
