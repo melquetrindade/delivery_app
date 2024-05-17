@@ -6,6 +6,10 @@ class ItemCarrinho {
   int qtd;
   String tamanho;
 
+  double calcItemCarrinho() {
+    return itemProduto.valor * qtd;
+  }
+
   ItemCarrinho(
       {required this.itemProduto, this.qtd = 0, this.tamanho = 'null'});
 }

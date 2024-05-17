@@ -14,13 +14,43 @@ class _PedidosPageState extends State<PedidosPage> {
   late List<Historico> pedidos;
   late HistoricoRepository historico;
   int selectedOption = 1;
-  
-  String _selectedOption = 'option1';
+
+  orderLast() {
+    print('menos recente');
+    pedidos.sort((a, b) => a.data.compareTo(b.data));
+  }
+
+  orderFirst() {
+    print('mais recente');
+    pedidos.sort((a, b) => b.data.compareTo(a.data));
+  }
+
+  orderLowerValue() {
+    print('menor valor');
+    pedidos
+        .sort((a, b) => a.calcTotalCarrinho().compareTo(b.calcTotalCarrinho()));
+  }
+
+  orderHighestValue() {
+    print('maior valor');
+    pedidos
+        .sort((a, b) => b.calcTotalCarrinho().compareTo(a.calcTotalCarrinho()));
+  }
 
   @override
   Widget build(BuildContext context) {
     historico = context.watch<HistoricoRepository>();
     pedidos = historico.historico;
+
+    if (selectedOption == 1) {
+      orderFirst();
+    } else if (selectedOption == 2) {
+      orderLast();
+    } else if (selectedOption == 3) {
+      orderHighestValue();
+    } else {
+      orderLowerValue();
+    }
 
     return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -40,7 +70,7 @@ class _PedidosPageState extends State<PedidosPage> {
                     _showBottomSheet();
                   },
                   icon: Icon(
-                    Icons.search,
+                    Icons.filter_list,
                     color: Colors.red,
                   )),
             )
@@ -93,130 +123,99 @@ class _PedidosPageState extends State<PedidosPage> {
     );
   }
 
-  loadWrap(Function funcSet) {
-    return Container(
-      color: Colors.grey[50],
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Wrap(
-          children: [
-            Container(
-                height: 50,
-                width: double.infinity,
-                child: Text(
-                  'Filtrar Por:',
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[700]),
-                )),
-            Container(
-                width: double.infinity,
-                child: ListTile(
-                  title: Text('Op 1'),
-                  trailing: Radio(
-                      value: 1,
-                      groupValue: selectedOption,
-                      activeColor: Colors.blue,
-                      fillColor: MaterialStateProperty.all(Colors.blue),
-                      splashRadius: 20,
-                      onChanged: (value) {
-                        funcSet(value);
-                      }),
-                )),
-            Divider(),
-            Container(
-                width: double.infinity,
-                child: ListTile(
-                  title: Text('Op 2'),
-                  trailing: Radio(
-                      value: 2,
-                      groupValue: selectedOption,
-                      activeColor: Colors.blue,
-                      fillColor: MaterialStateProperty.all(Colors.blue),
-                      splashRadius: 20,
-                      onChanged: (value) {
-                        print('opa 2');
-                        funcSet(value);
-                      }),
-                )),
-            Divider(),
-            Container(
-                width: double.infinity,
-                child: ListTile(
-                  title: Text('Op 3'),
-                  trailing: Radio(
-                      value: 3,
-                      groupValue: selectedOption,
-                      activeColor: Colors.blue,
-                      fillColor: MaterialStateProperty.all(Colors.blue),
-                      splashRadius: 20,
-                      onChanged: (value) {
-                        print('opa 3');
-                        funcSet(value);
-                      }),
-                )),
-            Divider(),
-            Container(
-                width: double.infinity,
-                child: ListTile(
-                  title: Text('Op 4'),
-                  trailing: Radio(
-                      value: 4,
-                      groupValue: selectedOption,
-                      activeColor: Colors.blue,
-                      fillColor: MaterialStateProperty.all(Colors.blue),
-                      splashRadius: 20,
-                      onChanged: (value) {
-                        print('opa 4');
-                        funcSet(value);
-                      }),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-
   void _showBottomSheet() {
-    showModalBottomSheet(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         // Utiliza StatefulBuilder para gerenciar o estado localmente no BottomSheet
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
-              child: Column(
+            return AlertDialog(
+              title: Center(child: Text("Filtrar Por:")),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  RadioListTile<String>(
-                    title: Text('Option 1'),
-                    value: 'option1',
-                    groupValue: _selectedOption,
-                    onChanged: (String? value) {
-                      // Atualiza o estado local no BottomSheet
+                  RadioListTile<int>(
+                    title: Text('Mais Recente'),
+                    value: 1,
+                    groupValue: selectedOption,
+                    onChanged: (int? value) {
                       setState(() {
-                        _selectedOption = value!;
+                        selectedOption = value!;
                       });
                     },
                   ),
-                  RadioListTile<String>(
-                    title: Text('Option 2'),
-                    value: 'option2',
-                    groupValue: _selectedOption,
-                    onChanged: (String? value) {
-                      // Atualiza o estado local no BottomSheet
+                  RadioListTile<int>(
+                    title: Text('Menos Recente'),
+                    value: 2,
+                    groupValue: selectedOption,
+                    onChanged: (int? value) {
                       setState(() {
-                        _selectedOption = value!;
+                        selectedOption = value!;
                       });
                     },
                   ),
-                  ElevatedButton(
-                    child: Text('Confirm'),
-                    onPressed: () {
-                      Navigator.pop(context, _selectedOption);
+                  RadioListTile<int>(
+                    title: Text('Maior Valor'),
+                    value: 3,
+                    groupValue: selectedOption,
+                    onChanged: (int? value) {
+                      setState(() {
+                        selectedOption = value!;
+                      });
                     },
                   ),
+                  RadioListTile<int>(
+                    title: Text('Menor Valor'),
+                    value: 4,
+                    groupValue: selectedOption,
+                    onChanged: (int? value) {
+                      setState(() {
+                        selectedOption = value!;
+                      });
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          child: Text('Fechar'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                                side: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                          child: Text('Aplicar'),
+                          onPressed: () {
+                            Navigator.pop(context, selectedOption);
+                          },
+                          style: ButtonStyle(
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                                side: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
                 ],
               ),
             );
@@ -226,7 +225,7 @@ class _PedidosPageState extends State<PedidosPage> {
     ).then((selectedValue) {
       if (selectedValue != null) {
         setState(() {
-          _selectedOption = selectedValue;
+          selectedOption = selectedValue;
         });
       }
     });

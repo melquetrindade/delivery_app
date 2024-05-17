@@ -9,6 +9,14 @@ class Historico {
   String formaPag;
   double frete;
 
+  double calcTotalCarrinho() {
+    double valorParcial = 0;
+    carrinho.forEach((element) {
+      valorParcial += element.calcItemCarrinho();
+    });
+    return valorParcial;
+  }
+
   Historico(
       {required this.carrinho,
       required this.cliente,
@@ -85,7 +93,7 @@ class HistoricoRepository extends ChangeNotifier {
               tamanho: 'G')
         ],
         cliente: 'Melque Rodrigues',
-        data: '10/05/2024 - 19:44:45',
+        data: '16/05/2024 - 14:08:59',
         formaPag: 'Em Espécie',
         frete: 5.00),
     Historico(
