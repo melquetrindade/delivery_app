@@ -8,11 +8,14 @@ class ComponenteEndereco extends StatefulWidget {
   final bool isCheck;
   final Function toggleState;
   final EnderecoLoja localizacaoLoja;
-  const ComponenteEndereco(
-      {super.key,
-      required this.isCheck,
-      required this.toggleState,
-      required this.localizacaoLoja});
+  final Function endCliente;
+  const ComponenteEndereco({
+    super.key,
+    required this.isCheck,
+    required this.toggleState,
+    required this.localizacaoLoja,
+    required this.endCliente,
+  });
 
   @override
   State<ComponenteEndereco> createState() => _ComponenteEnderecoState();
@@ -35,7 +38,7 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
   Widget build(BuildContext context) {
     endereco = context.watch<EnderecoRepository>();
     localizacao = endereco.endereco;
-    //print('valor do bool: ${widget.isCheck}');
+    widget.endCliente(localizacao);
 
     return Padding(
       padding: const EdgeInsets.all(12.0),

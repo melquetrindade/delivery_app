@@ -1,4 +1,5 @@
 import 'package:delivery_app/repository/carrinho.dart';
+import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:delivery_app/widgets/vendaPage/endereco.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VendaPage extends StatefulWidget {
   final List<ItemCarrinho> objItem;
@@ -22,6 +24,7 @@ class _VendaPageState extends State<VendaPage> {
   late EnderecoLojaRepository enderecoDaLoja;
   late HistoricoRepository historicoPedidos;
   late CarrinhoRepository carrinho;
+  late Endereco enderecoCliente;
 
   int qtdTotal = 0;
   double subTotal = 0;
@@ -101,6 +104,61 @@ class _VendaPageState extends State<VendaPage> {
         action: SnackBarAction(label: 'OK', onPressed: () {}),
       ),
     );
+
+    sendWhatsAppMessage('+5584999687569', mountMenssage());
+    //print(mountMenssage());
+  }
+
+  void sendWhatsAppMessage(String phoneNumber, String message) async {
+    final String url =
+        'https://wa.me/$phoneNumber?text=${Uri.encodeComponent(message)}';
+
+    // ignore: deprecated_member_use
+    if (await canLaunch(url)) {
+      print('entrou no if');
+      // ignore: deprecated_member_use
+      await launch(url);
+    } else {
+      print('entrou else');
+      throw 'Could not launch $url';
+    }
+  }
+
+  funcSetEndereco(Endereco newEnd) {
+    enderecoCliente = newEnd;
+  }
+
+  String mountMenssage() {
+    String message = 'Boa Noite, gostaria de fazer o pedido:\n\n';
+    List<String> produtos = [];
+
+    String typePag = '';
+    if (selectedOption == 1) {
+      typePag = 'Em Espécie';
+    } else if (selectedOption == 2) {
+      typePag = 'Pix';
+    } else {
+      typePag = 'Cartão';
+    }
+
+    widget.objItem.forEach((item) {
+      if (item.itemProduto.categoria == 'Pizza') {
+        produtos.add(
+            '${item.itemProduto.nome} (${item.tamanho}) --- qtd: ${item.qtd}');
+      } else {
+        produtos.add('${item.itemProduto.nome} --- qtd: ${item.qtd}');
+      }
+    });
+
+    message = message + produtos.join('\n');
+    if (isDelivery == false) {
+      message = message +
+          '\n\nEndereço de Entrega: \nRua: ${enderecoCliente.rua} - Nº ${enderecoCliente.num}\nBairro: ${enderecoCliente.bairro} - Complemento: ${enderecoCliente.complemento}\nPonto de Referência: ${enderecoCliente.referencia}\n\nForma de Pagamento: ${typePag}';
+    } else {
+      message = message + '\n\nVou querer retirar o pedido no estabelecimento\n\nForma de Pagamento: ${typePag}';
+    }
+
+    return message;
   }
 
   @override
@@ -138,6 +196,7 @@ class _VendaPageState extends State<VendaPage> {
               isCheck: isDelivery,
               toggleState: togglerDelivery,
               localizacaoLoja: localizacaoLoja,
+              endCliente: funcSetEndereco,
             ),
             FormaPagamento(
               selectedOption: selectedOption,
@@ -160,9 +219,7 @@ class _VendaPageState extends State<VendaPage> {
                       ),
                     ),
                   ),
-                  onPressed: () {
-                    registerOrder();
-                  },
+                  onPressed: () => registerOrder(),
                   child: Padding(
                     padding: const EdgeInsets.only(top: 15, bottom: 15),
                     child: Text(
@@ -179,3 +236,15 @@ class _VendaPageState extends State<VendaPage> {
     );
   }
 }
+
+
+/*
+  Future<void> launchWhatsApp(String phoneNumber, String message) async {
+    String url = 'https://wa.me/$phoneNumber?text=${Uri.encodeFull(message)}';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Não foi possível lançar $url';
+    }
+  }*/

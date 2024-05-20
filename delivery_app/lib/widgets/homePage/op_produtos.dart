@@ -18,12 +18,12 @@ class OpProdutos extends StatefulWidget {
 
 class _OpProdutosState extends State<OpProdutos> {
   List<Produtos> produtos = [
-    Produtos('Hambúrguer', 'assets/icon_hamburguer.png'),
-    Produtos('Pizza', 'assets/icon_pizza.png'),
-    Produtos('HotDog', 'assets/icon_cachorro-quente.png'),
-    Produtos('Açaí', 'assets/icon_acai.png'),
-    Produtos('MilkShaker', 'assets/icon_milkshakers.png'),
-    Produtos('Bebidas', 'assets/icon_soda.png'),
+    Produtos('Hambúrguer', 'assets/icons/icon_hamburguer.png'),
+    Produtos('Pizza', 'assets/icons/icon_pizza.png'),
+    Produtos('HotDog', 'assets/icons/icon_cachorro-quente.png'),
+    Produtos('Açaí', 'assets/icons/icon_acai.png'),
+    Produtos('MilkShaker', 'assets/icons/icon_milkshakers.png'),
+    Produtos('Bebidas', 'assets/icons/icon_soda.png'),
   ];
 
   int currentIndex = 0;
