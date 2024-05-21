@@ -1,3 +1,4 @@
+import 'package:delivery_app/pages/historicoDetails.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,17 @@ class _PedidosPageState extends State<PedidosPage> {
     print('maior valor');
     pedidos
         .sort((a, b) => b.calcTotalCarrinho().compareTo(a.calcTotalCarrinho()));
+  }
+
+  navVendaPage(Historico pedidoHist) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HistoricoDetails(
+          pedido: pedidoHist,
+        ),
+      ),
+    );
   }
 
   @override
@@ -103,6 +115,9 @@ class _PedidosPageState extends State<PedidosPage> {
 
       widgets.add(Container(
         child: ListTile(
+            onTap: () {
+              navVendaPage(item);
+            },
             title: Text('${item.cliente}',
                 style: TextStyle(fontSize: 15),
                 maxLines: 1,

@@ -11,7 +11,23 @@ class _InfoPageState extends State<InfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('Info'),),
+      backgroundColor: Colors.grey[50],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        title: const Text(
+          'Informações',
+          style: TextStyle(
+              color: Colors.red, fontSize: 18, fontWeight: FontWeight.w500),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Text('Info')
+          ],
+        ),
+      )
     );
   }
 }
