@@ -1,6 +1,7 @@
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class InfoPage extends StatefulWidget {
   const InfoPage({super.key});
@@ -12,6 +13,17 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   late EnderecoLoja localizacaoLoja;
   late EnderecoLojaRepository enderecoDaLoja;
+
+  void _launchMaps(double lat, double lng) async {
+    final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+    // ignore: deprecated_member_use
+    if (await canLaunch(url)) {
+      // ignore: deprecated_member_use
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +205,7 @@ class _InfoPageState extends State<InfoPage> {
                               width: 110,
                               child: OutlinedButton(
                                 onPressed: () {
-                                  // Ação a ser executada quando o botão for pressionado
+                                  _launchMaps(-6.6941727,-36.6569032);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide.none,
@@ -211,6 +223,54 @@ class _InfoPageState extends State<InfoPage> {
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(1, 2),
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 17),
+                                child: Icon(
+                                  Icons.call,
+                                  size: 27,
+                                ),
+                              ),
+                              Text(
+                                'Telefones',
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w500),
+                              )
+                            ],
+                          ),
+                          Container(
+                            width: double.infinity,
+                            child: ListTile(
+                              title: Text('Telefone 01'),
+                              subtitle: Text('(84) 99811-3464'),
+                            ),
+                          )
                         ],
                       ),
                     ),
