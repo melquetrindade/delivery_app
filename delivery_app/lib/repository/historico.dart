@@ -14,7 +14,7 @@ class Historico {
     carrinho.forEach((element) {
       valorParcial += element.calcItemCarrinho();
     });
-    return valorParcial;
+    return double.parse(valorParcial.toStringAsFixed(2));
   }
 
   Historico(

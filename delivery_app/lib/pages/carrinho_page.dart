@@ -2,6 +2,7 @@ import 'package:delivery_app/pages/venda_page.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class CarrinhoPage extends StatefulWidget {
@@ -94,6 +95,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
     List<Widget> widgets = [];
 
     for (var item in listaCarrinho) {
+      String valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(item.itemProduto.valor);
       widgets.add(Container(
         margin: EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
@@ -110,7 +112,7 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
                   : '${item.itemProduto.nome}',
               style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12)),
           subtitle: Text(
-            'R\$ ${item.itemProduto.valor}',
+            '${valorFormatado}',
             style: TextStyle(
                 fontWeight: FontWeight.w600, color: Colors.red, fontSize: 12),
           ),

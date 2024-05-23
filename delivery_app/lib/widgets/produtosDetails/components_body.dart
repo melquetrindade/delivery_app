@@ -3,6 +3,7 @@ import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class MyComponents extends StatefulWidget {
@@ -17,6 +18,7 @@ class _MyComponentsState extends State<MyComponents> {
   late FavoritosRepository favoritas;
   int selectedOption = 1;
   double valorProduto = 0;
+  String valorFormatado = '';
   late CarrinhoRepository carrinho;
 
   favoritarProduto() {
@@ -30,10 +32,16 @@ class _MyComponentsState extends State<MyComponents> {
   calcPreco() {
     if (selectedOption == 1) {
       valorProduto = widget.objProduto.valor;
+      valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(widget.objProduto.valor);
     } else if (selectedOption == 2) {
       valorProduto = widget.objProduto.valor + 10;
+      valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(widget.objProduto.valor + 10);
     } else {
       valorProduto = widget.objProduto.valor + 20;
+      valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(widget.objProduto.valor + 20);
     }
   }
 
@@ -66,7 +74,8 @@ class _MyComponentsState extends State<MyComponents> {
       Navigator.pop(context);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${produtoCarrinho.nome} adicionado ao carrinho!')),
+        SnackBar(
+            content: Text('${produtoCarrinho.nome} adicionado ao carrinho!')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -74,9 +83,11 @@ class _MyComponentsState extends State<MyComponents> {
           content: Text(
               'A Política do restaurante permite a quantidade máxima de até 10 unidades de produtos por pedido!'),
           duration: Duration(seconds: 60),
-          action: SnackBarAction(label: 'OK', onPressed: (){
-            Navigator.pop(context);
-          }),
+          action: SnackBarAction(
+              label: 'OK',
+              onPressed: () {
+                Navigator.pop(context);
+              }),
         ),
       );
     }
@@ -170,7 +181,7 @@ class _MyComponentsState extends State<MyComponents> {
                   child: Padding(
                     padding: const EdgeInsets.all(8),
                     child: Text(
-                      'R\$ $valorProduto',
+                      '${valorFormatado}',
                       style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 18,
@@ -210,7 +221,10 @@ class _MyComponentsState extends State<MyComponents> {
                 widget.objProduto.descricao,
                 textAlign: TextAlign.start,
                 style: TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w500, height: 1.5, color: Colors.grey[700]),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    height: 1.5,
+                    color: Colors.grey[700]),
                 maxLines: 6,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -222,7 +236,8 @@ class _MyComponentsState extends State<MyComponents> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.red),
+                    backgroundColor:
+                        MaterialStateProperty.all<Color>(Colors.red),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,

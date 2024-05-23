@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class RevisaoPage extends StatefulWidget {
   final int qtdTotal;
@@ -19,8 +20,23 @@ class RevisaoPage extends StatefulWidget {
 }
 
 class _RevisaoPageState extends State<RevisaoPage> {
+  String subTotalFormat = '';
+  String freteFormat = '';
+  String valorTotalFormat = '';
+
+  formatValues() {
+    subTotalFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+        .format(widget.subTotal);
+    freteFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+        .format(widget.frete);
+    valorTotalFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+        .format(widget.valorTotal);
+  }
+
   @override
   Widget build(BuildContext context) {
+    formatValues();
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -39,16 +55,13 @@ class _RevisaoPageState extends State<RevisaoPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text('Produtos (${widget.qtdTotal})'),
-                Text('R\$ ${widget.subTotal}')
+                Text('${subTotalFormat}')
               ],
             ),
             widget.isDelivery == false
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Frete'),
-                      Text('R\$ ${widget.frete}')
-                    ],
+                    children: [Text('Frete'), Text('${freteFormat}')],
                   )
                 : Container(),
             Row(
@@ -59,7 +72,7 @@ class _RevisaoPageState extends State<RevisaoPage> {
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  'R\$ ${widget.valorTotal}',
+                  '${valorTotalFormat}',
                   style: TextStyle(fontWeight: FontWeight.w600),
                 )
               ],

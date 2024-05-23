@@ -1,5 +1,6 @@
 import 'package:delivery_app/repository/historico.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class HistoricoDetails extends StatefulWidget {
   final Historico pedido;
@@ -10,11 +11,13 @@ class HistoricoDetails extends StatefulWidget {
 }
 
 class _HistoricoDetailsState extends State<HistoricoDetails> {
-  double valorTotal = 0;
+  //double valorTotal = 0;
+  String valorTotalFormat = '';
 
   @override
   Widget build(BuildContext context) {
-    valorTotal = double.parse(widget.pedido.calcTotalCarrinho().toStringAsFixed(2));
+    //double valorTotal = widget.pedido.calcTotalCarrinho();
+    valorTotalFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.pedido.calcTotalCarrinho());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -95,17 +98,22 @@ class _HistoricoDetailsState extends State<HistoricoDetails> {
                           width: double.infinity,
                           child: Padding(
                             padding: const EdgeInsets.only(top: 7),
-                            child: Text('CARRINHO:', style: TextStyle(fontSize: 12),),
+                            child: Text(
+                              'CARRINHO:',
+                              style: TextStyle(fontSize: 12),
+                            ),
                           )),
                     ),
                     loadToken(),
                     ListTile(
                       title: Text(
                         'TOTAL:',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+                        style: TextStyle(
+                            fontWeight: FontWeight.w500, fontSize: 15),
                       ),
-                      trailing: Text('R\$ ${valorTotal}',
-                        style: TextStyle(fontWeight: FontWeight.w500, fontSize: 15)),
+                      trailing: Text('${valorTotalFormat}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500, fontSize: 15)),
                     )
                   ],
                 )),
@@ -117,13 +125,14 @@ class _HistoricoDetailsState extends State<HistoricoDetails> {
 
   loadToken() {
     List<Widget> widgets = [];
-    double subTotal = 0;
-    calcSubTotal(int qtd, double preco) {
-      subTotal = qtd * preco;
-    }
+    String subTotalFormat = '';
+    String valorUnitario = '';
 
     for (var item in widget.pedido.carrinho) {
-      calcSubTotal(item.qtd, item.itemProduto.valor);
+      subTotalFormat = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(item.calcItemCarrinho());
+      valorUnitario = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(item.itemProduto.valor);
 
       widgets.add(ListTile(
           visualDensity: VisualDensity(horizontal: 0, vertical: -4),
@@ -144,11 +153,11 @@ class _HistoricoDetailsState extends State<HistoricoDetails> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Valor Unitário: R\$ ${item.itemProduto.valor}',
+                  'Valor Unitário: ${valorUnitario}',
                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
                 ),
                 Text(
-                  'SubTotal: R\$ ${subTotal}',
+                  'SubTotal: ${subTotalFormat}',
                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w400),
                 ),
               ],

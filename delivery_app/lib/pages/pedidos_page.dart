@@ -1,7 +1,7 @@
 import 'package:delivery_app/pages/historicoDetails.dart';
-import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class PedidosPage extends StatefulWidget {
@@ -38,7 +38,7 @@ class _PedidosPageState extends State<PedidosPage> {
         .sort((a, b) => b.calcTotalCarrinho().compareTo(a.calcTotalCarrinho()));
   }
 
-  navVendaPage(Historico pedidoHist) {
+  navHistoricoDetails(Historico pedidoHist) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -98,25 +98,29 @@ class _PedidosPageState extends State<PedidosPage> {
 
   loadHistorico() {
     List<Widget> widgets = [];
-    double valorTotal = 0;
+    String valorTotal = '';
 
-    calcTotal(List<ItemCarrinho> carrinho) {
+    calcTotal(Historico pedido) {
       double subTotal = 0;
-      valorTotal = 0;
+      valorTotal = '';
 
+      subTotal = double.parse(pedido.calcTotalCarrinho().toStringAsFixed(2));
+      valorTotal = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(subTotal);
+      /*
       carrinho.forEach((itemCar) {
         subTotal += itemCar.qtd * itemCar.itemProduto.valor;
         valorTotal = double.parse(subTotal.toStringAsFixed(2));
-      });
+      });*/
+
     }
 
     for (var item in pedidos) {
-      calcTotal(item.carrinho);
+      calcTotal(item);
 
       widgets.add(Container(
         child: ListTile(
             onTap: () {
-              navVendaPage(item);
+              navHistoricoDetails(item);
             },
             title: Text('${item.cliente}',
                 style: TextStyle(fontSize: 15),
@@ -127,7 +131,7 @@ class _PedidosPageState extends State<PedidosPage> {
               style: TextStyle(color: Colors.grey[600], fontSize: 13),
             ),
             trailing: Text(
-              'R\$ ${valorTotal}',
+              '${valorTotal}',
               style: TextStyle(fontSize: 14),
             )),
       ));

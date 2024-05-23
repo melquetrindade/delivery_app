@@ -3,6 +3,7 @@ import 'package:delivery_app/pages/produto_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class MyCard extends StatefulWidget {
   final Produto produto;
@@ -26,7 +27,7 @@ class _MyCardState extends State<MyCard> {
 
   @override
   Widget build(BuildContext context) {
-    double preco = widget.produto.valor;
+    String valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.produto.valor);
     return Card(
       elevation: 2,
       child: InkWell(
@@ -71,7 +72,7 @@ class _MyCardState extends State<MyCard> {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 5, bottom: 5),
                         child: Text(
-                          'R\$ $preco',
+                          '${valorFormatado}',
                           style: TextStyle(
                               fontWeight: FontWeight.w800,
                               fontSize: 15,

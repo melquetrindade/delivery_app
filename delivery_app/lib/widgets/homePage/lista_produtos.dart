@@ -4,6 +4,7 @@ import 'package:delivery_app/repository/carrinho.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class ListaProdutos extends StatefulWidget {
@@ -79,7 +80,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
   }
 
   Widget listaProduto(int index) {
-    double preco = widget.objProduto[index].valor;
+    String valorFormatado = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(widget.objProduto[index].valor);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 7),
@@ -157,7 +158,7 @@ class _ListaProdutosState extends State<ListaProdutos> {
                         Container(
                           width: 88,
                           child: Text(
-                            'R\$ $preco',
+                            '${valorFormatado}',
                             style: TextStyle(
                               fontWeight: FontWeight.w800,
                               color: Colors.red,

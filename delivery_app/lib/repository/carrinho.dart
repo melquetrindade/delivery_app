@@ -7,7 +7,7 @@ class ItemCarrinho {
   String tamanho;
 
   double calcItemCarrinho() {
-    return itemProduto.valor * qtd;
+    return double.parse((itemProduto.valor * qtd).toStringAsFixed(2));
   }
 
   ItemCarrinho(
