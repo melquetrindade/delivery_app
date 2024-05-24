@@ -1,10 +1,11 @@
-import 'package:delivery_app/pages/home_page.dart';
+import 'package:delivery_app/pages/authCheck.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:delivery_app/repository/produtos.dart';
+import 'package:delivery_app/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
+      ChangeNotifierProvider<AuthService>(create: (_) => AuthService()),
       ChangeNotifierProvider<CarrinhoRepository>(create: (context) => CarrinhoRepository()),
       ChangeNotifierProvider<ProdutosRepository>( create: (_) => ProdutosRepository()),
       ChangeNotifierProvider<FavoritosRepository>(create: (_) => FavoritosRepository()),
@@ -40,7 +42,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const AuthCheck(),
     );
   }
 }
