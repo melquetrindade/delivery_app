@@ -1,5 +1,6 @@
+import 'package:delivery_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
-import '../my_flutter_app_icons.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -17,7 +18,9 @@ class _LoginPageState extends State<LoginPage> {
   late String title;
   late String actionButton;
   late String toggleButton;
-  late String loginWithGoogle;
+  bool loading = false;
+
+  late AuthService authService;
 
   @override
   void initState() {
@@ -33,19 +36,41 @@ class _LoginPageState extends State<LoginPage> {
           title = 'Bem Vindo';
           actionButton = 'Login';
           toggleButton = 'Ainda não tem conta? Cadastre-se agora!';
-          loginWithGoogle = 'Login com o Google';
         } else {
           title = 'Crie sua conta';
           actionButton = 'Cadastrar';
           toggleButton = 'Voltar ao login';
-          loginWithGoogle = 'Cadastre-se com o Google';
         }
       },
     );
   }
 
+  login() async {
+    setState(() => loading = true);
+    try {
+      await authService.login(email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  register() async {
+    setState(() => loading = true);
+    try {
+      await authService.register(email.text, senha.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    authService = context.read<AuthService>();
+
     return Scaffold(
         backgroundColor: Colors.white,
         body: Padding(
@@ -116,58 +141,45 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  if (isLogin) {
+                                    login();
+                                  } else {
+                                    register();
+                                  }
+                                }
+                              },
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.check,
-                                    color: Colors.white,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Text(
-                                      '${actionButton}',
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.white),
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(16),
-                          child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey.shade50),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        5),
-                                    side: BorderSide.none,
-                                  ),
-                                ),
-                              ),
-                              onPressed: () {},
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    MyFlutterApp.google,
-                                    color: Colors.black,
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(16),
-                                    child: Text(
-                                      '${loginWithGoogle}',
-                                      style: TextStyle(
-                                          fontSize: 15, color: Colors.black),
-                                    ),
-                                  ),
-                                ],
+                                children: loading
+                                    ? [
+                                        Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: SizedBox(
+                                            width: 24,
+                                            height: 24,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      ]
+                                    : [
+                                        Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Text(
+                                            '${actionButton}',
+                                            style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
                               )),
                         ),
                         TextButton(
