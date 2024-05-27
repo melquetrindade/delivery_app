@@ -48,10 +48,10 @@ class _FavoritosPageState extends State<FavoritosPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('renderizou');
     favoritas = context.watch<FavoritosRepository>();
     listaFavoritos = favoritas.produtosFavoritos;
     teste();
-    print('no favoritos\n');
 
     return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -74,7 +74,9 @@ class _FavoritosPageState extends State<FavoritosPage> {
               padding: const EdgeInsets.only(right: 20),
               child: IconButton(
                   onPressed: () {
-                    showSearch(context: context, delegate: SearchFavoritos(objtsProdutos: listaTeste));
+                    showSearch(
+                        context: context,
+                        delegate: SearchFavoritos(objtsProdutos: listaTeste));
                   },
                   icon: Icon(
                     Icons.search,
@@ -83,17 +85,22 @@ class _FavoritosPageState extends State<FavoritosPage> {
             )
           ],
         ),
-        body: listaTeste.isEmpty
-            ? ListTile(
-                leading: Icon(Icons.favorite),
-                title: Center(child: Text('Ainda não há produtos favoritados')),
+        body: favoritas.loading
+            ? Center(
+                child: CircularProgressIndicator(),
               )
-            : ListView.builder(
-                itemBuilder: (BuildContext context, int produto) {
-                  return MyCard(produto: listaTeste[produto]);
-                },
-                padding: EdgeInsets.all(16),
-                itemCount: listaTeste.length,
-              ));
+            : listaTeste.isEmpty
+                ? ListTile(
+                    leading: Icon(Icons.favorite),
+                    title: Center(
+                        child: Text('Ainda não há produtos favoritados')),
+                  )
+                : ListView.builder(
+                    itemBuilder: (BuildContext context, int produto) {
+                      return MyCard(produto: listaTeste[produto]);
+                    },
+                    padding: EdgeInsets.all(16),
+                    itemCount: listaTeste.length,
+                  ));
   }
 }

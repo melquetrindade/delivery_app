@@ -19,13 +19,13 @@ void main() async {
 
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider<AuthService>(create: (_) => AuthService()),
-      ChangeNotifierProvider<CarrinhoRepository>(create: (context) => CarrinhoRepository()),
-      ChangeNotifierProvider<ProdutosRepository>( create: (_) => ProdutosRepository()),
-      ChangeNotifierProvider<FavoritosRepository>(create: (_) => FavoritosRepository()),
-      ChangeNotifierProvider<EnderecoRepository>(create: (_) => EnderecoRepository()),
-      ChangeNotifierProvider<EnderecoLojaRepository>(create: (_) => EnderecoLojaRepository()),
-      ChangeNotifierProvider<HistoricoRepository>(create: (_) => HistoricoRepository()),
+      ChangeNotifierProvider<AuthService>(create: (context) => AuthService()),
+      ChangeNotifierProvider<CarrinhoRepository>(create: (context) => CarrinhoRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<ProdutosRepository>( create: (context) => ProdutosRepository()),
+      ChangeNotifierProvider<FavoritosRepository>(create: (context) => FavoritosRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository()),
+      ChangeNotifierProvider<EnderecoLojaRepository>(create: (context) => EnderecoLojaRepository()),
+      ChangeNotifierProvider<HistoricoRepository>(create: (context) => HistoricoRepository()),
     ],
     child: MyApp(),
   ));

@@ -1,5 +1,8 @@
+import 'package:delivery_app/databases/db_firestore.dart';
 import 'package:delivery_app/models/produto.dart';
+import 'package:delivery_app/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FavoriteProducts {
   final String nome;
@@ -10,42 +13,58 @@ class FavoriteProducts {
 
 class FavoritosRepository extends ChangeNotifier {
   List<FavoriteProducts> _produtosFavoritos = [];
-  final List<FavoriteProducts> _dbFirebase = [
-    FavoriteProducts('McNífico Bacon', 'Hambúrguer'),
-    FavoriteProducts('Calabresa', 'Pizza'),
-    FavoriteProducts('Dog Simples', 'HotDog'),
-    FavoriteProducts('Açaí Tradicional', 'Açaí'),
-    FavoriteProducts('Milk Shake Kopenhagen', 'MilkShakers'),
-    FavoriteProducts('Coca-Cola Lata', 'Bebida'),
-  ];
+  late FirebaseFirestore db;
+  late AuthService auth;
+  bool loading = true;
 
   List<FavoriteProducts> get produtosFavoritos => _produtosFavoritos;
 
-  FavoritosRepository() {
+  FavoritosRepository({required this.auth}) {
     iniciarState();
   }
 
-  iniciarState() {
-    _dbFirebase.forEach((element) {
-      _produtosFavoritos.add(element);
-    });
+  iniciarState() async {
+    await _startFirestore();
+    await _readFavoritos();
   }
 
-  saveProduto(Produto produto) {
-    //print('clicou para favoritar');
-    
-    _dbFirebase.add(FavoriteProducts(produto.nome, produto.categoria));
+  _startFirestore() {
+    db = DBFirestore.get();
+  }
+
+  _readFavoritos() async {
+    loading = true;
+    if (auth.usuario != null && _produtosFavoritos.isEmpty) {
+      final snapshot = await db
+          .collection('loja/usuarios/clientes/${auth.usuario!.uid}/favoritas')
+          .get();
+      snapshot.docs.forEach((item) {
+        print('no read favoritos: ${item}');
+        _produtosFavoritos
+            .add(FavoriteProducts(item.get('produto'), item.get('categoria')));
+      });
+
+      notifyListeners();
+    }
+    loading = false;
+  }
+
+  saveProduto(Produto produto) async {
     _produtosFavoritos.add(FavoriteProducts(produto.nome, produto.categoria));
-    
+    await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/favoritas')
+        .doc(produto.nome)
+        .set({'produto': produto.nome, 'categoria': produto.categoria});
+
     notifyListeners();
   }
 
-  removeProduto(Produto produto) {
-    //print('clicou para desfavoritar');
-    
-    _dbFirebase.removeWhere((item) => item.nome == produto.nome);
+  removeProduto(Produto produto) async {
     _produtosFavoritos.removeWhere((item) => item.nome == produto.nome);
-    
+    await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/favoritas')
+        .doc(produto.nome)
+        .delete();
 
     notifyListeners();
   }
