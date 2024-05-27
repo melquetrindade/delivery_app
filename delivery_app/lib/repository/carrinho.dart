@@ -50,16 +50,14 @@ class CarrinhoRepository extends ChangeNotifier {
           .get();
       snapshot.docs.forEach((item) {
         _carrinho.add(ItemCarrinho(
-          itemProduto: Produto(
-            item['itemCarrinho']['nome'], 
-            item['itemCarrinho']['img'], 
-            item['itemCarrinho']['descricao'], 
-            item['itemCarrinho']['categoria'], 
-            item['itemCarrinho']['valor']
-          ),
-          qtd: item['qtd'],
-          tamanho: item['tamanho']
-        ));
+            itemProduto: Produto(
+                item['itemCarrinho']['nome'],
+                item['itemCarrinho']['img'],
+                item['itemCarrinho']['descricao'],
+                item['itemCarrinho']['categoria'],
+                item['itemCarrinho']['valor']),
+            qtd: item['qtd'],
+            tamanho: item['tamanho']));
       });
 
       notifyListeners();
@@ -70,9 +68,6 @@ class CarrinhoRepository extends ChangeNotifier {
   addProduto(ItemCarrinho produto) async {
     List<ItemCarrinho> hasAdd = [];
     int id = 0;
-    final qtd = await db
-        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
-        .get();
 
     if (produto.itemProduto.categoria == 'Pizza') {
       _carrinho.asMap().forEach((index, item) {
@@ -85,10 +80,11 @@ class CarrinhoRepository extends ChangeNotifier {
       if (!hasAdd.isEmpty) {
         print('entrou no de pizza');
         _carrinho[id].qtd++;
-        //await db.collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho').where('itemCarrinho.nome', isEqualTo: produto.itemProduto.nome).get();
-        //_dbFirebase[id].qtd = _carrinho[id].qtd;
-        qtd.docs.forEach((element) {
-          print(element);
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc('${produto.itemProduto.nome}${produto.tamanho}')
+            .update({
+          'qtd': _carrinho[id].qtd,
         });
       } else {
         _carrinho.add(produto);
@@ -117,9 +113,13 @@ class CarrinhoRepository extends ChangeNotifier {
       if (!hasAdd.isEmpty) {
         print('entrou no que não é pizza');
         _carrinho[id].qtd++;
-        //_dbFirebase[id].qtd = _carrinho[id].qtd;
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc(produto.itemProduto.nome)
+            .update({
+          'qtd': _carrinho[id].qtd,
+        });
       } else {
-        //_dbFirebase.add(produto);
         _carrinho.add(produto);
         await db
             .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
@@ -137,15 +137,11 @@ class CarrinhoRepository extends ChangeNotifier {
         });
       }
     }
-    //_dbFirebase.where((item) => item.itemProduto.nome == produto.nome).toList();
 
     notifyListeners();
   }
 
-  deleteProduto(ItemCarrinho produto) {
-    //_dbFirebase.removeWhere((element) => element.nome == produto.nome);
-    //_carrinho.removeWhere((element) => element.nome == produto.nome);
-
+  deleteProduto(ItemCarrinho produto) async {
     int id = 0;
     if (produto.itemProduto.categoria == 'Pizza') {
       _carrinho.asMap().forEach((index, item) {
@@ -158,9 +154,17 @@ class CarrinhoRepository extends ChangeNotifier {
       _carrinho[id].qtd--;
       if (_carrinho[id].qtd == 0) {
         _carrinho.removeAt(id);
-        //_dbFirebase.removeAt(id);
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc('${produto.itemProduto.nome}${produto.tamanho}')
+            .delete();
       } else {
-        //_dbFirebase[id].qtd = _carrinho[id].qtd;
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc('${produto.itemProduto.nome}${produto.tamanho}')
+            .update({
+          'qtd': _carrinho[id].qtd,
+        });
       }
     } else {
       _carrinho.asMap().forEach((index, item) {
@@ -172,18 +176,29 @@ class CarrinhoRepository extends ChangeNotifier {
       _carrinho[id].qtd--;
       if (_carrinho[id].qtd == 0) {
         _carrinho.removeAt(id);
-        //_dbFirebase.removeAt(id);
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc(produto.itemProduto.nome)
+            .delete();
       } else {
-        //_dbFirebase[id].qtd = _carrinho[id].qtd;
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+            .doc(produto.itemProduto.nome)
+            .update({
+          'qtd': _carrinho[id].qtd,
+        });
       }
     }
 
     notifyListeners();
   }
 
-  clearCarrinho() {
-    //_dbFirebase = [];
+  clearCarrinho() async {
     _carrinho = [];
+    final snapshot = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
+        .get();
+    snapshot.docs.clear();
 
     notifyListeners();
   }
