@@ -22,6 +22,7 @@ class CarrinhoRepository extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool loading = true;
+  bool jaCarregou = false;
 
   CarrinhoRepository({required this.auth}) {
     iniciarState();
@@ -32,10 +33,17 @@ class CarrinhoRepository extends ChangeNotifier {
   iniciarState() async {
     await _startFirestore();
     await _readFavoritos();
+    jaCarregou = true;
   }
 
   _startFirestore() {
     db = DBFirestore.get();
+  }
+
+  setLista() {
+    print('entrou no setLista');
+    _carrinho = [];
+    _readFavoritos();
   }
 
   _readFavoritos() async {

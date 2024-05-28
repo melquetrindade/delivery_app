@@ -16,32 +16,37 @@ class FavoritosRepository extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool loading = true;
+  bool jaCarregou = false;
 
   List<FavoriteProducts> get produtosFavoritos => _produtosFavoritos;
 
   FavoritosRepository({required this.auth}) {
-    print('carregou o construtor');
     iniciarState();
   }
 
   iniciarState() async {
     await _startFirestore();
     await _readFavoritos();
+    jaCarregou = true;
   }
 
   _startFirestore() {
     db = DBFirestore.get();
   }
 
+  setLista() {
+    print('entrou no setLista');
+    _produtosFavoritos = [];
+    _readFavoritos();
+  }
+
   _readFavoritos() async {
     loading = true;
     if (auth.usuario != null) {
-      print('entrou para carregar uid: ${auth.usuario!.uid}');
       final snapshot = await db
           .collection('loja/usuarios/clientes/${auth.usuario!.uid}/favoritas')
           .get();
       snapshot.docs.forEach((item) {
-        print('no read favoritos: ${item}');
         _produtosFavoritos
             .add(FavoriteProducts(item.get('produto'), item.get('categoria')));
       });

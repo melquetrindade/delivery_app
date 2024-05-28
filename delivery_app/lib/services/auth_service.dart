@@ -32,7 +32,8 @@ class AuthService extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       print('deu pau ${e.message}');
       if (e.code == 'invalid-credential') {
-        throw AuthException('As credênciais fornecidas são inválidas. Cadastre-se!');
+        throw AuthException(
+            'As credênciais fornecidas são inválidas. Cadastre-se!');
       }
     }
   }

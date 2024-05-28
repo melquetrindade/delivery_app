@@ -19,8 +19,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider<AuthService>(create: (context) => AuthService()),
       ChangeNotifierProvider<CarrinhoRepository>(
-          create: (context) =>
-              CarrinhoRepository(auth: context.read<AuthService>())),
+          create: (context) => CarrinhoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<ProdutosRepository>(
           create: (context) => ProdutosRepository()),
       ChangeNotifierProvider<FavoritosRepository>(create: (context) => FavoritosRepository(auth: context.read<AuthService>())),
@@ -29,8 +28,7 @@ void main() async {
       ChangeNotifierProvider<EnderecoLojaRepository>(
           create: (context) => EnderecoLojaRepository()),
       ChangeNotifierProvider<HistoricoRepository>(
-          create: (context) =>
-              HistoricoRepository(auth: context.read<AuthService>())),
+          create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
     ],
     child: MyApp(),
   ));

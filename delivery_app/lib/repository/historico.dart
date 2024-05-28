@@ -33,6 +33,7 @@ class HistoricoRepository extends ChangeNotifier {
   late FirebaseFirestore db;
   late AuthService auth;
   bool loading = true;
+  bool jaCarregou = false;
 
   HistoricoRepository({required this.auth}) {
     iniciarState();
@@ -43,10 +44,17 @@ class HistoricoRepository extends ChangeNotifier {
   iniciarState() async {
     await _startFirestore();
     await _readFavoritos();
+    jaCarregou = true;
   }
 
   _startFirestore() {
     db = DBFirestore.get();
+  }
+
+  setLista() {
+    print('entrou no setLista');
+    _historico = [];
+    _readFavoritos();
   }
 
   _readFavoritos() async {
