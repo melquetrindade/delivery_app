@@ -43,7 +43,12 @@ class _CarrinhoPageState extends State<CarrinhoPage> {
               color: Colors.red, fontSize: 18, fontWeight: FontWeight.w500),
         ),
       ),
-      body: listaCarrinho.isEmpty
+      body: carrinho.loading
+      ? Center(
+          child: CircularProgressIndicator(),
+        )
+      :
+      listaCarrinho.isEmpty
           ? ListTile(
               leading: Icon(Icons.local_grocery_store),
               title: Center(child: Text('Ainda não há produtos no carrinho!')),

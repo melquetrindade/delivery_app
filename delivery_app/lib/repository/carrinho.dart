@@ -30,10 +30,6 @@ class CarrinhoRepository extends ChangeNotifier {
   List<ItemCarrinho> get objCarrinho => _carrinho;
 
   iniciarState() async {
-    /*
-    _dbFirebase.forEach((element) {
-      _carrinho.add(element);
-    });*/
     await _startFirestore();
     await _readFavoritos();
   }
@@ -198,7 +194,9 @@ class CarrinhoRepository extends ChangeNotifier {
     final snapshot = await db
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/carrinho')
         .get();
-    snapshot.docs.clear();
+    for (var doc in snapshot.docs) {
+      doc.reference.delete();
+    }
 
     notifyListeners();
   }

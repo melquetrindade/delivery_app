@@ -88,7 +88,18 @@ class _PedidosPageState extends State<PedidosPage> {
             )
           ],
         ),
-        body: Padding(
+        body: historico.loading
+        ? Center(
+          child: CircularProgressIndicator(),
+        )
+        : pedidos.isEmpty
+        ?
+        ListTile(
+          leading: Icon(Icons.playlist_add_check),
+          title: Center(child: Text('Sua lista de pedidos está vazia!')),
+        )
+        :
+        Padding(
           padding: const EdgeInsets.all(12.0),
           child: SingleChildScrollView(
             child: loadHistorico(),

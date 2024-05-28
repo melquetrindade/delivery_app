@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_app/databases/db_firestore.dart';
 import 'package:delivery_app/models/produto.dart';
 import 'package:delivery_app/repository/carrinho.dart';
+import 'package:delivery_app/services/auth_service.dart';
 import 'package:flutter/cupertino.dart';
 
 class Historico {
@@ -27,6 +30,105 @@ class Historico {
 
 class HistoricoRepository extends ChangeNotifier {
   List<Historico> _historico = [];
+  late FirebaseFirestore db;
+  late AuthService auth;
+  bool loading = true;
+
+  HistoricoRepository({required this.auth}) {
+    iniciarState();
+  }
+
+  List<Historico> get historico => _historico;
+
+  iniciarState() async {
+    await _startFirestore();
+    await _readFavoritos();
+  }
+
+  _startFirestore() {
+    db = DBFirestore.get();
+  }
+
+  _readFavoritos() async {
+    loading = true;
+    if (auth.usuario != null && _historico.isEmpty){
+      final snapshot = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
+        .get();
+      snapshot.docs.forEach((doc) {
+        List<ItemCarrinho> listaCarrinho = [];
+
+        doc['carrinho'].forEach((item) {
+          listaCarrinho.add(ItemCarrinho(
+            itemProduto: Produto(
+              item['produto']['nome'], 
+              item['produto']['img'], 
+              item['produto']['descricao'], 
+              item['produto']['categoria'], 
+              item['produto']['valor']
+            ),
+            qtd: item['qtd'],
+            tamanho: item['tamanho']
+          ));
+        });
+
+        _historico.add(Historico(
+            carrinho: listaCarrinho,
+            cliente: doc['cliente'],
+            data: doc['data'],
+            formaPag: doc['formaPag'],
+            frete: doc['frete']));
+      });
+    }
+    loading = false;
+    notifyListeners();
+  }
+
+  registerHistoric(Historico pedido) async {
+    var listaCarrinho = [];
+
+    loadItemCarrinho() {
+      pedido.carrinho.forEach((item) {
+        listaCarrinho.add({
+          'produto': {
+            'nome': item.itemProduto.nome,
+            'img': item.itemProduto.img,
+            'descricao': item.itemProduto.descricao,
+            'categoria': item.itemProduto.categoria,
+            'valor': item.itemProduto.valor
+          },
+          'qtd': item.qtd,
+          'tamanho': item.tamanho
+        });
+      });
+    }
+
+    loadItemCarrinho();
+
+    final qtd = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
+        .get();
+
+    _historico.add(pedido);
+    await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
+        .doc((qtd.size + 1).toString())
+        .set({
+      'carrinho': listaCarrinho,
+      'cliente': pedido.cliente,
+      'data': pedido.data,
+      'formaPag': pedido.formaPag,
+      'frete': pedido.frete
+    });
+
+    notifyListeners();
+  }
+}
+
+
+
+
+/*
   List<Historico> _dbFirebase = [
     Historico(
         carrinho: [
@@ -164,21 +266,4 @@ class HistoricoRepository extends ChangeNotifier {
         data: '02/04/2024 - 20:38:45',
         formaPag: 'Cartão',
         frete: 5.00)
-  ];
-
-  HistoricoRepository() {
-    iniciarState();
-  }
-
-  List<Historico> get historico => _historico;
-
-  iniciarState() {
-    _historico = _dbFirebase;
-  }
-
-  registerHistoric(Historico pedido) {
-    _dbFirebase = [];
-    _historico.add(pedido);
-    _dbFirebase = _historico;
-  }
-}
+  ];*/
