@@ -13,19 +13,24 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider<AuthService>(create: (context) => AuthService()),
-      ChangeNotifierProvider<CarrinhoRepository>(create: (context) => CarrinhoRepository(auth: context.read<AuthService>())),
-      ChangeNotifierProvider<ProdutosRepository>( create: (context) => ProdutosRepository()),
+      ChangeNotifierProvider<CarrinhoRepository>(
+          create: (context) =>
+              CarrinhoRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<ProdutosRepository>(
+          create: (context) => ProdutosRepository()),
       ChangeNotifierProvider<FavoritosRepository>(create: (context) => FavoritosRepository(auth: context.read<AuthService>())),
-      ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository()),
-      ChangeNotifierProvider<EnderecoLojaRepository>(create: (context) => EnderecoLojaRepository()),
-      ChangeNotifierProvider<HistoricoRepository>(create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<EnderecoRepository>(
+          create: (context) => EnderecoRepository()),
+      ChangeNotifierProvider<EnderecoLojaRepository>(
+          create: (context) => EnderecoLojaRepository()),
+      ChangeNotifierProvider<HistoricoRepository>(
+          create: (context) =>
+              HistoricoRepository(auth: context.read<AuthService>())),
     ],
     child: MyApp(),
   ));
@@ -42,7 +47,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: const AuthCheck(),
+      home: AuthCheck(),
     );
   }
 }

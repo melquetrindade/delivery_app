@@ -20,6 +20,7 @@ class FavoritosRepository extends ChangeNotifier {
   List<FavoriteProducts> get produtosFavoritos => _produtosFavoritos;
 
   FavoritosRepository({required this.auth}) {
+    print('carregou o construtor');
     iniciarState();
   }
 
@@ -34,7 +35,8 @@ class FavoritosRepository extends ChangeNotifier {
 
   _readFavoritos() async {
     loading = true;
-    if (auth.usuario != null && _produtosFavoritos.isEmpty) {
+    if (auth.usuario != null) {
+      print('entrou para carregar uid: ${auth.usuario!.uid}');
       final snapshot = await db
           .collection('loja/usuarios/clientes/${auth.usuario!.uid}/favoritas')
           .get();
