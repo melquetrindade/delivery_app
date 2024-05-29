@@ -73,7 +73,7 @@ class _VendaPageState extends State<VendaPage> {
   }
 
   registerOrder() {
-    if(enderecoCliente.rua != ''){
+    if(enderecoCliente.rua != '' || isDelivery){
       DateTime now = DateTime.now();
       String formattedDateTime = DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
       //String formattedDateTime = '${now.day}/${now.month}/${now.year} - ${now.hour}:${now.minute}:${now.second}';

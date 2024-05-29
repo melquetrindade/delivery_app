@@ -19,7 +19,8 @@ class Endereco {
 }
 
 class EnderecoRepository extends ChangeNotifier {
-  Endereco _endereco = Endereco(rua: '', bairro: '', num: '', complemento: '', referencia: '');
+  Endereco _endereco =
+      Endereco(rua: '', bairro: '', num: '', complemento: '', referencia: '');
   late FirebaseFirestore db;
   late AuthService auth;
   bool loading = true;
@@ -93,7 +94,19 @@ class EnderecoRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  deleteEndereco() {}
+  deleteEndereco() async {
+    _endereco =
+        Endereco(rua: '', bairro: '', num: '', complemento: '', referencia: '');
+    final snapshot = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/endereco')
+        .get();
+
+    snapshot.docs.forEach((doc) {
+      doc.reference.delete();
+    });
+
+    notifyListeners();
+  }
 
   updateEndereco(Endereco newEndereco) async {
     final qtd = await db

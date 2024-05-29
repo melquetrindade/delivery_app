@@ -295,7 +295,47 @@ class _EditEnderecoState extends State<EditEndereco> {
                             ),
                           ),
                         ),
+                      ),
+                      enderecoCliente.rua != ''
+                      ?
+                      Container(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all<Color>(Colors.white),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.zero, // Raio dos cantos
+                                side: BorderSide.none// Remove a borda
+                              ),
+                            ),
+                          ),
+                          onPressed: () {
+                            endereco.deleteEndereco();
+                  
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Endereço excluído com sucesso!')),
+                            );
+                          },
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.only(top: 15, bottom: 15),
+                            child: Text(
+                              'Excluir',
+                              style: TextStyle(
+                                  color: Colors.red, fontSize: 15),
+                            ),
+                          ),
+                        ),
                       )
+                      :
+                      Container()
                     ],
                   ),
                 ),
