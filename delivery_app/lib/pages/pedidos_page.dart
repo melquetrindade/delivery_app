@@ -51,6 +51,7 @@ class _PedidosPageState extends State<PedidosPage> {
 
   @override
   Widget build(BuildContext context) {
+    pedidos = [];
     historico = context.watch<HistoricoRepository>();
     pedidos = historico.historico;
 
@@ -89,40 +90,35 @@ class _PedidosPageState extends State<PedidosPage> {
           ],
         ),
         body: historico.loading
-        ? Center(
-          child: CircularProgressIndicator(),
-        )
-        : pedidos.isEmpty
-        ?
-        ListTile(
-          leading: Icon(Icons.playlist_add_check),
-          title: Center(child: Text('Sua lista de pedidos está vazia!')),
-        )
-        :
-        Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: SingleChildScrollView(
-            child: loadHistorico(),
-          ),
-        ));
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : pedidos.isEmpty
+                ? ListTile(
+                    leading: Icon(Icons.playlist_add_check),
+                    title:
+                        Center(child: Text('Sua lista de pedidos está vazia!')),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: SingleChildScrollView(
+                      child: loadHistorico(),
+                    ),
+                  ));
   }
 
   loadHistorico() {
     List<Widget> widgets = [];
+    widgets = [];
     String valorTotal = '';
-
+    print(widgets.length);
     calcTotal(Historico pedido) {
       double subTotal = 0;
       valorTotal = '';
 
       subTotal = double.parse(pedido.calcTotalCarrinho().toStringAsFixed(2));
-      valorTotal = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$').format(subTotal);
-      /*
-      carrinho.forEach((itemCar) {
-        subTotal += itemCar.qtd * itemCar.itemProduto.valor;
-        valorTotal = double.parse(subTotal.toStringAsFixed(2));
-      });*/
-
+      valorTotal = NumberFormat.currency(locale: 'pt_BR', symbol: 'R\$')
+          .format(subTotal);
     }
 
     for (var item in pedidos) {
@@ -148,6 +144,7 @@ class _PedidosPageState extends State<PedidosPage> {
       ));
       widgets.add(Divider());
     }
+    //print(widgets.length);
     return Column(
       children: widgets,
     );

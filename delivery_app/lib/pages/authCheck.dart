@@ -1,6 +1,7 @@
 import 'package:delivery_app/pages/home_page.dart';
 import 'package:delivery_app/pages/loginPage.dart';
 import 'package:delivery_app/repository/carrinho.dart';
+import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:delivery_app/services/auth_service.dart';
@@ -32,6 +33,10 @@ class _AuthCheckState extends State<AuthCheck> {
     if (auth.usuario != null && context.read<HistoricoRepository>().jaCarregou) {
       print('entrou no if do auth do historico');
       context.read<HistoricoRepository>().setLista();
+    }
+    if (auth.usuario != null && context.read<EnderecoRepository>().jaCarregou) {
+      print('entrou no if do auth do endereco');
+      context.read<EnderecoRepository>().setLista();
     }
 
     if (auth.isLoading) {

@@ -23,12 +23,11 @@ void main() async {
       ChangeNotifierProvider<ProdutosRepository>(
           create: (context) => ProdutosRepository()),
       ChangeNotifierProvider<FavoritosRepository>(create: (context) => FavoritosRepository(auth: context.read<AuthService>())),
-      ChangeNotifierProvider<EnderecoRepository>(
-          create: (context) => EnderecoRepository()),
       ChangeNotifierProvider<EnderecoLojaRepository>(
           create: (context) => EnderecoLojaRepository()),
       ChangeNotifierProvider<HistoricoRepository>(
           create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository(auth: context.read<AuthService>())),
     ],
     child: MyApp(),
   ));

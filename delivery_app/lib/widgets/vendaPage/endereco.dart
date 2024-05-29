@@ -46,7 +46,29 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
         child: Column(
           children: [
             widget.isCheck == false
-                ? Row(
+                ? 
+                localizacao.rua == ''
+                ?
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Endereço',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w400),
+                      ),
+                      IconButton(
+                          onPressed: () {
+                            navEditEndereco();
+                          },
+                          icon: Icon(
+                            Icons.add_location_alt_outlined,
+                            color: Colors.grey[600],
+                          ))
+                    ],
+                  )
+                :
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
@@ -77,7 +99,64 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
                     ),
                   ),
             widget.isCheck == false
-                ? Container(
+                ? 
+                localizacao.rua == ''
+                ?
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(1, 2), // mudança de posição da sombra
+                        ),
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(14.0),
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.yellow[100],
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Colors.yellow.shade600,
+                                width: 1,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Icon(
+                                      Icons.info,
+                                      color: Colors.yellow[600],
+                                    ),
+                                  ),
+                                  const Flexible(
+                                    child: Text(
+                                      'Você ainda não possui endereço de entrega. Adicione um para continuar!',
+                                      style: TextStyle(
+                                          color: Colors.black, fontSize: 12),
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                :
+                Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [

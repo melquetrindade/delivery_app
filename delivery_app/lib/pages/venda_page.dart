@@ -73,40 +73,51 @@ class _VendaPageState extends State<VendaPage> {
   }
 
   registerOrder() {
-    DateTime now = DateTime.now();
-    String formattedDateTime = DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
-    //String formattedDateTime = '${now.day}/${now.month}/${now.year} - ${now.hour}:${now.minute}:${now.second}';
+    if(enderecoCliente.rua != ''){
+      DateTime now = DateTime.now();
+      String formattedDateTime = DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
+      //String formattedDateTime = '${now.day}/${now.month}/${now.year} - ${now.hour}:${now.minute}:${now.second}';
 
-    String typePag = '';
-    if (selectedOption == 1) {
-      typePag = 'Em Espécie';
-    } else if (selectedOption == 2) {
-      typePag = 'Pix';
-    } else {
-      typePag = 'Cartão';
+      String typePag = '';
+      if (selectedOption == 1) {
+        typePag = 'Em Espécie';
+      } else if (selectedOption == 2) {
+        typePag = 'Pix';
+      } else {
+        typePag = 'Cartão';
+      }
+
+      historicoPedidos.registerHistoric(Historico(
+          carrinho: widget.objItem,
+          cliente: 'Melque Rodrigues',
+          data: formattedDateTime,
+          formaPag: typePag,
+          frete: localizacaoLoja.frete));
+
+      carrinho.clearCarrinho();
+
+      Navigator.pop(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Seu pedido foi enviado com sucesso!'),
+          duration: Duration(seconds: 30),
+          action: SnackBarAction(label: 'OK', onPressed: () {}),
+        ),
+      );
+
+      sendWhatsAppMessage('+5584999687569', mountMenssage());
+      //print(mountMenssage());
     }
-
-    historicoPedidos.registerHistoric(Historico(
-        carrinho: widget.objItem,
-        cliente: 'Melque Rodrigues',
-        data: formattedDateTime,
-        formaPag: typePag,
-        frete: localizacaoLoja.frete));
-
-    carrinho.clearCarrinho();
-
-    Navigator.pop(context);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Seu pedido foi enviado com sucesso!'),
-        duration: Duration(seconds: 30),
-        action: SnackBarAction(label: 'OK', onPressed: () {}),
-      ),
-    );
-
-    sendWhatsAppMessage('+5584999687569', mountMenssage());
-    //print(mountMenssage());
+    else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Você precisa ter um endereço de entrega pra poder realizar o pedido!'),
+          duration: Duration(seconds: 30),
+          action: SnackBarAction(label: 'OK', onPressed: () {}),
+        ),
+      );
+    }
   }
 
   void sendWhatsAppMessage(String phoneNumber, String message) async {
