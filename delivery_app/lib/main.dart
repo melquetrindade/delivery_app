@@ -4,6 +4,7 @@ import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/historico.dart';
+import 'package:delivery_app/repository/perfil.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:delivery_app/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,7 @@ void main() async {
       ChangeNotifierProvider<HistoricoRepository>(
           create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository(auth: context.read<AuthService>())),
+      ChangeNotifierProvider<PerfilRepository>(create: (context) => PerfilRepository(auth: context.read<AuthService>())),
     ],
     child: MyApp(),
   ));

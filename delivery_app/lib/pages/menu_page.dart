@@ -1,5 +1,6 @@
 import 'package:delivery_app/models/produto.dart';
 import 'package:delivery_app/pages/editEndereco.dart';
+import 'package:delivery_app/pages/editPerfil.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:delivery_app/services/auth_service.dart';
 //import 'package:delivery_app/widgets/homePage/leading.dart';
@@ -82,6 +83,12 @@ class _MenuState extends State<Menu> {
           InkWell(
             onTap: () {
               print('abrir configurações de perfil');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PerfilPage(),
+                ),
+              );
             },
             child: Padding(
               padding: const EdgeInsets.all(15.0),
