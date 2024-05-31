@@ -19,6 +19,9 @@ class _UploadFotoPageState extends State<UploadFotoPage> {
     perfil = context.watch<PerfilRepository>();
     uploading = perfil.uploading;
     total = perfil.total;
+    if (uploading) {
+      print('${total.round()}% enviados');
+    }
 
     print('foto do usuário: ${perfil.imgProfile}');
 
@@ -48,6 +51,15 @@ class _UploadFotoPageState extends State<UploadFotoPage> {
           ? Center(
               child: CircularProgressIndicator(),
             )
+          :
+          uploading
+          ?
+          Center(
+            child: Column(children: [
+              Text('${total.round()}% enviados'),
+              CircularProgressIndicator(),
+            ],),
+          )
           : SingleChildScrollView(
               child: Padding(
                 padding: EdgeInsets.all(12),

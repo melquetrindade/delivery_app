@@ -115,6 +115,7 @@ class PerfilRepository extends ChangeNotifier {
           .set({'img': arquivo[0]});
       _imgProfile = arquivo[0];
     }
+    notifyListeners();
   }
 
   deleteImage() async {
@@ -126,9 +127,11 @@ class PerfilRepository extends ChangeNotifier {
           .doc('img')
           .delete();
       _imgProfile = '';
-      
-    } else{
-      refs = (await storage.ref('usuarios/clientes/${auth.usuario!.uid}/image').listAll()).items;
+    } else {
+      refs = (await storage
+              .ref('usuarios/clientes/${auth.usuario!.uid}/image')
+              .listAll())
+          .items;
       await storage.ref(refs[0].fullPath).delete();
       await db
           .collection('loja/usuarios/clientes/${auth.usuario!.uid}/imgProfile')
