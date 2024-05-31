@@ -120,25 +120,18 @@ class PerfilRepository extends ChangeNotifier {
 
   deleteImage() async {
     print('qtd do refs: ${refs.length}');
-    if (refs.length > 0) {
-      await storage.ref(refs[0].fullPath).delete();
-      await db
-          .collection('loja/usuarios/clientes/${auth.usuario!.uid}/imgProfile')
-          .doc('img')
-          .delete();
-      _imgProfile = '';
-    } else {
-      refs = (await storage
-              .ref('usuarios/clientes/${auth.usuario!.uid}/image')
-              .listAll())
-          .items;
-      await storage.ref(refs[0].fullPath).delete();
-      await db
-          .collection('loja/usuarios/clientes/${auth.usuario!.uid}/imgProfile')
-          .doc('img')
-          .delete();
-      _imgProfile = '';
-    }
+    refs = [];
+    arquivo = [];
+    refs = (await storage
+            .ref('usuarios/clientes/${auth.usuario!.uid}/image')
+            .listAll())
+        .items;
+    await storage.ref(refs[0].fullPath).delete();
+    await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/imgProfile')
+        .doc('img')
+        .delete();
+    _imgProfile = '';
     notifyListeners();
   }
 }
