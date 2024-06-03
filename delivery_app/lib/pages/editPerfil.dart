@@ -194,20 +194,27 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     horizontal: 12),
                                           ),
                                           onChanged: (value) {
-                                            
-                                            String formattedValue = value.replaceAll(RegExp(r'\D'), '');
+                                            String formattedValue = value
+                                                .replaceAll(RegExp(r'\D'), '');
+                                            int fim = formattedValue.length;
                                             print(value.length);
-                                            if (value.length <= 11) {
-                                              
-
-                                              if (formattedValue.length == 11) {
+                                            if(value.length < 17){
+                                              if (formattedValue.length > 2 &&
+                                                formattedValue.length <= 7) {
+                                              formattedValue =
+                                                  '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, fim)}';
+                                              } else if (formattedValue.length >
+                                                  7) {
+                                                print('entrouuu');
+                                                print(formattedValue);
                                                 formattedValue =
-                                                    '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, 11)}';
+                                                    '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, 3)}.${formattedValue.substring(3, 7)}-${formattedValue.substring(7, fim)}';
                                               }
                                               telefone.text = formattedValue;
-                                            } else {
-                                              telefone.text = value;
+                                            }else{
+                                              telefone.text = value.substring(0, value.length - 1);
                                             }
+                                            
                                           },
                                           keyboardType: TextInputType.text,
                                           validator: (value) {
