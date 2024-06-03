@@ -50,23 +50,25 @@ class _UploadFotoPageState extends State<UploadFotoPage> {
             )
           : uploading
               ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 25),
-                      child: Text('${total.round()}% enviados',style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 25),
+                        child: Text(
+                          '${total.round()}% enviados',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500),
+                        ),
                       ),
-                    ),
-                    CircularProgressIndicator(
-                      color: Colors.red,
-                    ),
-                  ],
-                ),
-              )
+                      CircularProgressIndicator(
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                )
               : SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.all(12),
@@ -153,6 +155,7 @@ class _UploadFotoPageState extends State<UploadFotoPage> {
                                         InkWell(
                                           onTap: () {
                                             print('botão para atualizar foto');
+                                            perfil.updateImg();
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(

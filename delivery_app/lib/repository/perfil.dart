@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:delivery_app/databases/db_firestore.dart';
 import 'package:delivery_app/databases/firebase_storage.dart';
@@ -8,7 +7,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+class Perfil {
+  String firstName;
+  String fastName;
+  String numberPhone;
+
+  Perfil(
+      {required this.firstName,
+      required this.fastName,
+      required this.numberPhone});
+}
+
 class PerfilRepository extends ChangeNotifier {
+  Perfil _perfil = Perfil(firstName: '', fastName: '', numberPhone: '');
   String _imgProfile = '';
   late FirebaseStorage storage;
   late FirebaseFirestore db;
@@ -25,6 +36,7 @@ class PerfilRepository extends ChangeNotifier {
   }
 
   String get imgProfile => _imgProfile;
+  Perfil get perfil => _perfil;
 
   iniciarState() async {
     await _startFireStorage();
@@ -44,6 +56,8 @@ class PerfilRepository extends ChangeNotifier {
   setImg() {
     print('entrou no setImg');
     _imgProfile = '';
+    refs = [];
+    arquivo = [];
     _readImageProfile();
   }
 
@@ -55,6 +69,17 @@ class PerfilRepository extends ChangeNotifier {
 
     if (snapshot.docs.length == 1) {
       _imgProfile = snapshot.docs[0]['img'];
+    }
+
+    final snapshotPerfil = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/perfil')
+        .get();
+    if (snapshotPerfil.docs.length == 1) {
+      _perfil = Perfil(
+        firstName: snapshotPerfil.docs[0]['firstName'],
+        fastName: snapshotPerfil.docs[0]['fastName'],
+        numberPhone: snapshotPerfil.docs[0]['numberPhone'],
+      );
     }
     loading = false;
     notifyListeners();
@@ -96,6 +121,11 @@ class PerfilRepository extends ChangeNotifier {
         }
       });
     }
+  }
+
+  updateImg() async {
+    await deleteImage();
+    await pickerAndUploadImage();
   }
 
   addImgFirestore() async {
