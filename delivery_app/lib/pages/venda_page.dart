@@ -2,6 +2,7 @@ import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
 import 'package:delivery_app/repository/historico.dart';
+import 'package:delivery_app/repository/perfil.dart';
 import 'package:delivery_app/widgets/vendaPage/endereco.dart';
 import 'package:delivery_app/widgets/vendaPage/formaPagamento.dart';
 import 'package:delivery_app/widgets/vendaPage/revisao.dart';
@@ -20,6 +21,7 @@ class VendaPage extends StatefulWidget {
 }
 
 class _VendaPageState extends State<VendaPage> {
+  late PerfilRepository profile;
   late EnderecoLoja localizacaoLoja;
   late EnderecoLojaRepository enderecoDaLoja;
   late HistoricoRepository historicoPedidos;
@@ -73,9 +75,10 @@ class _VendaPageState extends State<VendaPage> {
   }
 
   registerOrder() {
-    if(enderecoCliente.rua != '' || isDelivery){
+    if (enderecoCliente.rua != '' && profile.perfil.firstName != '') {
       DateTime now = DateTime.now();
-      String formattedDateTime = DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
+      String formattedDateTime =
+          DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
       //String formattedDateTime = '${now.day}/${now.month}/${now.year} - ${now.hour}:${now.minute}:${now.second}';
 
       String typePag = '';
@@ -89,7 +92,7 @@ class _VendaPageState extends State<VendaPage> {
 
       historicoPedidos.registerHistoric(Historico(
           carrinho: widget.objItem,
-          cliente: 'Melque Rodrigues',
+          cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
           data: formattedDateTime,
           formaPag: typePag,
           frete: localizacaoLoja.frete));
@@ -107,12 +110,11 @@ class _VendaPageState extends State<VendaPage> {
       );
 
       sendWhatsAppMessage('+5584999687569', mountMenssage());
-      //print(mountMenssage());
-    }
-    else{
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Você precisa ter um endereço de entrega pra poder realizar o pedido!'),
+          content: Text(
+              'Você precisa ter um endereço de entrega e um perfil pra poder realizar o pedido!'),
           duration: Duration(seconds: 30),
           action: SnackBarAction(label: 'OK', onPressed: () {}),
         ),
@@ -166,7 +168,8 @@ class _VendaPageState extends State<VendaPage> {
       message = message +
           '\n\nEndereço de Entrega: \nRua: ${enderecoCliente.rua} - Nº ${enderecoCliente.num}\nBairro: ${enderecoCliente.bairro} - Complemento: ${enderecoCliente.complemento}\nPonto de Referência: ${enderecoCliente.referencia}\n\nForma de Pagamento: ${typePag}';
     } else {
-      message = message + '\n\nVou querer retirar o pedido no estabelecimento\n\nForma de Pagamento: ${typePag}';
+      message = message +
+          '\n\nVou querer retirar o pedido no estabelecimento\n\nForma de Pagamento: ${typePag}';
     }
 
     return message;
@@ -174,6 +177,7 @@ class _VendaPageState extends State<VendaPage> {
 
   @override
   Widget build(BuildContext context) {
+    profile = context.read<PerfilRepository>();
     carrinho = context.read<CarrinhoRepository>();
     historicoPedidos = context.read<HistoricoRepository>();
     enderecoDaLoja = context.read<EnderecoLojaRepository>();

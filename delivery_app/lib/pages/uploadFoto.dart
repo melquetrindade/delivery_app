@@ -20,8 +20,6 @@ class _UploadFotoPageState extends State<UploadFotoPage> {
     uploading = perfil.uploading;
     total = perfil.total;
 
-    //print('foto do usuário: ${perfil.imgProfile}');
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(

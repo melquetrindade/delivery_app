@@ -58,11 +58,14 @@ class PerfilRepository extends ChangeNotifier {
     _imgProfile = '';
     refs = [];
     arquivo = [];
+    _perfil = Perfil(firstName: '', fastName: '', numberPhone: '');
     _readImageProfile();
   }
 
   _readImageProfile() async {
     loading = true;
+
+    // ler a foto do usuário
     final snapshot = await db
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/imgProfile')
         .get();
@@ -71,6 +74,7 @@ class PerfilRepository extends ChangeNotifier {
       _imgProfile = snapshot.docs[0]['img'];
     }
 
+    // ler informações do perfil
     final snapshotPerfil = await db
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/perfil')
         .get();
@@ -162,6 +166,38 @@ class PerfilRepository extends ChangeNotifier {
         .doc('img')
         .delete();
     _imgProfile = '';
+    notifyListeners();
+  }
+
+  savePerfil(Perfil perfilUser) async {
+    final snapshot = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/perfil')
+        .get();
+    if(snapshot.docs.length == 1){
+      await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/perfil')
+        .doc('infoPerfil')
+        .update({
+        'firstName': perfilUser.firstName,
+        'fastName': perfilUser.fastName,
+        'numberPhone': perfilUser.numberPhone
+      });
+    }else{
+      await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/perfil')
+        .doc('infoPerfil')
+        .set({
+        'firstName': perfilUser.firstName,
+        'fastName': perfilUser.fastName,
+        'numberPhone': perfilUser.numberPhone
+      });
+    }
+    
+    _perfil = Perfil(
+        firstName: perfilUser.firstName,
+        fastName: perfilUser.fastName,
+        numberPhone: perfilUser.numberPhone);
+
     notifyListeners();
   }
 }

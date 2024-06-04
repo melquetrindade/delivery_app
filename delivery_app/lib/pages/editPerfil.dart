@@ -26,6 +26,26 @@ class _PerfilPageState extends State<PerfilPage> {
     });
   }
 
+  formatPhone(String value) {
+    String formattedValue = value.replaceAll(RegExp(r'\D'), '');
+    int fim = formattedValue.length;
+    print(value.length);
+    if (value.length < 17) {
+      if (formattedValue.length > 2 && formattedValue.length <= 7) {
+        formattedValue =
+            '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, fim)}';
+      } else if (formattedValue.length > 7) {
+        print('entrouuu');
+        print(formattedValue);
+        formattedValue =
+            '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, 3)}.${formattedValue.substring(3, 7)}-${formattedValue.substring(7, fim)}';
+      }
+      telefone.text = formattedValue;
+    } else {
+      telefone.text = value.substring(0, value.length - 1);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     perfilRepository = context.watch<PerfilRepository>();
@@ -139,6 +159,12 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     vertical: 10,
                                                     horizontal: 12),
                                           ),
+                                          onChanged: (value) {
+                                            String formattedValue =
+                                                value.replaceAll(
+                                                    RegExp(r'[^a-zA-Z]'), '');
+                                            nome.text = formattedValue;
+                                          },
                                           keyboardType: TextInputType.text,
                                           validator: (value) {
                                             if (value!.isEmpty) {
@@ -164,6 +190,12 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     vertical: 10,
                                                     horizontal: 12),
                                           ),
+                                          onChanged: (value) {
+                                            String formattedValue =
+                                                value.replaceAll(
+                                                    RegExp(r'[^a-zA-Z]'), '');
+                                            sobreNome.text = formattedValue;
+                                          },
                                           keyboardType: TextInputType.text,
                                           validator: (value) {
                                             if (value!.isEmpty) {
@@ -194,32 +226,14 @@ class _PerfilPageState extends State<PerfilPage> {
                                                     horizontal: 12),
                                           ),
                                           onChanged: (value) {
-                                            String formattedValue = value
-                                                .replaceAll(RegExp(r'\D'), '');
-                                            int fim = formattedValue.length;
-                                            print(value.length);
-                                            if(value.length < 17){
-                                              if (formattedValue.length > 2 &&
-                                                formattedValue.length <= 7) {
-                                              formattedValue =
-                                                  '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, fim)}';
-                                              } else if (formattedValue.length >
-                                                  7) {
-                                                print('entrouuu');
-                                                print(formattedValue);
-                                                formattedValue =
-                                                    '(${formattedValue.substring(0, 2)}) ${formattedValue.substring(2, 3)}.${formattedValue.substring(3, 7)}-${formattedValue.substring(7, fim)}';
-                                              }
-                                              telefone.text = formattedValue;
-                                            }else{
-                                              telefone.text = value.substring(0, value.length - 1);
-                                            }
-                                            
+                                            formatPhone(value);
                                           },
                                           keyboardType: TextInputType.text,
                                           validator: (value) {
                                             if (value!.isEmpty) {
                                               return 'Informe o seu telefone!';
+                                            } else if (value.length < 16) {
+                                              return 'O número deve ter está no formato: (XX) X.XXXX-XXXX';
                                             }
                                             return null;
                                           },
@@ -251,14 +265,17 @@ class _PerfilPageState extends State<PerfilPage> {
                           onPressed: () {
                             if (formKey.currentState!.validate()) {
                               print('salvar no firestore');
-                              /*
-                                Navigator.pop(context);
-                
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                      content: Text(
-                                          'Endereço adicionado com sucesso!')),
-                                );*/
+                              perfilRepository.savePerfil(Perfil(
+                                  firstName: nome.text,
+                                  fastName: sobreNome.text,
+                                  numberPhone: telefone.text));
+                              
+                              Navigator.pop(context);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'Perfil salvo com sucesso!')),
+                              );
                             }
                           },
                           child: Padding(

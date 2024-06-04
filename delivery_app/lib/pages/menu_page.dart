@@ -55,7 +55,7 @@ class _MenuState extends State<Menu> {
           child: SingleChildScrollView(
             child: Container(
               child: Column(
-                children: [MyHeaderDrawser(), myDrawserList()],
+                children: [MyHeaderDrawser(user: authService.usuario,), myDrawserList()],
               ),
             ),
           ),
@@ -82,7 +82,6 @@ class _MenuState extends State<Menu> {
         children: [
           InkWell(
             onTap: () {
-              print('abrir configurações de perfil');
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -116,8 +115,6 @@ class _MenuState extends State<Menu> {
           Divider(),
           InkWell(
             onTap: () {
-              print('abrir configurações de endereço');
-              
               Navigator.push(
                 context,
                 MaterialPageRoute(
