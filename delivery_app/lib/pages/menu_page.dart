@@ -1,16 +1,13 @@
 import 'package:delivery_app/models/produto.dart';
 import 'package:delivery_app/pages/editEndereco.dart';
 import 'package:delivery_app/pages/editPerfil.dart';
-import 'package:delivery_app/pages/notificationPage.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:delivery_app/services/auth_service.dart';
-//import 'package:delivery_app/widgets/homePage/leading.dart';
 import 'package:delivery_app/widgets/homePage/lista_produtos.dart';
 import 'package:delivery_app/widgets/homePage/myheaderDrawser.dart';
 import 'package:delivery_app/widgets/homePage/op_produtos.dart';
 import 'package:flutter/material.dart';
 import 'package:delivery_app/widgets/homePage/banners.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 class Menu extends StatefulWidget {
@@ -24,15 +21,6 @@ class _MenuState extends State<Menu> {
   late List<Produto> objProdutos;
   late ProdutosRepository produtos;
   late AuthService authService;
-
-  navNotificationPage() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => NotificationPage(),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
