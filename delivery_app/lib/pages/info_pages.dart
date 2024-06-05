@@ -1,4 +1,5 @@
 import 'package:delivery_app/repository/enderecoLoja.dart';
+import 'package:delivery_app/services/notificationsLocal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -13,6 +14,7 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   late EnderecoLoja localizacaoLoja;
   late EnderecoLojaRepository enderecoDaLoja;
+  bool isCheck = false;
 
   void _launchMaps(double lat, double lng) async {
     final url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
@@ -205,7 +207,7 @@ class _InfoPageState extends State<InfoPage> {
                               width: 110,
                               child: OutlinedButton(
                                 onPressed: () {
-                                  _launchMaps(-6.6941727,-36.6569032);
+                                  _launchMaps(-6.6941727, -36.6569032);
                                 },
                                 style: OutlinedButton.styleFrom(
                                   side: BorderSide.none,
@@ -214,11 +216,10 @@ class _InfoPageState extends State<InfoPage> {
                                   ),
                                   backgroundColor: Colors.red, // Cor de fundo
                                 ),
-                                child: Text('Ver Mapa',
+                                child: Text(
+                                  'Ver Mapa',
                                   style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13
-                                  ),
+                                      color: Colors.white, fontSize: 13),
                                 ),
                               ),
                             ),
@@ -272,6 +273,47 @@ class _InfoPageState extends State<InfoPage> {
                             ),
                           )
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(1, 2),
+                        ),
+                      ],
+                    ),
+                    child: CheckboxListTile(
+                      value: isCheck,
+                      onChanged: (bool? newValue) {
+                        setState(() {
+                          isCheck = newValue!;
+                          if (isCheck) {
+                            Provider.of<NotificationService>(context,
+                                    listen: false)
+                                .showNotification(CustomNotification(
+                                    id: 2,
+                                    title: 'Teste',
+                                    body: 'Acesse o app!',
+                                    payload: '/notificacao'));
+                          }
+                        });
+                      },
+                      activeColor: Colors.blue,
+                      checkColor: Colors.white,
+                      title: Text(
+                        'Enviar notificação!',
+                        style: TextStyle(fontSize: 13),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),

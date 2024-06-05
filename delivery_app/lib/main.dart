@@ -1,4 +1,3 @@
-import 'package:delivery_app/pages/authCheck.dart';
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
@@ -6,7 +5,9 @@ import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:delivery_app/repository/perfil.dart';
 import 'package:delivery_app/repository/produtos.dart';
+import 'package:delivery_app/routes/routes.dart';
 import 'package:delivery_app/services/auth_service.dart';
+import 'package:delivery_app/services/notificationsLocal.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,7 @@ void main() async {
           create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<PerfilRepository>(create: (context) => PerfilRepository(auth: context.read<AuthService>())),
+      Provider<NotificationService>(create: (context) => NotificationService(),)
     ],
     child: MyApp(),
   ));
@@ -46,7 +48,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      home: AuthCheck(),
+      //home: AuthCheck(),
+      routes: Routes.list,
+      initialRoute: Routes.initial,
+      navigatorKey: Routes.navigatorKey,
     );
   }
 }
