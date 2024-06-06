@@ -29,8 +29,9 @@ class NotificationService {
   }
 
   _initializeNotifications() async {
-    const android = AndroidInitializationSettings('launcher_icon');
-    const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
+    const android = AndroidInitializationSettings('@mipmap/launcher_icon2');
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
 
     await localNotificationsPlugin.initialize(
       const InitializationSettings(
@@ -56,7 +57,7 @@ class NotificationService {
         importance: Importance.max,
         priority: Priority.max,
         enableVibration: true);
-
+    print('id: ${notification.id}, title: ${notification.title}, body: ${notification.body}');
     localNotificationsPlugin.show(
         notification.id,
         notification.title,

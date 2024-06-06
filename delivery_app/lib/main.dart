@@ -7,6 +7,7 @@ import 'package:delivery_app/repository/perfil.dart';
 import 'package:delivery_app/repository/produtos.dart';
 import 'package:delivery_app/routes/routes.dart';
 import 'package:delivery_app/services/auth_service.dart';
+import 'package:delivery_app/services/firebase_messaging.dart';
 import 'package:delivery_app/services/notificationsLocal.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,8 @@ void main() async {
           create: (context) => HistoricoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<PerfilRepository>(create: (context) => PerfilRepository(auth: context.read<AuthService>())),
-      Provider<NotificationService>(create: (context) => NotificationService(),)
+      Provider<NotificationService>(create: (context) => NotificationService(),),
+      Provider<FirebaseMessagingService>(create: (context) => FirebaseMessagingService(context.read<NotificationService>()),)
     ],
     child: MyApp(),
   ));

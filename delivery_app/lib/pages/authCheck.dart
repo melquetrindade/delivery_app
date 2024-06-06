@@ -6,6 +6,8 @@ import 'package:delivery_app/repository/favoritos.dart';
 import 'package:delivery_app/repository/historico.dart';
 import 'package:delivery_app/repository/perfil.dart';
 import 'package:delivery_app/services/auth_service.dart';
+import 'package:delivery_app/services/firebase_messaging.dart';
+import 'package:delivery_app/services/notificationsLocal.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,10 +22,29 @@ class _AuthCheckState extends State<AuthCheck> {
   late AuthService auth;
 
   @override
+  void initState() {
+    super.initState();
+    initializeFirebaseMessaging();
+    checkNotifications();
+  }
+
+  initializeFirebaseMessaging() async {
+    print('entrou para inicializar');
+    await Provider.of<FirebaseMessagingService>(context, listen: false)
+        .initialize();
+  }
+
+  checkNotifications() async {
+    await Provider.of<NotificationService>(context, listen: false)
+        .checkForNotifications();
+  }
+
+  @override
   Widget build(BuildContext context) {
     auth = context.watch<AuthService>();
-    
-    if (auth.usuario != null && context.read<FavoritosRepository>().jaCarregou) {
+
+    if (auth.usuario != null &&
+        context.read<FavoritosRepository>().jaCarregou) {
       print('entrou no if do auth do favoritos');
       context.read<FavoritosRepository>().setLista();
     }
@@ -31,7 +52,9 @@ class _AuthCheckState extends State<AuthCheck> {
       print('entrou no if do auth do carrinho');
       context.read<CarrinhoRepository>().setLista();
     }
-    if (auth.usuario != null && context.read<HistoricoRepository>().jaCarregou && (context.read<HistoricoRepository>().historico.length > 0)) {
+    if (auth.usuario != null &&
+        context.read<HistoricoRepository>().jaCarregou &&
+        (context.read<HistoricoRepository>().historico.length > 0)) {
       print('entrou no if do auth do historico');
       context.read<HistoricoRepository>().setLista();
     }
@@ -39,7 +62,7 @@ class _AuthCheckState extends State<AuthCheck> {
       print('entrou no if do auth do endereco');
       context.read<EnderecoRepository>().setLista();
     }
-    if(auth.usuario != null && context.read<PerfilRepository>().jaCarregou){
+    if (auth.usuario != null && context.read<PerfilRepository>().jaCarregou) {
       print('entrou no if do auth do perfil');
       context.read<PerfilRepository>().setImg();
     }
