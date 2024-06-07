@@ -2,7 +2,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import '../styles/globals.css'
 import Head from 'next/head'
 import MainContainer from '../componentes/mainContainer'
-import React from "react";
+import React, {useState, useEffect} from "react";
+import {login, onAuthChanged, registrar} from '../utils/firebase/authService'
 
 export const metadata = {
   title: "Create Next App",
@@ -10,17 +11,89 @@ export const metadata = {
 };
 
 export default function MyApp({ Component, pageProps }) {
-  return (
-    <div>
-      <MainContainer>
-        <Head>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
-        </Head>
-        <Component {...pageProps} />
-      </MainContainer>
-    </div>
-  );
+
+  const [user, setUser] = useState(null)
+
+  const handlerLogin = async () => {
+    const valueEmail = document.getElementById('username').value
+    const valuePass = document.getElementById('password').value
+
+    if(valueEmail && valuePass){
+      console.log(valueEmail)
+      console.log(valuePass)
+
+      login(valueEmail, valuePass).then((user) => {
+        console.log(user)
+      }).catch((error) => {
+        console.log(error.code)
+        if (error.code == 'auth/invalid-credential') {
+          console.log('As credênciais fornecidas são inválidas. Cadastre-se!')
+          //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'SENHA INVÁLIDA. TENTE NOVAMENTE!'})
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    function navHome(){
+      return onAuthChanged((user) => {
+        if(user){
+          setUser(user)
+        }
+        else{
+          setUser(user)
+        }
+      })
+    }
+    return navHome()
+  },[])
+
+  if(user){
+    return (
+      <div>
+        <MainContainer>
+          <Head>
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+          </Head>
+          <Component {...pageProps} />
+        </MainContainer>
+      </div>
+    );
+  }
+
+  return(
+    <main>
+      <div class='form-floating'>
+        <input 
+            type="text" 
+            id="username" 
+            class="form-control shadow-none" 
+            required
+            placeholder="fulado123@gmail.com" 
+            minlength="1" 
+            maxlength="50"
+        >
+        </input>
+        <label for="username">Usuário</label>
+      </div>
+      <div class='form-floating'>
+        <input 
+            type="password" 
+            id="password" 
+            class="form-control shadow-none" 
+            required
+            placeholder="********" 
+            minlength="1" 
+            maxlength="8"
+        >
+        </input>
+        <label for="password">Senha</label>
+      </div>
+      <div onClick={handlerLogin}>Login</div>
+    </main>
+  )
+  
 }
 
 /* 
