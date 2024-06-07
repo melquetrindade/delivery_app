@@ -7,4 +7,5 @@
     min-height: calc(100vh - 12vh);
     display: flex;
     justify-content: center;
+    flex-grow: 1;
 }

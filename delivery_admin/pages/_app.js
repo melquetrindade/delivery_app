@@ -4,6 +4,7 @@ import Head from 'next/head'
 import MainContainer from '../componentes/mainContainer'
 import React, {useState, useEffect} from "react";
 import {login, onAuthChanged, registrar} from '../utils/firebase/authService'
+import styles from '../styles/myApp.module.css'
 
 export const metadata = {
   title: "Create Next App",
@@ -13,6 +14,7 @@ export const metadata = {
 export default function MyApp({ Component, pageProps }) {
 
   const [user, setUser] = useState(null)
+  const [isLogin, setLogin] = useState(true)
 
   const handlerLogin = async () => {
     const valueEmail = document.getElementById('username').value
@@ -48,6 +50,33 @@ export default function MyApp({ Component, pageProps }) {
     return navHome()
   },[])
 
+  const toggleOpLogin = () => {
+    setLogin(!isLogin)
+  }
+
+  const handlerRegistrar = async () => {
+    const valueEmail = document.getElementById('username').value
+    const valuePass = document.getElementById('password').value
+
+    if(valueEmail && valuePass){
+      console.log(valueEmail)
+      console.log(valuePass)
+
+      registrar(valueEmail, valuePass).then((user) => console.log(user)).catch((error) => {
+        if (error.code == 'auth/email-already-in-use') {
+          console.log('ESTE E-MAIL JÁ ESTA SENDO USADO. TENTE OUTRO!')
+          //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'ESTE E-MAIL JÁ ESTA SENDO USADO. TENTE OUTRO!'})
+        } else if (error.code == 'auth/invalid-email'){
+          console.log('ESTE É UM E-MAIL INVÁLIDO. TENTE NOVAMENTE!')
+          //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'ESTE É UM E-MAIL INVÁLIDO. TENTE NOVAMENTE!'})
+        } else if(error.code == 'auth/weak-password'){
+          console.log('SENHA FRACA. UTILIZE AO MENOS 6 CARACTERES!')
+          //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'SENHA FRACA. UTILIZE AO MENOS 6 CARACTERES!'})
+        }
+      })
+    }
+  }
+
   if(user){
     return (
       <div>
@@ -63,35 +92,40 @@ export default function MyApp({ Component, pageProps }) {
   }
 
   return(
-    <main>
-      <div class='form-floating'>
-        <input 
-            type="text" 
-            id="username" 
-            class="form-control shadow-none" 
-            required
-            placeholder="fulado123@gmail.com" 
-            minlength="1" 
-            maxlength="50"
-        >
-        </input>
-        <label for="username">Usuário</label>
-      </div>
-      <div class='form-floating'>
-        <input 
-            type="password" 
-            id="password" 
-            class="form-control shadow-none" 
-            required
-            placeholder="********" 
-            minlength="1" 
-            maxlength="8"
-        >
-        </input>
-        <label for="password">Senha</label>
-      </div>
-      <div onClick={handlerLogin}>Login</div>
-    </main>
+    <div className={styles.body}>
+      <main className={styles.main}>
+          <div className={styles.title}>{isLogin ? 'Bem Vindo' : 'Crie Sua conta'}</div>
+          <div class='form-floating'>
+            <input 
+                type="text" 
+                id="username" 
+                class="form-control shadow-none" 
+                required
+                placeholder="fulado123@gmail.com" 
+                minlength="1" 
+                maxlength="50"
+            >
+            </input>
+            <label for="username">Usuário</label>
+          </div>
+          <div style={{ height: '10px'}}></div>
+          <div class='form-floating'>
+            <input 
+                type="password" 
+                id="password" 
+                class="form-control shadow-none" 
+                required
+                placeholder="********" 
+                minlength="1" 
+                maxlength="8"
+            >
+            </input>
+            <label for="password">Senha</label>
+          </div>
+          <div className={styles.button01} onClick={isLogin ? handlerLogin : handlerRegistrar}>{isLogin ? 'Login' : 'Cadastrar'}</div>
+          <div className={styles.button02} onClick={toggleOpLogin}>{isLogin ? 'Ainda não tem Conta? Cadastre-se agora' : 'Voltar ao Login'}</div>
+      </main>
+    </div>
   )
   
 }
