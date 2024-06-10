@@ -9,8 +9,11 @@ const Sidebar = () => {
       <h4>Delivery - Admin</h4>
       <Nav defaultActiveKey="/" className="flex-column">
         <Nav.Link href="/" className="text-white">Home</Nav.Link>
-        <Nav.Link href="#" className="text-white">Opção 1</Nav.Link>
-        <Nav.Link href="#" className="text-white">Opção 2</Nav.Link>
+        <Nav.Link href="#" className="text-white">Produtos</Nav.Link>
+        <Nav.Link href="#" className="text-white">Promoções</Nav.Link>
+        <Nav.Link href="#" className="text-white">Configurações</Nav.Link>
+        <Nav.Link href="#" className="text-white">Pedidos</Nav.Link>
+        <Nav.Link href="#" className="text-white">Vendas</Nav.Link>
         <Nav.Link href="#" className="text-white" onClick={logOut}>Sair</Nav.Link>
       </Nav>
     </div>
