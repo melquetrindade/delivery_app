@@ -95,7 +95,14 @@ class _VendaPageState extends State<VendaPage> {
           cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
           data: formattedDateTime,
           formaPag: typePag,
-          frete: localizacaoLoja.frete));
+          frete: isDelivery ? 0 : localizacaoLoja.frete));
+      
+      historicoPedidos.registerVendas(Historico(
+          carrinho: widget.objItem,
+          cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
+          data: formattedDateTime,
+          formaPag: typePag,
+          frete: isDelivery ? 0 : localizacaoLoja.frete));
 
       carrinho.clearCarrinho();
 

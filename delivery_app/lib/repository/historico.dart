@@ -59,25 +59,23 @@ class HistoricoRepository extends ChangeNotifier {
 
   _readFavoritos() async {
     loading = true;
-    if (auth.usuario != null && _historico.isEmpty){
+    if (auth.usuario != null && _historico.isEmpty) {
       final snapshot = await db
-        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
-        .get();
+          .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
+          .get();
       snapshot.docs.forEach((doc) {
         List<ItemCarrinho> listaCarrinho = [];
 
         doc['carrinho'].forEach((item) {
           listaCarrinho.add(ItemCarrinho(
-            itemProduto: Produto(
-              item['produto']['nome'], 
-              item['produto']['img'], 
-              item['produto']['descricao'], 
-              item['produto']['categoria'], 
-              item['produto']['valor']
-            ),
-            qtd: item['qtd'],
-            tamanho: item['tamanho']
-          ));
+              itemProduto: Produto(
+                  item['produto']['nome'],
+                  item['produto']['img'],
+                  item['produto']['descricao'],
+                  item['produto']['categoria'],
+                  item['produto']['valor']),
+              qtd: item['qtd'],
+              tamanho: item['tamanho']));
         });
 
         _historico.add(Historico(
@@ -90,6 +88,40 @@ class HistoricoRepository extends ChangeNotifier {
     }
     loading = false;
     notifyListeners();
+  }
+
+  registerVendas(Historico pedido) async {
+    print('entrou para registrar');
+    var listaCarrinho = [];
+
+    loadItemCarrinho() {
+      pedido.carrinho.forEach((item) {
+        listaCarrinho.add({
+          'produto': {
+            'nome': item.itemProduto.nome,
+            'img': item.itemProduto.img,
+            'descricao': item.itemProduto.descricao,
+            'categoria': item.itemProduto.categoria,
+            'valor': item.itemProduto.valor
+          },
+          'qtd': item.qtd,
+          'tamanho': item.tamanho
+        });
+      });
+    }
+
+    loadItemCarrinho();
+
+    final qtd2 = await db.collection('loja/owner/vendas').get();
+    print(qtd2);
+
+    await db.collection('loja/owner/vendas').doc((qtd2.size + 1).toString()).set({
+      'carrinho': listaCarrinho,
+      'cliente': pedido.cliente,
+      'data': pedido.data,
+      'formaPag': pedido.formaPag,
+      'frete': pedido.frete
+    });
   }
 
   registerHistoric(Historico pedido) async {

@@ -3,6 +3,7 @@ import { Navbar, Nav, Button, Offcanvas } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '../styles/NavbarWithSidebar.module.css';
 import {logOut} from '../utils/firebase/authService'
+import Link from "next/link";
 
 const NavbarWithSidebar = () => {
   const [show, setShow] = useState(false);
@@ -16,6 +17,7 @@ const NavbarWithSidebar = () => {
     fontSize: '1rem',
     color: 'yellow',
     fontWeight: 500,
+    paddingTop: '3px',
   };
 
   const logout = {
@@ -36,7 +38,8 @@ const NavbarWithSidebar = () => {
     cursor: 'pointer',
     backgroundColor: 'red',
     borderRadius: '5px',
-    padding: '8px 15px'
+    padding: '8px 15px',
+    textDecoration: 'none'
   }
 
   const contButtons2 = {
@@ -65,13 +68,30 @@ const NavbarWithSidebar = () => {
     color: 'white'
   }
 
+  const contLogo = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '15%'
+  }
+
+  const img = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    marginLeft: '7%'
+  }
+
   return (
     <>
         <Navbar className={`${styles.navBar} d-flex justify-content-between align-items-center px-5`}>
             <Button className={styles.buttonHamburguer} onClick={handleShow}>
                 <span className={`material-symbols-outlined ${styles.buttonSpan}`}>menu</span>
             </Button>
-            <h1 href="#" style={title}>Delivery-Admin</h1>
+            <div style={contLogo}>
+              <h1 href="#" style={title}>Delivery-Admin</h1>
+              <img src='/icon.png' style={img}></img>
+            </div>
         </Navbar>
 
         <Offcanvas show={show} onHide={handleClose} style={teste}>
@@ -80,35 +100,35 @@ const NavbarWithSidebar = () => {
             </Offcanvas.Header>
             <Offcanvas.Body className={styles.offcanvasBody}>
                 <Nav className='flex-column'>
-                    <div style={contButtons}>
-                        <h5 href="/" style={buttonStyle}>Home</h5>
+                    <Link href="/" style={contButtons}>
+                        <h5 style={buttonStyle}>Home</h5>
                         <span class="material-symbols-outlined" style={span2}>home</span>
-                    </div>
+                    </Link>
                     <hr></hr>
-                    <div style={contButtons}>
-                        <h5 href="#" style={buttonStyle}>Produtos</h5>
+                    <Link href="/produtos" style={contButtons}>
+                        <h5 style={buttonStyle}>Produtos</h5>
                         <span class="material-symbols-outlined" style={span2}>fastfood</span>
-                    </div>
+                    </Link>
                     <hr></hr>
-                    <div style={contButtons}>
-                        <h5 href="#" style={buttonStyle}>Promoções</h5>
+                    <Link href="/promocoes" style={contButtons}>
+                        <h5 style={buttonStyle}>Promoções</h5>
                         <span class="material-symbols-outlined" style={span2}>shopping_bag</span>
-                    </div>
+                    </Link>
                     <hr></hr>
-                    <div style={contButtons}>
-                        <h5 href="#" style={buttonStyle}>Configurações</h5>
+                    <Link href="/configuracoes" style={contButtons}>
+                        <h5 style={buttonStyle}>Configurações</h5>
                         <span class="material-symbols-outlined" style={span2}>settings</span>
-                    </div>
+                    </Link>
                     <hr></hr>
-                    <div style={contButtons}>
-                        <h5 href="#" style={buttonStyle}>Pedidos</h5>
+                    <Link href="/pedidos" style={contButtons}>
+                        <h5 style={buttonStyle}>Pedidos</h5>
                         <span class="material-symbols-outlined" style={span2}>receipt_long</span>
-                    </div>
+                    </Link>
                     <hr></hr>
-                    <div style={contButtons}>
-                        <h5 href="#" style={buttonStyle}>Vendas</h5>
+                    <Link href="/vendas" style={contButtons}>
+                        <h5 style={buttonStyle}>Vendas</h5>
                         <span class="material-symbols-outlined" style={span2}>order_approve</span>
-                    </div>
+                    </Link>
                     <div style={contButtons2}>
                         <h5 href="#" onClick={logOut} style={logout}>Sair</h5>
                         <span class="material-symbols-outlined" style={span}>logout</span>
