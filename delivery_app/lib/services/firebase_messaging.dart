@@ -1,11 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_app/databases/db_firestore.dart';
 import 'package:delivery_app/routes/routes.dart';
+import 'package:delivery_app/services/auth_service.dart';
 import 'package:delivery_app/services/notificationsLocal.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class FirebaseMessagingService {
   final NotificationService _notificationService;
+  late AuthService auth;
+  late FirebaseFirestore db;
+  bool jaCarregou = false;
 
-  FirebaseMessagingService(this._notificationService);
+  FirebaseMessagingService(this._notificationService, this.auth);
 
   Future<void> initialize() async {
     await FirebaseMessaging.instance
@@ -14,13 +20,38 @@ class FirebaseMessagingService {
       sound: true,
       alert: true,
     );
+    await _startFirestore();
     getDeviceFirebaseToken();
     _onMenssage();
     _onMessageOpenedApp();
+    jaCarregou = true;
+  }
+
+  _startFirestore() {
+    db = DBFirestore.get();
   }
 
   getDeviceFirebaseToken() async {
+    print('entrou no get token');
     final token = await FirebaseMessaging.instance.getToken();
+    final snapshot = await db
+        .collection('loja/usuarios/clientes/${auth.usuario!.uid}/device').get();
+    if (snapshot.docs.length == 1) {
+      print('entrou no 1º if do get token');
+      if (token != snapshot.docs[0]['token']) {
+        print('entrou no 2º if do get token');
+        await db
+            .collection('loja/usuarios/clientes/${auth.usuario!.uid}/device')
+            .doc('tokenDevice')
+            .update({'token': token});
+      }
+    } else {
+      print('entrou no else do get token');
+      await db
+          .collection('loja/usuarios/clientes/${auth.usuario!.uid}/device')
+          .doc('tokenDevice')
+          .set({'token': token});
+    }
     print('============================');
     print('token: ${token}');
     print('============================');

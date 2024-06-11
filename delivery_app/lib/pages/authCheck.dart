@@ -29,7 +29,6 @@ class _AuthCheckState extends State<AuthCheck> {
   }
 
   initializeFirebaseMessaging() async {
-    print('entrou para inicializar');
     await Provider.of<FirebaseMessagingService>(context, listen: false)
         .initialize();
   }
@@ -43,6 +42,26 @@ class _AuthCheckState extends State<AuthCheck> {
   Widget build(BuildContext context) {
     auth = context.watch<AuthService>();
 
+    reload();
+
+    if (auth.isLoading) {
+      return loading();
+    } else if (auth.usuario == null) {
+      return LoginPage();
+    } else {
+      return HomePage();
+    }
+  }
+
+  loading() {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  reload() {
     if (auth.usuario != null &&
         context.read<FavoritosRepository>().jaCarregou) {
       print('entrou no if do auth do favoritos');
@@ -66,21 +85,10 @@ class _AuthCheckState extends State<AuthCheck> {
       print('entrou no if do auth do perfil');
       context.read<PerfilRepository>().setImg();
     }
-
-    if (auth.isLoading) {
-      return loading();
-    } else if (auth.usuario == null) {
-      return LoginPage();
-    } else {
-      return HomePage();
+    if (auth.usuario != null &&
+        context.read<FirebaseMessagingService>().jaCarregou) {
+      print('entrou no if do auth do Firebase messaging');
+      context.read<FirebaseMessagingService>().getDeviceFirebaseToken();
     }
-  }
-
-  loading() {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
   }
 }

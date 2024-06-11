@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:delivery_app/repository/carrinho.dart';
 import 'package:delivery_app/repository/endereco.dart';
 import 'package:delivery_app/repository/enderecoLoja.dart';
@@ -74,12 +76,35 @@ class _VendaPageState extends State<VendaPage> {
     });
   }
 
+  int gerarNumeroAleatorioDe4Digitos() {
+    // Cria uma instância de Random
+    Random random = Random();
+    // Gera um número aleatório de 4 dígitos entre 1000 e 9999
+    int numeroAleatorio = 1000 + random.nextInt(9000);
+
+    return numeroAleatorio;
+  }
+
+  String transformarData(String data) {
+    // Remove os caracteres não numéricos da string
+    String dataFormatada = data.replaceAll(RegExp(r'[^0-9]'), '');
+    return dataFormatada;
+  }
+
+  String gerarNumeroPedido(String data) {
+    String parte01 = gerarNumeroAleatorioDe4Digitos().toString();
+    String parte02 = transformarData(data);
+    String numPedido = parte01 + parte02;
+    return numPedido;
+  }
+
   registerOrder() {
     if (enderecoCliente.rua != '' && profile.perfil.firstName != '') {
       DateTime now = DateTime.now();
       String formattedDateTime =
           DateFormat('dd/MM/yyyy - HH:mm:ss').format(now);
       //String formattedDateTime = '${now.day}/${now.month}/${now.year} - ${now.hour}:${now.minute}:${now.second}';
+      String numeroPedido = gerarNumeroPedido(formattedDateTime);
 
       String typePag = '';
       if (selectedOption == 1) {
@@ -90,24 +115,18 @@ class _VendaPageState extends State<VendaPage> {
         typePag = 'Cartão';
       }
 
-      historicoPedidos.registerHistoric(Historico(
-          carrinho: widget.objItem,
-          cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
-          data: formattedDateTime,
-          formaPag: typePag,
-          frete: isDelivery ? 0 : localizacaoLoja.frete));
-      
-      historicoPedidos.registerVendas(Historico(
-          carrinho: widget.objItem,
-          cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
-          data: formattedDateTime,
-          formaPag: typePag,
-          frete: isDelivery ? 0 : localizacaoLoja.frete));
+      historicoPedidos.registerHistoric(
+          Historico(
+              carrinho: widget.objItem,
+              cliente: '${profile.perfil.firstName} ${profile.perfil.fastName}',
+              data: formattedDateTime,
+              formaPag: typePag,
+              frete: isDelivery ? 0 : localizacaoLoja.frete),
+          numeroPedido);
 
       carrinho.clearCarrinho();
 
       Navigator.pop(context);
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Seu pedido foi enviado com sucesso!'),
@@ -116,7 +135,7 @@ class _VendaPageState extends State<VendaPage> {
         ),
       );
 
-      sendWhatsAppMessage('+5584999687569', mountMenssage());
+      sendWhatsAppMessage('+5584999687569', mountMenssage(numeroPedido));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -148,7 +167,7 @@ class _VendaPageState extends State<VendaPage> {
     enderecoCliente = newEnd;
   }
 
-  String mountMenssage() {
+  String mountMenssage(String numPedido) {
     String message = 'Boa Noite, gostaria de fazer o pedido:\n\n';
     List<String> produtos = [];
 
@@ -169,7 +188,7 @@ class _VendaPageState extends State<VendaPage> {
         produtos.add('${item.itemProduto.nome} --- qtd: ${item.qtd}');
       }
     });
-
+    message = message + 'Nº do Pedido: ${numPedido}\n\n';
     message = message + produtos.join('\n');
     if (isDelivery == false) {
       message = message +

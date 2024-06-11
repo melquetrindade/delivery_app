@@ -33,7 +33,7 @@ void main() async {
       ChangeNotifierProvider<EnderecoRepository>(create: (context) => EnderecoRepository(auth: context.read<AuthService>())),
       ChangeNotifierProvider<PerfilRepository>(create: (context) => PerfilRepository(auth: context.read<AuthService>())),
       Provider<NotificationService>(create: (context) => NotificationService(),),
-      Provider<FirebaseMessagingService>(create: (context) => FirebaseMessagingService(context.read<NotificationService>()),)
+      Provider<FirebaseMessagingService>(create: (context) => FirebaseMessagingService(context.read<NotificationService>(), context.read<AuthService>()),)
     ],
     child: MyApp(),
   ));

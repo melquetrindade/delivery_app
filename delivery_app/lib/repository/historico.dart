@@ -90,41 +90,13 @@ class HistoricoRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  registerVendas(Historico pedido) async {
-    print('entrou para registrar');
-    var listaCarrinho = [];
-
-    loadItemCarrinho() {
-      pedido.carrinho.forEach((item) {
-        listaCarrinho.add({
-          'produto': {
-            'nome': item.itemProduto.nome,
-            'img': item.itemProduto.img,
-            'descricao': item.itemProduto.descricao,
-            'categoria': item.itemProduto.categoria,
-            'valor': item.itemProduto.valor
-          },
-          'qtd': item.qtd,
-          'tamanho': item.tamanho
-        });
-      });
-    }
-
-    loadItemCarrinho();
-
-    final qtd2 = await db.collection('loja/owner/vendas').get();
-    print(qtd2);
-
-    await db.collection('loja/owner/vendas').doc((qtd2.size + 1).toString()).set({
-      'carrinho': listaCarrinho,
-      'cliente': pedido.cliente,
-      'data': pedido.data,
-      'formaPag': pedido.formaPag,
-      'frete': pedido.frete
-    });
+  registerPedido(int doc) async {
+    final pedido =
+        await db.collection('loja/owner/vendas').doc(doc.toString()).get();
+    print(pedido['data']);
   }
 
-  registerHistoric(Historico pedido) async {
+  registerHistoric(Historico pedido, String numPedido) async {
     var listaCarrinho = [];
 
     loadItemCarrinho() {
@@ -149,6 +121,8 @@ class HistoricoRepository extends ChangeNotifier {
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
         .get();
 
+    final qtd2 = await db.collection('loja/owner/vendas').get();
+
     _historico.add(pedido);
     await db
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
@@ -158,8 +132,22 @@ class HistoricoRepository extends ChangeNotifier {
       'cliente': pedido.cliente,
       'data': pedido.data,
       'formaPag': pedido.formaPag,
-      'frete': pedido.frete
+      'frete': pedido.frete,
     });
+
+    await db
+        .collection('loja/owner/vendas')
+        .doc((qtd2.size + 1).toString())
+        .set({
+      'carrinho': listaCarrinho,
+      'cliente': pedido.cliente,
+      'data': pedido.data,
+      'formaPag': pedido.formaPag,
+      'frete': pedido.frete,
+      'numPedido': numPedido
+    });
+
+    registerPedido(qtd2.size + 1);
 
     notifyListeners();
   }
