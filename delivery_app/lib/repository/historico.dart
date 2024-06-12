@@ -90,10 +90,21 @@ class HistoricoRepository extends ChangeNotifier {
     notifyListeners();
   }
 
-  registerPedido(int doc) async {
+  registerPedido(int doc, String numPedido) async {
     final pedido =
         await db.collection('loja/owner/vendas').doc(doc.toString()).get();
-    print(pedido['data']);
+    
+    final device = await db.collection('loja/usuarios/clientes/${auth.usuario!.uid}/device').doc('tokenDevice').get();
+
+    await db.collection('loja/owner/pedidos').doc(numPedido).set({
+      'carrinho': pedido['carrinho'],
+      'cliente': pedido['cliente'],
+      'data': pedido['data'],
+      'formaPag': pedido['formaPag'],
+      'frete': pedido['frete'],
+      'numPedido': pedido['numPedido'],
+      'device': device['token']
+    });
   }
 
   registerHistoric(Historico pedido, String numPedido) async {
@@ -147,7 +158,7 @@ class HistoricoRepository extends ChangeNotifier {
       'numPedido': numPedido
     });
 
-    registerPedido(qtd2.size + 1);
+    registerPedido(qtd2.size + 1, numPedido);
 
     notifyListeners();
   }
