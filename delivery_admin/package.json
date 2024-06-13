@@ -2,6 +2,8 @@
   "name": "delivery_admin",
   "version": "0.1.0",
   "private": true,
+  "main": "index2.js",
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +13,7 @@
   "dependencies": {
     "bootstrap": "^5.3.3",
     "firebase": "^10.12.2",
+    "firebase-admin": "^12.1.1",
     "next": "14.2.3",
     "react": "^18",
     "react-bootstrap": "^2.10.2",
