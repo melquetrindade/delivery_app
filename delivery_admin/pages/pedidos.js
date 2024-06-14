@@ -1,32 +1,41 @@
-import React from "react";
-import { messaging } from '../utils/firebase/firebaseService';
+import React, {useState, useEffect} from "react";
+import { getDocs, collection} from 'firebase/firestore';
+import { db } from '../utils/firebase/firebaseService';
 
 export default function Pedidos() {
-    const sendPushNotification = async () => {
-        
-        const notificationPayload = {
-            to: 'cp-KxxNlQNeReDkDuc8XiK:APA91bF7kic65Z2Jg-wTCt4ywFpZY4VTCDrUXjTNb3_xyrHAOUBMSeJJogmCTaemzVgHpi7-s0mlnz16bkCbqVnOzxin1cR-MRv0w7CY9vG00K0uE-4flLU3G3H2D_xdcEusXBBXq_bA', // Substitua pelo token real do dispositivo
-            notification: {
-              title: 'Título da Minha Notificação Push',
-              body: 'Corpo da Minha Notificação Push',
-            },
-        };
-      
-        messaging.send(notificationPayload).then((response) => {
-            console.log('Notificação enviada com sucesso:', response);
-          }).catch((error) => {
-            console.error('Erro ao enviar notificação:', error);
-          });
+  const [pedidos, setPedidos] = useState([])
+
+  const carregaPedidos = async () => {
+      try{
+          var newData = []
+
+          const querySnapshot = await getDocs(collection(db, `loja/owner/pedidos`));
+          querySnapshot.forEach((doc) => {
+              var docData = doc.data();
+              //console.log(docData)
+              newData.push(docData);
+          })
+
+          setVendas(newData)
+      } catch(error){
+          console.error('Erro ao adicionar dado:', error);
+          //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
       }
-      
-    // Exemplo de uso
-    const deviceToken = "cp-KxxNlQNeReDkDuc8XiK:APA91bF7kic65Z2Jg-wTCt4ywFpZY4VTCDrUXjTNb3_xyrHAOUBMSeJJogmCTaemzVgHpi7-s0mlnz16bkCbqVnOzxin1cR-MRv0w7CY9vG00K0uE-4flLU3G3H2D_xdcEusXBBXq_bA";
-    //sendPushNotification(deviceToken);
+    }
+
+    useEffect(() => {
+      carregaPedidos()
+    }, []);
+
+    if(pedidos.length != 0){
+      vendas.forEach((item) => {
+          console.log(item)
+    })
+  }
 
     return(
         <main>
             <h1>Pág de pedidos</h1>
-            <button onClick={sendPushNotification}>enviar mensagem</button>
         </main>
     );
 }
