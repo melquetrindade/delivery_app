@@ -39,33 +39,48 @@ export default function Vendas() {
         console.log('detalhar pedido')
     }
 
+    const calcPrice = (item, index) => {
+        var total = 0
+        console.log(`item: ${index}`)
+        item.carrinho.forEach((itemCarrinho) => {
+            console.log(`preço: ${itemCarrinho.produto.valor} - qtd: ${itemCarrinho.qtd}`)
+            total += itemCarrinho.produto.valor * itemCarrinho.qtd
+        })
+        return total.toFixed(2).replace('.', ',');
+    }
+
     return(
         <main className={styles.main}>
             <div>
-                <h3>Tabela de Vendas</h3>
-                <Table responsive="sm">
+                <div className={styles.contTitle}>
+                    <h3>Tabela de Vendas</h3>
+                    <span class="material-symbols-outlined">filter_list</span>
+                </div>
+                <table responsive="sm" className={styles.table}>
                     <thead>
                         <tr>
                             <th>#</th>
                             <th>Cliente</th>
                             <th>Data</th>
                             <th>Forma de Pagamento</th>
+                            <th>Total</th>
                             <th>Nº Pedido</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className={styles.tBody}>
                         {vendas.map((item, index) => (
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{item.cliente}</td>
                                 <td>{item.data}</td>
                                 <td>{item.formaPag}</td>
+                                <td>{calcPrice(item, index)}</td>
                                 <td>{item.numPedido}</td>
-                                <td onClick={detailsOrder} style={{ cursor: 'pointer' }}>detalhar</td>
+                                <td onClick={detailsOrder} className={styles.buttonDetails}>detalhar</td>
                             </tr>
                         ))}
                     </tbody>
-                </Table>
+                </table>
             </div>
         </main>
        
