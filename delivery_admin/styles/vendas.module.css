@@ -65,4 +65,5 @@
     border: 1px solid black;
     color: rgb(1, 205, 1);
     font-weight: bolder;
+    cursor: pointer;
 }
