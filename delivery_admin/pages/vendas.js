@@ -1,16 +1,14 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, doc, collection} from 'firebase/firestore';
+import { getDocs, collection} from 'firebase/firestore';
 import { db } from '../utils/firebase/firebaseService';
-import Table from 'react-bootstrap/Table';
 import styles from '../styles/vendas.module.css'
-import Button from 'react-bootstrap/Button';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import { useRouter } from 'next/router'
 
 export default function Vendas() {
+    const router = useRouter()
     const [vendas, setVendas] = useState([])
-    console.log('atualizou a página')
-    console.log(vendas)
 
     const carregaVendas = async () => {
         try{
@@ -19,7 +17,6 @@ export default function Vendas() {
             const querySnapshot = await getDocs(collection(db, `loja/owner/vendas`));
             querySnapshot.forEach((doc) => {
                 var docData = doc.data();
-                //console.log(docData)
                 newData.push(docData);
             })
 
@@ -34,22 +31,17 @@ export default function Vendas() {
         carregaVendas()
     }, []);
 
-    /*
-    if(vendas.length != 0){
-        vendas.forEach((item) => {
-            console.log(item.cliente)
+    const detailsOrder = (idVenda) => {
+        router.push({
+            pathname: './detailsVenda',
+            query: {docId: idVenda}
         })
-    }*/
-
-    const detailsOrder = () => {
-        console.log('detalhar pedido')
     }
 
-    const calcPrice = (item, index) => {
+    const calcPrice = (item) => {
         var total = 0
-        //console.log(`item: ${index}`)
+        
         item.carrinho.forEach((itemCarrinho) => {
-            //console.log(`preço: ${itemCarrinho.produto.valor} - qtd: ${itemCarrinho.qtd}`)
             total += itemCarrinho.produto.valor * itemCarrinho.qtd
         })
         return total.toFixed(2).replace('.', ',');
@@ -57,20 +49,54 @@ export default function Vendas() {
 
     const filterSales = (op) => {
         if(op == 1){
-            console.log('mais recente')
+            ordenerMaisEMenos('mais')
         } else if(op == 2){
-            console.log('menos recente')
+            ordenerMaisEMenos('menos')
         } else if(op == 3){
-            console.log('maior valor')
-            ordenarNumeros()
+            ordenarMaiorEMenor('maior')
         } else {
-            console.log('menor valor')
+            ordenarMaiorEMenor('menor')
         }
     }
 
-    const ordenarNumeros = () => {
+    function parseDate(dateStr) {
+        const [datePart, timePart] = dateStr.split(' - '); // Dividir a string da data e da hora
+        const [day, month, year] = datePart.split('/').map(Number); // Dividir a parte da data em dia, mês e ano
+        const [hours, minutes, seconds] = timePart.split(':').map(Number); // Dividir a parte do tempo em horas, minutos e segundos
+        return new Date(year, month - 1, day, hours, minutes, seconds); // Criar e retornar um objeto Date
+    }
+    
+    const ordenerMaisEMenos = (criterio) => {
         var newList = []
-        var testeList = []
+        var auxList = []
+        newList = vendas.sort(function(a, b) {
+            const date1 = parseDate(a.data);
+            const date2 = parseDate(b.data);
+        
+            if (date1 > date2) {
+                if(criterio == 'menos'){
+                    return 1
+                }
+                return -1;
+            } else if(date1 < date2) {
+                if(criterio == 'menos'){
+                    return -1
+                }
+                return 1;
+            } else{
+                return 0
+            }
+        })
+        newList.forEach((item) => {
+            auxList.push(item)
+        })
+        setVendas(auxList)
+    }
+    
+
+    const ordenarMaiorEMenor = (criterio) => {
+        var newList = []
+        var auxList = []
         newList = vendas.sort(function(a, b) {
             var totalA = 0
             var totalB = 0
@@ -81,28 +107,30 @@ export default function Vendas() {
             b.carrinho.forEach((item) => {
                 totalB += item.produto.valor * item.qtd
             })
-            console.log(`total a: ${totalA}`)
-            console.log(`total b: ${totalB}`)
             // Retorna verdadeiro se 'a' deve vir antes de 'b'
             if (totalA > totalB) {
-                console.log('entrou no if')
+                if(criterio == 'menor'){
+                    return 1
+                }
                 return -1;
             }
             // Retorna falso se 'a' deve vir depois de 'b'
             else if (totalA < totalB) {
-                console.log('entrou no elseif')
+                if(criterio == 'menor'){
+                    return -1
+                }
                 return 1;
             } else {
-                console.log('entrou no else')
                 return 0;
             }
         });
         newList.forEach((item) => {
-            testeList.push(item)
+            auxList.push(item)
         })
-        setVendas(testeList)
+        setVendas(auxList)
     }
 
+    
     return(
         <main className={styles.main}>
             <div>
@@ -133,9 +161,9 @@ export default function Vendas() {
                                 <td>{item.cliente}</td>
                                 <td>{item.data}</td>
                                 <td>{item.formaPag}</td>
-                                <td>{calcPrice(item, index)}</td>
+                                <td>{calcPrice(item)}</td>
                                 <td>{item.numPedido}</td>
-                                <td onClick={detailsOrder} className={styles.buttonDetails}>detalhar</td>
+                                <td onClick={() => detailsOrder(item.id)} className={styles.buttonDetails}>detalhar</td>
                             </tr>
                         ))}
                     </tbody>

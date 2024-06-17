@@ -1,0 +1,91 @@
+@charset "UTF-8";
+
+.main{
+    width: 100%;
+    height: calc(100vh - 8.2vh);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.divContent{
+    width: 50%;
+    height: 100%;
+    text-align: center;
+}
+
+.divContent > h1{
+    margin-top: 2%;
+    margin-bottom: 4%;
+}
+
+.divContent > div{
+    width: 60%;
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: auto;
+    background-color: rgb(241, 241, 241);
+    margin: auto
+}
+
+.divConteudo{
+    border: 1px solid black;
+}
+
+.divSessao{
+    text-align: start;
+    padding: 0px 10px 0px 10px;
+    border-bottom: 1px solid black;
+}
+
+.divSessao > h5{
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.divSessao > h6{
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: rgb(96, 96, 96);
+}
+
+.contCarrinho{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.textLeft > h5{
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.textLeft > h6{
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(96, 96, 96);
+}
+
+.textRigth > h5{
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.textRigth > h6{
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(96, 96, 96);
+}
+
+.divTotal{
+    text-align: start;
+    padding: 0px 10px 0px 10px;
+    border-bottom: 1px solid black;
+    padding: 10px;
+}
+
+.divTotal > div{
+    display: flex;
+    justify-content: space-between;
+    justify-items: center;
+}

@@ -139,23 +139,25 @@ class HistoricoRepository extends ChangeNotifier {
         .collection('loja/usuarios/clientes/${auth.usuario!.uid}/historico')
         .doc((qtd.size + 1).toString())
         .set({
-      'carrinho': listaCarrinho,
-      'cliente': pedido.cliente,
-      'data': pedido.data,
-      'formaPag': pedido.formaPag,
-      'frete': pedido.frete,
+          'id': (qtd.size + 1),
+          'carrinho': listaCarrinho,
+          'cliente': pedido.cliente,
+          'data': pedido.data,
+          'formaPag': pedido.formaPag,
+          'frete': pedido.frete,
     });
 
     await db
         .collection('loja/owner/vendas')
         .doc((qtd2.size + 1).toString())
         .set({
-      'carrinho': listaCarrinho,
-      'cliente': pedido.cliente,
-      'data': pedido.data,
-      'formaPag': pedido.formaPag,
-      'frete': pedido.frete,
-      'numPedido': numPedido
+          'id': (qtd2.size + 1),
+          'carrinho': listaCarrinho,
+          'cliente': pedido.cliente,
+          'data': pedido.data,
+          'formaPag': pedido.formaPag,
+          'frete': pedido.frete,
+          'numPedido': numPedido
     });
 
     registerPedido(qtd2.size + 1, numPedido);
