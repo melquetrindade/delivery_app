@@ -8,6 +8,7 @@ export default function DetailsVenda(){
     const router = useRouter()
     const {docId} = router.query
     const [venda, setVenda] = useState({})
+    const [loading, setLoading] = useState('load')
 
     useEffect(() => {
         carregaVenda()
@@ -19,7 +20,9 @@ export default function DetailsVenda(){
             const snapData = querySnapshot.data()
 
             setVenda(snapData)
+            setLoading('ok')
         } catch(error){
+            setLoading('erro')
             console.error('Erro ao adicionar dado:', error);
             //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
         }
@@ -29,55 +32,93 @@ export default function DetailsVenda(){
         console.log(venda)
     }
 
+    const formatPrice = (price) => {
+        var format = price
+        return format.toFixed(2).replace('.', ',');
+    }
+
+    const calcPrice = (item) => {
+        var total = 0
+        total += item.produto.valor * item.qtd
+        return total.toFixed(2).replace('.', ',');
+    }
+
+    const calcTotal = (carrinho) => {
+        var total = 0
+        carrinho.forEach((item) => {
+            total += item.produto.valor * item.qtd
+        })
+        return total.toFixed(2).replace('.', ',');
+    }
+
     return(
         <main className={styles.main}>
-            <div className={styles.divContent}>
-                <h1>Detalhes do Pedido</h1>
-                <div className={styles.divConteudo}>
-                    <div className={styles.divSessao}>
-                        <h5>Cliente</h5>
-                        <h6>Melque Rodrigues</h6>
-                    </div>
-                    <div className={styles.divSessao}>
-                        <h5>Data</h5>
-                        <h6>12/06/2024 - 10:33:20</h6>
-                    </div>
-                    <div className={styles.divSessao}>
-                        <h5>Forma de Pagamento</h5>
-                        <h6>Pix</h6>
-                    </div>
-                    <div className={styles.divSessao}>
-                        <h5>Carrinho</h5>
-                        <div className={styles.contCarrinho}>
-                            <div className={styles.textLeft}>
-                                <h5>produto 1</h5>
-                                <h6>{`qtd: ${docId}`}</h6>
-                            </div>
-                            <div className={styles.textRigth}>
-                                <h5>Valor Unitário: R$6,00</h5>
-                                <h6>SubTotal: R$18,00</h6>
-                            </div>
+            {
+                loading == 'load'
+                ?
+                <Load/>
+                :
+                loading == 'erro'
+                ?
+                <Error/>
+                :
+                <div className={styles.divContent}>
+                    <h1>Detalhes do Pedido</h1>
+                    <div className={styles.divConteudo}>
+                        <div className={styles.divSessao}>
+                            <h5>Cliente</h5>
+                            <h6>{`${venda.cliente}`}</h6>
                         </div>
-                        <div className={styles.contCarrinho}>
-                            <div className={styles.textLeft}>
-                                <h5>produto 1</h5>
-                                <h6>{`qtd: ${docId}`}</h6>
-                            </div>
-                            <div className={styles.textRigth}>
-                                <h5>Valor Unitário: R$6,00</h5>
-                                <h6>SubTotal: R$18,00</h6>
-                            </div>
+                        <div className={styles.divSessao}>
+                            <h5>Data</h5>
+                            <h6>{`${venda.data}`}</h6>
                         </div>
-                    </div>
-                    <div className={styles.divTotal}>
-                        <div>
-                            <h5>TOTAL:</h5>
-                            <h6>R$ 20,00</h6>
+                        <div className={styles.divSessao}>
+                            <h5>Forma de Pagamento</h5>
+                            <h6>{`${venda.formaPag}`}</h6>
+                        </div>
+                        <div className={styles.divSessao}>
+                            <h5>Carrinho</h5>
+                            {venda.carrinho.map((item, index) => (
+                                <div className={styles.contCarrinho}>
+                                    <div className={styles.textLeft}>
+                                        <h5>{item.produto.nome}</h5>
+                                        <h6>{`qtd: ${item.qtd}`}</h6>
+                                    </div>
+                                    <div className={styles.textRigth}>
+                                        <h5>{`Valor Unitário: R$${formatPrice(item.produto.valor)}`}</h5>
+                                        <h6>{`SubTotal: R$${calcPrice(item)}`}</h6>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        <div className={styles.divTotal}>
+                            <div>
+                                <h5>TOTAL:</h5>
+                                <h6>{`R$ ${calcTotal(venda.carrinho)}`}</h6>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            
         </main>
        
+    )
+}
+
+function Error(){
+    return(
+        <h1>Error</h1>
+    )
+}
+
+function Load(){
+    return(
+        <div className={styles.fade}>
+            <div class="spinner-border text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
     )
 }
