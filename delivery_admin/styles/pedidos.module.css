@@ -1,0 +1,43 @@
+@charset "UTF-8";
+
+.main{
+    width: 100%;
+    height: calc(100vh - 8.2vh);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.containerPedidos{
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 80%;
+    background-color: blue;
+}
+
+.containerPedidos > div{
+    width: 400px;
+    background-color: azure;
+    margin-bottom: 5px;
+    padding: 10px;
+}
+
+.contDivider{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contDivider p{
+    margin: 0px;
+    padding: 0px;
+}
+
+.teste{
+    display: block;
+}
+
+.divCarrinho{
+    display: none;
+}
