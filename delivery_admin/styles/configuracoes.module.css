@@ -64,7 +64,11 @@
     border-radius: 5px;
     background-color: blue;
     color: white;
-    
+    transition: 0.5s;
+}
+
+.buttonLock:hover{
+    background-color: rgb(86, 86, 250);
 }
 
 .buttonLock > p{
@@ -93,10 +97,14 @@
 
 .sessaoEndereco > div{
     padding-bottom: 5%;
+    background-color: rgb(223, 223, 223);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 3px gray;
 }
 
 .contForm{
-    width: 60%;
+    width: 65%;
     margin: auto;
 }
 
@@ -143,4 +151,9 @@
     cursor: pointer;
     display: flex;
     justify-content: center;
+}
+
+.formModal > h1{
+    font-size: 1rem;
+    font-weight: 500;
 }
