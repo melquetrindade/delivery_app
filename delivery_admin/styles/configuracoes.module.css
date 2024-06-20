@@ -49,6 +49,38 @@
     background-color: rgb(189, 189, 189);
 }
 
+.opa{
+    display: flex;
+    justify-content: center;
+    margin-top: 2%;
+}
+
+.buttonLock{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 7px 6px 7px;
+    width: 31%;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: blue;
+    color: white;
+    
+}
+
+.buttonLock > p{
+    margin: 0px;
+    padding: 0px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tdStatus{
+    color: rgb(47, 218, 0);
+    background-color: white;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+}
+
 .buttonDetails{
     background-color: white;
     border: 1px solid black;
@@ -66,4 +98,49 @@
 .contForm{
     width: 60%;
     margin: auto;
+}
+
+.sessaoContato{
+    padding-bottom: 5%;
+}
+
+.tableContato{
+    border-collapse: collapse;
+    border: 1px solid black;
+    margin: auto;
+}
+
+.tableContato thead{
+    background-color: red;
+    color: white;
+}
+
+.tableContato td{
+    padding: 10px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.tableContato th{
+    padding: 10px;
+    text-align: center;
+    background-color: red;
+    color: white;
+}
+
+.tableContato tr:nth-child(odd){
+    background-color: rgb(243, 242, 242);
+}
+.tableContato tr:nth-child(even){
+    background-color: rgb(189, 189, 189);
+}
+
+.buttonDelete{
+    background-color: white;
+    border: 1px solid black;
+    color: red;
+    font-weight: bolder;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
 }
