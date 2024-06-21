@@ -178,3 +178,7 @@
 .tdInput > form > input{
     width: 7rem;
 }
+
+.rowCheck > td > span{
+    cursor: pointer;
+}

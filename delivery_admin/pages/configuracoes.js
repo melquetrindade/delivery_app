@@ -15,7 +15,17 @@ export default function Configuracoes() {
     const [dataHorario, setHorario] = useState()
     const [dataEndereco, setEndereco] = useState()
     const [dataContato, setContato] = useState()
+    const [dayOpen, setDay] = useState({
+        segunda: false,
+        terca: false,
+        quarta: false,
+        quinta: false,
+        sexta: false,
+        sabado: false,
+        domingo: false,
+    })
     const [show, setShow] = useState(false);
+    var listDayOpen = [false, false, false, false, false, false, false]
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -96,6 +106,74 @@ export default function Configuracoes() {
 
         console.log(abtrSegunda)
         console.log(fchSegunda)
+    }
+
+    const opCheckBox = (dia) => {
+        if(dia == 0){
+            listDayOpen[0] = !listDayOpen[0]
+            const segunda = document.getElementById('segunda')
+            if(segunda.innerHTML == 'check_box_outline_blank'){
+                segunda.innerHTML = 'check_box'
+            }
+            else{
+                segunda.innerHTML = 'check_box_outline_blank'
+            }
+            //console.log(teste.innerHTML)
+        } else if (dia == 1) {
+            listDayOpen[1] = !listDayOpen[1]
+            const terca = document.getElementById('terca')
+            if(terca.innerHTML == 'check_box_outline_blank'){
+                terca.innerHTML = 'check_box'
+            }
+            else{
+                terca.innerHTML = 'check_box_outline_blank'
+            }
+        } else if (dia == 2) {
+            listDayOpen[2] = !listDayOpen[2]
+            const quarta = document.getElementById('quarta')
+            if(quarta.innerHTML == 'check_box_outline_blank'){
+                quarta.innerHTML = 'check_box'
+            }
+            else{
+                quarta.innerHTML = 'check_box_outline_blank'
+            }
+        } else if (dia == 3) {
+            listDayOpen[3] = !listDayOpen[3]
+            const quinta = document.getElementById('quinta')
+            if(quinta.innerHTML == 'check_box_outline_blank'){
+                quinta.innerHTML = 'check_box'
+            }
+            else{
+                quinta.innerHTML = 'check_box_outline_blank'
+            }
+        } else if (dia == 4) {
+            listDayOpen[4] = !listDayOpen[4]
+            const sexta = document.getElementById('sexta')
+            if(sexta.innerHTML == 'check_box_outline_blank'){
+                sexta.innerHTML = 'check_box'
+            }
+            else{
+                sexta.innerHTML = 'check_box_outline_blank'
+            }
+        } else if (dia == 5) {
+            listDayOpen[5] = !listDayOpen[5]
+            const sabado = document.getElementById('sabado')
+            if(sabado.innerHTML == 'check_box_outline_blank'){
+                sabado.innerHTML = 'check_box'
+            }
+            else{
+                sabado.innerHTML = 'check_box_outline_blank'
+            }
+        } else {
+            listDayOpen[6] = !listDayOpen[6]
+            const domingo = document.getElementById('domingo')
+            if(domingo.innerHTML == 'check_box_outline_blank'){
+                domingo.innerHTML = 'check_box'
+            }
+            else{
+                domingo.innerHTML = 'check_box_outline_blank'
+            }
+        }
     }
 
     return(
@@ -185,7 +263,7 @@ export default function Configuracoes() {
                             <table className={styles.tableForm}>
                                 <thead>
                                     <tr>
-                                        <th>Horários</th>
+                                        <th colspan="2"></th>
                                         <th>Segunda-Feira</th>
                                         <th>Terça-Feira</th>
                                         <th>Quarta-Feira</th>
@@ -197,6 +275,7 @@ export default function Configuracoes() {
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <th rowspan="2" scope="rowgroup">Horários</th>
                                         <th scope="row">Abre às</th>
                                         <td className={styles.tdInput}>
                                             <form>
@@ -233,6 +312,7 @@ export default function Configuracoes() {
                                                 <input type="text" id="abtrDomingo" required placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
+                                        
                                     </tr>
                                     <tr>
                                         <th scope="row">Fecha às</th>
@@ -272,7 +352,16 @@ export default function Configuracoes() {
                                             </form>
                                         </td>
                                     </tr>
-                                    
+                                    <tr className={styles.rowCheck}>
+                                        <th colspan="2" scope="row">Abrir</th>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(0)}>{listDayOpen[0] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(1)}>{listDayOpen[1] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(2)}>{listDayOpen[2] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(3)}>{listDayOpen[3] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(4)}>{listDayOpen[4] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(5)}>{listDayOpen[5] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(6)}>{listDayOpen[6] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <div className={styles.opa}>
