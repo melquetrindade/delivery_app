@@ -153,7 +153,28 @@
     justify-content: center;
 }
 
-.formModal > h1{
-    font-size: 1rem;
-    font-weight: 500;
+.tableForm{
+    border-collapse: collapse;
+    margin: auto;
+}
+.tableForm td{
+    border: 1px solid black;
+    padding: 7px;
+}
+
+.tableForm tr{
+    border: 1px solid black;
+    padding: 7px;
+}
+
+.tableForm th{
+    border: 1px solid black;
+    padding: 7px;
+    background-color: darkgrey;
+    color: white;
+    text-align: center;
+}
+
+.tdInput > form > input{
+    width: 7rem;
 }
