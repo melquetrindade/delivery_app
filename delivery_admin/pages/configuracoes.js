@@ -24,6 +24,15 @@ export default function Configuracoes() {
         sabado: false,
         domingo: false,
     })
+    var listaTeste = [
+        [dayOpen.segunda, 'abtrSegunda', 'fchSegunda'],
+        [dayOpen.terca, 'abtrTerca', 'fchTerca'],
+        [dayOpen.quarta, 'abtrQuarta', 'fchQuarta'],
+        [dayOpen.quinta, 'abtrQuinta', 'fchQuinta'],
+        [dayOpen.sexta, 'abtrSexta', 'fchSexta'],
+        [dayOpen.sabado, 'abtrSabado', 'fchSabado'],
+        [dayOpen.domingo, 'abtrDomingo', 'fchDomingo'],
+    ]
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -80,123 +89,31 @@ export default function Configuracoes() {
         setLoading('ok')
     }, []);
 
-    if(loading == 'ok'){
-        console.log('loading == ok')
-        if(dataHorario){
-            console.log(`horarios: ${dataHorario}`)
-        }
-    }
-
-    const registerTime = () => {
+    const registerTime2 = () => {
         var tudoOk = true
-        var objtHorarios = []
+        var objtHorarios = [
+            {segunda: undefined},
+            {terca: undefined},
+            {quarta: undefined},
+            {quinta: undefined},
+            {sexta: undefined},
+            {sabado: undefined},
+            {domingo: undefined},
+        ]
 
-        const abtrSegunda = document.getElementById('abtrSegunda').value;
-        const abtrTerca = document.getElementById('abtrTerca').value;
-        const abtrQuarta = document.getElementById('abtrQuarta').value;
-        const abtrQuinta = document.getElementById('abtrQuinta').value;
-        const abtrSexta = document.getElementById('abtrSexta').value;
-        const abtrSabado = document.getElementById('abtrSabado').value;
-        const abtrDomingo = document.getElementById('abtrDomingo').value;
-        const fchSegunda = document.getElementById('fchSegunda').value;
-        const fchTerca = document.getElementById('fchTerca').value;
-        const fchQuarta = document.getElementById('fchQuarta').value;
-        const fchQuinta = document.getElementById('fchQuinta').value;
-        const fchSexta = document.getElementById('fchSexta').value;
-        const fchSabado = document.getElementById('fchSabado').value;
-        const fchDomingo = document.getElementById('fchDomingo').value;
-
-        if(dayOpen.segunda){
-            console.log(`segunda: abre as: ${abtrSegunda} - fechas as ${fchSegunda}`)
-            if(abtrSegunda && fchSegunda){
-                formataHorario(abtrSegunda)
-                objtHorarios.push({
-                    segunda: {
-                        abre: abtrSegunda,
-                        fecha: fchSegunda,
+        for(var i = 0; i < listaTeste.length; i++){
+            const abtr = document.getElementById(listaTeste[i][1]).value;
+            const fch = document.getElementById(listaTeste[i][2]).value;
+            if(listaTeste[i][0]) {
+                if(abtr && fch && formataHorario(abtr) && formataHorario(fch)){
+                    objtHorarios[i] = {
+                        abre: abtr,
+                        fecha: fch,
                         status: true
                     }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.terca){
-            console.log(`terca: abre as: ${abtrTerca} - fechas as ${fchTerca}`)
-            if(abtrTerca && fchTerca){
-                objtHorarios.push({
-                    terca: {
-                        abre: abtrTerca,
-                        fecha: fchTerca,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.quarta){
-            console.log(`quarta: abre as: ${abtrQuarta} - fechas as ${fchQuarta}`)
-            if(abtrSegunda && fchSegunda){
-                objtHorarios.push({
-                    quarta: {
-                        abre: abtrQuarta,
-                        fecha: fchQuarta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.quinta){
-            console.log(`quinta: abre as: ${abtrQuinta} - fechas as ${fchQuinta}`)
-            if(abtrSegunda && fchSegunda){
-                objtHorarios.push({
-                    quita: {
-                        abre: abtrQuinta,
-                        fecha: fchQuinta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.sexta){
-            console.log(`sexta: abre as: ${abtrSexta} - fechas as ${fchSexta}`)
-            if(abtrSegunda && fchSegunda){
-                objtHorarios.push({
-                    sexta: {
-                        abre: abtrSexta,
-                        fecha: fchSexta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.sabado){
-            console.log(`sabado: abre as: ${abtrSabado} - fechas as ${fchSabado}`)
-            if(abtrSegunda && fchSegunda){
-                objtHorarios.push({
-                    sabado: {
-                        abre: abtrSabado,
-                        fecha: fchSabado,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.domingo) {
-            console.log(`domingo: abre as: ${abtrDomingo} - fechas as ${fchDomingo}`)
-            if(abtrSegunda && fchSegunda){
-                objtHorarios.push({
-                    domingo: {
-                        abre: abtrDomingo,
-                        fecha: fchDomingo,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
+                } else{
+                    tudoOk = false
+                }
             }
         }
 
@@ -211,18 +128,15 @@ export default function Configuracoes() {
 
     const formataHorario = (hora) => {
         const formthora = hora.split(":");
-        //console.log(hora)
-        // Os dois vetores separados
-        console.log(formthora)
         if(formthora.length == 2){
-            const hoursArray = [formthora[0]];
-            const minutesArray = [formthora[1]];
-
-            console.log(`1: ${hoursArray}`)
-            console.log(`2: ${minutesArray}`)
+            const hoursArray = formthora[0];
+            const minutesArray = formthora[1];
+            if(hoursArray.length == 2 && minutesArray.length == 2){
+                return true
+            }
+            return false
         }
-        
-        
+        return false 
     }
 
     const opCheckBox = (dia) => {
@@ -488,7 +402,7 @@ export default function Configuracoes() {
                                 </tbody>
                             </table>
                             <div className={styles.opa}>
-                                <div className={styles.buttonLock} onClick={registerTime}>
+                                <div className={styles.buttonLock} onClick={registerTime2}>
                                     <p>Registrar Horários</p>
                                     <span class="material-symbols-outlined">schedule</span>
                                 </div>
@@ -576,3 +490,120 @@ export default function Configuracoes() {
         </main>
     );
 }
+
+
+/*
+const registerTime = () => {
+        var tudoOk = true
+        var objtHorarios = []
+
+        const abtrSegunda = document.getElementById('abtrSegunda').value;
+        const abtrTerca = document.getElementById('abtrTerca').value;
+        const abtrQuarta = document.getElementById('abtrQuarta').value;
+        const abtrQuinta = document.getElementById('abtrQuinta').value;
+        const abtrSexta = document.getElementById('abtrSexta').value;
+        const abtrSabado = document.getElementById('abtrSabado').value;
+        const abtrDomingo = document.getElementById('abtrDomingo').value;
+        const fchSegunda = document.getElementById('fchSegunda').value;
+        const fchTerca = document.getElementById('fchTerca').value;
+        const fchQuarta = document.getElementById('fchQuarta').value;
+        const fchQuinta = document.getElementById('fchQuinta').value;
+        const fchSexta = document.getElementById('fchSexta').value;
+        const fchSabado = document.getElementById('fchSabado').value;
+        const fchDomingo = document.getElementById('fchDomingo').value;
+
+        if(dayOpen.segunda){
+            if(abtrSegunda && fchSegunda && formataHorario(abtrSegunda) && formataHorario(fchSegunda)){
+                objtHorarios.push({
+                    segunda: {
+                        abre: abtrSegunda,
+                        fecha: fchSegunda,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.terca){
+            if(abtrTerca && fchTerca && formataHorario(abtrTerca) && formataHorario(fchTerca)){
+                objtHorarios.push({
+                    terca: {
+                        abre: abtrTerca,
+                        fecha: fchTerca,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.quarta){
+            if(abtrQuarta && fchQuarta && formataHorario(abtrQuarta) && formataHorario(fchQuarta)){
+                objtHorarios.push({
+                    quarta: {
+                        abre: abtrQuarta,
+                        fecha: fchQuarta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.quinta){
+            if(abtrQuinta && fchQuinta && formataHorario(abtrQuinta) && formataHorario(fchQuinta)){
+                objtHorarios.push({
+                    quita: {
+                        abre: abtrQuinta,
+                        fecha: fchQuinta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.sexta){
+            if(abtrSexta && fchSexta && formataHorario(abtrSexta) && formataHorario(fchSexta)){
+                objtHorarios.push({
+                    sexta: {
+                        abre: abtrSexta,
+                        fecha: fchSexta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.sabado){
+            if(abtrSabado && fchSabado && formataHorario(abtrSabado) && formataHorario(fchSabado)){
+                objtHorarios.push({
+                    sabado: {
+                        abre: abtrSabado,
+                        fecha: fchSabado,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.domingo) {
+            if(abtrDomingo && fchDomingo && formataHorario(abtrDomingo) && formataHorario(fchDomingo)){
+                objtHorarios.push({
+                    domingo: {
+                        abre: abtrDomingo,
+                        fecha: fchDomingo,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        }
+
+        if(tudoOk){
+            console.log('registrar no firebase')
+            console.log(objtHorarios)
+        }
+        else{
+            console.log('apresentar um notificação para preencher corretamente os horários de atendimento')
+        }
+    }
+*/
