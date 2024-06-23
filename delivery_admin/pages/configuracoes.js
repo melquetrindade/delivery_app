@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, collection, getDoc, doc} from 'firebase/firestore';
+import { getDocs, collection, getDoc, doc, terminate} from 'firebase/firestore';
 import styles from '../styles/configuracoes.module.css'
 import { db } from '../utils/firebase/firebaseService';
 
@@ -25,7 +25,6 @@ export default function Configuracoes() {
         domingo: false,
     })
     const [show, setShow] = useState(false);
-    var listDayOpen = [false, false, false, false, false, false, false]
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -89,6 +88,9 @@ export default function Configuracoes() {
     }
 
     const registerTime = () => {
+        var tudoOk = true
+        var objtHorarios = []
+
         const abtrSegunda = document.getElementById('abtrSegunda').value;
         const abtrTerca = document.getElementById('abtrTerca').value;
         const abtrQuarta = document.getElementById('abtrQuarta').value;
@@ -104,75 +106,196 @@ export default function Configuracoes() {
         const fchSabado = document.getElementById('fchSabado').value;
         const fchDomingo = document.getElementById('fchDomingo').value;
 
-        console.log(abtrSegunda)
-        console.log(fchSegunda)
+        if(dayOpen.segunda){
+            console.log(`segunda: abre as: ${abtrSegunda} - fechas as ${fchSegunda}`)
+            if(abtrSegunda && fchSegunda){
+                formataHorario(abtrSegunda)
+                objtHorarios.push({
+                    segunda: {
+                        abre: abtrSegunda,
+                        fecha: fchSegunda,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.terca){
+            console.log(`terca: abre as: ${abtrTerca} - fechas as ${fchTerca}`)
+            if(abtrTerca && fchTerca){
+                objtHorarios.push({
+                    terca: {
+                        abre: abtrTerca,
+                        fecha: fchTerca,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.quarta){
+            console.log(`quarta: abre as: ${abtrQuarta} - fechas as ${fchQuarta}`)
+            if(abtrSegunda && fchSegunda){
+                objtHorarios.push({
+                    quarta: {
+                        abre: abtrQuarta,
+                        fecha: fchQuarta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.quinta){
+            console.log(`quinta: abre as: ${abtrQuinta} - fechas as ${fchQuinta}`)
+            if(abtrSegunda && fchSegunda){
+                objtHorarios.push({
+                    quita: {
+                        abre: abtrQuinta,
+                        fecha: fchQuinta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.sexta){
+            console.log(`sexta: abre as: ${abtrSexta} - fechas as ${fchSexta}`)
+            if(abtrSegunda && fchSegunda){
+                objtHorarios.push({
+                    sexta: {
+                        abre: abtrSexta,
+                        fecha: fchSexta,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.sabado){
+            console.log(`sabado: abre as: ${abtrSabado} - fechas as ${fchSabado}`)
+            if(abtrSegunda && fchSegunda){
+                objtHorarios.push({
+                    sabado: {
+                        abre: abtrSabado,
+                        fecha: fchSabado,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        } if(dayOpen.domingo) {
+            console.log(`domingo: abre as: ${abtrDomingo} - fechas as ${fchDomingo}`)
+            if(abtrSegunda && fchSegunda){
+                objtHorarios.push({
+                    domingo: {
+                        abre: abtrDomingo,
+                        fecha: fchDomingo,
+                        status: true
+                    }
+                })
+            } else{
+                tudoOk = false
+            }
+        }
+
+        if(tudoOk){
+            console.log('registrar no firebase')
+            console.log(objtHorarios)
+        }
+        else{
+            console.log('apresentar um notificação para preencher corretamente os horários de atendimento')
+        }
+    }
+
+    const formataHorario = (hora) => {
+        const formthora = hora.split(":");
+        //console.log(hora)
+        // Os dois vetores separados
+        console.log(formthora)
+        if(formthora.length == 2){
+            const hoursArray = [formthora[0]];
+            const minutesArray = [formthora[1]];
+
+            console.log(`1: ${hoursArray}`)
+            console.log(`2: ${minutesArray}`)
+        }
+        
+        
     }
 
     const opCheckBox = (dia) => {
         if(dia == 0){
-            listDayOpen[0] = !listDayOpen[0]
-            const segunda = document.getElementById('segunda')
-            if(segunda.innerHTML == 'check_box_outline_blank'){
-                segunda.innerHTML = 'check_box'
-            }
-            else{
-                segunda.innerHTML = 'check_box_outline_blank'
-            }
-            //console.log(teste.innerHTML)
+            setDay({
+                segunda: !dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else if (dia == 1) {
-            listDayOpen[1] = !listDayOpen[1]
-            const terca = document.getElementById('terca')
-            if(terca.innerHTML == 'check_box_outline_blank'){
-                terca.innerHTML = 'check_box'
-            }
-            else{
-                terca.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: !dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else if (dia == 2) {
-            listDayOpen[2] = !listDayOpen[2]
-            const quarta = document.getElementById('quarta')
-            if(quarta.innerHTML == 'check_box_outline_blank'){
-                quarta.innerHTML = 'check_box'
-            }
-            else{
-                quarta.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: !dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else if (dia == 3) {
-            listDayOpen[3] = !listDayOpen[3]
-            const quinta = document.getElementById('quinta')
-            if(quinta.innerHTML == 'check_box_outline_blank'){
-                quinta.innerHTML = 'check_box'
-            }
-            else{
-                quinta.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: !dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else if (dia == 4) {
-            listDayOpen[4] = !listDayOpen[4]
-            const sexta = document.getElementById('sexta')
-            if(sexta.innerHTML == 'check_box_outline_blank'){
-                sexta.innerHTML = 'check_box'
-            }
-            else{
-                sexta.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: !dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else if (dia == 5) {
-            listDayOpen[5] = !listDayOpen[5]
-            const sabado = document.getElementById('sabado')
-            if(sabado.innerHTML == 'check_box_outline_blank'){
-                sabado.innerHTML = 'check_box'
-            }
-            else{
-                sabado.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: !dayOpen.sabado,
+                domingo: dayOpen.domingo,
+            })
         } else {
-            listDayOpen[6] = !listDayOpen[6]
-            const domingo = document.getElementById('domingo')
-            if(domingo.innerHTML == 'check_box_outline_blank'){
-                domingo.innerHTML = 'check_box'
-            }
-            else{
-                domingo.innerHTML = 'check_box_outline_blank'
-            }
+            setDay({
+                segunda: dayOpen.segunda,
+                terca: dayOpen.terca,
+                quarta: dayOpen.quarta,
+                quinta: dayOpen.quinta,
+                sexta: dayOpen.sexta,
+                sabado: dayOpen.sabado,
+                domingo: !dayOpen.domingo,
+            })
         }
     }
 
@@ -279,37 +402,37 @@ export default function Configuracoes() {
                                         <th scope="row">Abre às</th>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrSegunda" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrSegunda" disabled={!dayOpen.segunda} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrTerca" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrTerca"  disabled={!dayOpen.terca} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrQuarta" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrQuarta" disabled={!dayOpen.quarta} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrQuinta" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrQuinta" disabled={!dayOpen.quinta} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrSexta" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrSexta" disabled={!dayOpen.sexta} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrSabado" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrSabado" disabled={!dayOpen.sabado} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="abtrDomingo" required placeholder="ex: 18:00"></input>
+                                                <input type="text" id="abtrDomingo" disabled={!dayOpen.domingo} placeholder="ex: 18:00"></input>
                                             </form>
                                         </td>
                                         
@@ -318,49 +441,49 @@ export default function Configuracoes() {
                                         <th scope="row">Fecha às</th>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchSegunda" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchSegunda" disabled={!dayOpen.segunda} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchTerca" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchTerca" disabled={!dayOpen.terca} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchQuarta" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchQuarta" disabled={!dayOpen.quarta} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchQuinta" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchQuinta" disabled={!dayOpen.quinta} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchSexta" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchSexta" disabled={!dayOpen.sexta} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchSabado" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchSabado" disabled={!dayOpen.sabado} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                         <td className={styles.tdInput}>
                                             <form>
-                                                <input type="text" id="fchDomingo" required placeholder="ex: 23:00"></input>
+                                                <input type="text" id="fchDomingo" disabled={!dayOpen.domingo} placeholder="ex: 23:00"></input>
                                             </form>
                                         </td>
                                     </tr>
                                     <tr className={styles.rowCheck}>
                                         <th colspan="2" scope="row">Abrir</th>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(0)}>{listDayOpen[0] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(1)}>{listDayOpen[1] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(2)}>{listDayOpen[2] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(3)}>{listDayOpen[3] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(4)}>{listDayOpen[4] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(5)}>{listDayOpen[5] ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(6)}>{listDayOpen[6] ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(0)}>{dayOpen.segunda ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="terca" class="material-symbols-outlined" onClick={() => opCheckBox(1)}>{dayOpen.terca ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="quarta" class="material-symbols-outlined" onClick={() => opCheckBox(2)}>{dayOpen.quarta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="quinta" class="material-symbols-outlined" onClick={() => opCheckBox(3)}>{dayOpen.quinta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="sexta" class="material-symbols-outlined" onClick={() => opCheckBox(4)}>{dayOpen.sexta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="sabado" class="material-symbols-outlined" onClick={() => opCheckBox(5)}>{dayOpen.sabado ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        <td><span id="domingo" class="material-symbols-outlined" onClick={() => opCheckBox(6)}>{dayOpen.domingo ? 'check_box' : 'check_box_outline_blank'}</span></td>
                                     </tr>
                                 </tbody>
                             </table>
