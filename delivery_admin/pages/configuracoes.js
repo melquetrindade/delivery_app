@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, collection, getDoc, doc, terminate} from 'firebase/firestore';
+import { getDocs, collection, getDoc, doc, addDoc, setDoc} from 'firebase/firestore';
 import styles from '../styles/configuracoes.module.css'
 import { db } from '../utils/firebase/firebaseService';
 
@@ -40,10 +40,31 @@ export default function Configuracoes() {
 
     const loadHorario = async () => {
         try{
+            var listaDias = []
             const querySnapshot = await getDoc(doc(db, `loja/configuracoes/horarios`, 'horarios'));
             const snapData = querySnapshot.data()
-            console.log(`snapData: ${snapData}`)
-            setHorario(snapData)
+            if(snapData){
+                for (var i = 0; i < 7; i++){
+                    if(i == 0){
+                        listaDias.push(snapData.segunda)
+                    } else if(i == 1){
+                        listaDias.push(snapData.terca)
+                    } else if(i == 2){
+                        listaDias.push(snapData.quarta)
+                    } else if(i == 3){
+                        listaDias.push(snapData.quinta)
+                    } else if(i == 4){
+                        listaDias.push(snapData.sexta)
+                    } else if(i == 5){
+                        listaDias.push(snapData.sabado)
+                    } else {
+                        listaDias.push(snapData.domingo)
+                    }
+                    
+                }
+            }
+            //console.log(`snapData: ${listaDias.length}`)
+            setHorario(listaDias)
         } catch(error){
             console.error('Erro ao adicionar dado:', error);
             //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
@@ -89,16 +110,51 @@ export default function Configuracoes() {
         setLoading('ok')
     }, []);
 
+    if(dataHorario != undefined){
+        console.log(dataHorario)
+    }
+
+    const registerTimeFirebase = async (objt) => {
+        console.log(objt)
+        
+        try{
+            /*
+            await addDoc(collection(db, `loja/configuracoes/horarios`), {
+                dias: objt[0]
+            })*/
+            // Caminho da coleção
+            const docRef = doc(db, `loja/configuracoes/horarios`, 'horarios');
+
+            // Dados do documento
+            const data = {
+                segunda: objt[0].status ? objt[0] : {status: false},
+                terca: objt[1].status ? objt[1] : {status: false},
+                quarta: objt[2].status ? objt[2] : {status: false},
+                quinta: objt[3].status ? objt[3] : {status: false},
+                sexta: objt[4].status ? objt[4] : {status: false},
+                sabado: objt[5].status ? objt[5] : {status: false},
+                domingo: objt[6].status ? objt[6] : {status: false}
+            };
+
+            // Definir o documento na coleção
+            await setDoc(docRef, data);
+            console.log('horarios add com sucesso')
+        } catch(error) {
+            console.error('Erro ao adicionar dado:', error);
+        }
+        
+    }
+
     const registerTime2 = () => {
         var tudoOk = true
         var objtHorarios = [
-            {segunda: undefined},
-            {terca: undefined},
-            {quarta: undefined},
-            {quinta: undefined},
-            {sexta: undefined},
-            {sabado: undefined},
-            {domingo: undefined},
+            {status: false},
+            {status: false},
+            {status: false},
+            {status: false},
+            {status: false},
+            {status: false},
+            {status: false},
         ]
 
         for(var i = 0; i < listaTeste.length; i++){
@@ -119,7 +175,8 @@ export default function Configuracoes() {
 
         if(tudoOk){
             console.log('registrar no firebase')
-            console.log(objtHorarios)
+            //console.log(objtHorarios)
+            registerTimeFirebase(objtHorarios)
         }
         else{
             console.log('apresentar um notificação para preencher corretamente os horários de atendimento')
@@ -232,60 +289,15 @@ export default function Configuracoes() {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    
                                     <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Segunda-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Terça-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Quarta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Quinta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Sexta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Sábado</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Domingo</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}><span class="material-symbols-outlined">edit</span></td>
-                                    </tr>
+                                                <td className={styles.tdStatus}>Aberto</td>
+                                                <td>Segunda-Feira</td>
+                                                <td>18:00 - 23:00</td>
+                                                <td className={styles.buttonDetails}>
+                                                    <span class="material-symbols-outlined">edit</span>
+                                                </td>
+                                            </tr>
                                 </tbody>
                             </table>
                             <div className={styles.opa}>
@@ -493,6 +505,88 @@ export default function Configuracoes() {
 
 
 /*
+{
+                                        dataHorario.map((day, index) => (
+                                            <tr key={index}>
+                                                <td className={styles.tdStatus}>Aberto</td>
+                                                <td>Segunda-Feira</td>
+                                                <td>18:00 - 23:00</td>
+                                                <td className={styles.buttonDetails}>
+                                                    <span class="material-symbols-outlined">edit</span>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    }
+
+<table responsive="sm" className={styles.table}>
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Dia</th>
+                                        <th>Horário</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Segunda-Feira</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Terça-Feira</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Quarta-Feira</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Quinta-Feira</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Sexta-Feira</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Sábado</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}>
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.tdStatus}>Aberto</td>
+                                        <td>Domingo</td>
+                                        <td>18:00 - 23:00</td>
+                                        <td className={styles.buttonDetails}><span class="material-symbols-outlined">edit</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+
+
 const registerTime = () => {
         var tudoOk = true
         var objtHorarios = []
