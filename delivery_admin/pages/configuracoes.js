@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, collection, getDoc, doc, addDoc, setDoc} from 'firebase/firestore';
+import { getDocs, collection, getDoc, doc, addDoc, setDoc, updateDoc} from 'firebase/firestore';
 import styles from '../styles/configuracoes.module.css'
 import { db } from '../utils/firebase/firebaseService';
 
@@ -33,6 +33,7 @@ export default function Configuracoes() {
         [dayOpen.sabado, 'abtrSabado', 'fchSabado'],
         [dayOpen.domingo, 'abtrDomingo', 'fchDomingo'],
     ]
+    const [editDay, setEditDay] = useState({})
     const [show, setShow] = useState(false);
 
     const handleClose = () => setShow(false);
@@ -63,8 +64,9 @@ export default function Configuracoes() {
                     
                 }
             }
-            //console.log(`snapData: ${listaDias.length}`)
-            setHorario(listaDias)
+            if(listaDias.length != 0){
+                setHorario(listaDias)
+            }
         } catch(error){
             console.error('Erro ao adicionar dado:', error);
             //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
@@ -115,17 +117,8 @@ export default function Configuracoes() {
     }
 
     const registerTimeFirebase = async (objt) => {
-        console.log(objt)
-        
         try{
-            /*
-            await addDoc(collection(db, `loja/configuracoes/horarios`), {
-                dias: objt[0]
-            })*/
-            // Caminho da coleção
             const docRef = doc(db, `loja/configuracoes/horarios`, 'horarios');
-
-            // Dados do documento
             const data = {
                 segunda: objt[0].status ? objt[0] : {status: false},
                 terca: objt[1].status ? objt[1] : {status: false},
@@ -135,8 +128,6 @@ export default function Configuracoes() {
                 sabado: objt[5].status ? objt[5] : {status: false},
                 domingo: objt[6].status ? objt[6] : {status: false}
             };
-
-            // Definir o documento na coleção
             await setDoc(docRef, data);
             console.log('horarios add com sucesso')
         } catch(error) {
@@ -174,8 +165,6 @@ export default function Configuracoes() {
         }
 
         if(tudoOk){
-            console.log('registrar no firebase')
-            //console.log(objtHorarios)
             registerTimeFirebase(objtHorarios)
         }
         else{
@@ -270,6 +259,106 @@ export default function Configuracoes() {
         }
     }
 
+    const verificaDia = (index) => {
+        if(index == 0){
+            return 'Segunda-Feira'
+        } else if(index == 1){
+            return 'Terça-Feira'
+        } else if(index == 2){
+            return 'Quarta-Feira'
+        } else if(index == 3){
+            return 'Quinta-Feira'
+        } else if(index == 4){
+            return 'Sexta-Feira'
+        } else if(index == 5){
+            return 'Sábado'
+        }
+        return 'Domingo'
+    }
+
+    const funcSetDay = (dia, abre, fecha) => {
+        setEditDay({
+            dia: dia,
+            abre, abre,
+            fecha: fecha
+        })
+        handleShow()
+    }
+
+    const registerTime = () => {
+        var tudoOk = true
+        var objtHorario = {}
+        const abtr = document.getElementById('inputAbre').value
+        const fch = document.getElementById('inputFecha').value
+
+        if(formataHorario(abtr) && formataHorario(fch)){
+            objtHorario = {
+                abre: abtr,
+                fecha: fch,
+                status: true
+            }
+        } else{
+            tudoOk = false
+        }
+        if(!tudoOk){
+            console.log('erro no input')
+        } else {
+            //console.log(objtHorario)
+            var newData = updateSchedules(objtHorario)
+            registerEditFirebase(newData)
+        }
+    }
+
+    const updateSchedules = (objt) => {
+        if(editDay.dia == 'Segunda-Feira'){
+            var newSchedules = dataHorario
+            console.log(`newSchedules antes: ${newSchedules}`)
+            //console.log(`newSchedules[0].segunda antes: ${newSchedules[0].segunda.abre}`)
+            newSchedules[0] = objt
+            //console.log(`newSchedules[0].segunda depois: ${newSchedules[0].segunda.abre}`)
+            //newSchedules[0].segunda.abre = objt.abre
+            //newSchedules[0].segunda.fecha = objt.fecha
+            //newSchedules[0].segunda.status = objt.status
+
+            return newSchedules
+        } else if(editDay.dia == 'Terça-Feira'){
+
+        } else if(editDay.dia == 'Quarta-Feira'){
+            
+        } else if(editDay.dia == 'Quinta-Feira'){
+            
+        } else if(editDay.dia == 'Sexta-Feira'){
+            
+        } else if(editDay.dia == 'Sábado-Feira'){
+            
+        }
+        return dataHorario
+    }
+
+    const registerEditFirebase = async (objtData) => {
+        //console.log(`novos dados: ${objtData}`)
+        const data = {
+            segunda: objtData[0].status ? objtData[0] : {status: false},
+            terca: objtData[1].status ? objtData[1] : {status: false},
+            quarta: objtData[2].status ? objtData[2] : {status: false},
+            quinta: objtData[3].status ? objtData[3] : {status: false},
+            sexta: objtData[4].status ? objtData[4] : {status: false},
+            sabado: objtData[5].status ? objtData[5] : {status: false},
+            domingo: objtData[6].status ? objtData[6] : {status: false}
+        };
+        objtData.forEach((item, index) => {
+            console.log(`dia: ${index} - item: ${item.status}`)
+        })
+        try{
+            
+            const docRef = doc(db, `loja/configuracoes/horarios`, 'horarios');
+            await updateDoc(docRef, data);
+            console.log('horário atualizado com sucesso!')
+        } catch (error){
+            console.error('Erro ao adicionar dado:', error);
+        }
+    }
+
     return(
         <main className={styles.main}>
             <div>
@@ -289,15 +378,18 @@ export default function Configuracoes() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                                    <tr>
-                                                <td className={styles.tdStatus}>Aberto</td>
-                                                <td>Segunda-Feira</td>
-                                                <td>18:00 - 23:00</td>
-                                                <td className={styles.buttonDetails}>
+                                    {
+                                        dataHorario.map((day, index) => (
+                                            <tr key={index}>
+                                                <td className={styles.tdStatus} style={day.status ? {color: 'rgb(47, 218, 0)'} : {color: 'red'}}>{day.status ? `Aberto` : `Fechado`}</td>
+                                                <td>{verificaDia(index)}</td>
+                                                <td>{day.status ? `${day.abre} - ${day.fecha}` : `---`}</td>
+                                                <td className={styles.buttonDetails} onClick={() => funcSetDay(verificaDia(index), day.status ? day.abre : 'null', day.status ? day.fecha : 'null')}>
                                                     <span class="material-symbols-outlined">edit</span>
                                                 </td>
                                             </tr>
+                                        ))
+                                    }
                                 </tbody>
                             </table>
                             <div className={styles.opa}>
@@ -306,6 +398,43 @@ export default function Configuracoes() {
                                     <span class="material-symbols-outlined">lock</span>
                                 </div>
                             </div>
+                            <Modal show={show} onHide={handleClose}>
+                                <Modal.Header closeButton>
+                                    <Modal.Title>Editar Horarios</Modal.Title>
+                                </Modal.Header>
+                                <Modal.Body>
+                                    <p>{editDay.dia}</p>
+                                    <Form>
+                                        <Row className="mb-3">
+                                            <Form.Group as={Col} controlId="inputAbre">
+                                                <Form.Label>Abre às:</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="18:00"
+                                                    autoFocus
+                                                />
+                                            </Form.Group>
+                                            <Form.Group as={Col} controlId="inputFecha">
+                                                <Form.Label>Fecha às:</Form.Label>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="23:00"
+                                                    autoFocus
+                                                />
+                                            </Form.Group>
+                                        </Row>
+                                    
+                                    </Form>
+                                </Modal.Body>
+                                <Modal.Footer>
+                                <Button variant="secondary" onClick={handleClose}>
+                                    Close
+                                </Button>
+                                <Button variant="primary" onClick={registerTime}>
+                                    Salvar
+                                </Button>
+                                </Modal.Footer>
+                            </Modal>
                         </>
                         :
                         <>
