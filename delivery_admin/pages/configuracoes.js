@@ -303,52 +303,47 @@ export default function Configuracoes() {
         if(!tudoOk){
             console.log('erro no input')
         } else {
-            //console.log(objtHorario)
             var newData = updateSchedules(objtHorario)
             registerEditFirebase(newData)
         }
+        handleClose()
     }
 
     const updateSchedules = (objt) => {
+        var newSchedules = dataHorario
         if(editDay.dia == 'Segunda-Feira'){
-            var newSchedules = dataHorario
-            console.log(`newSchedules antes: ${newSchedules}`)
-            //console.log(`newSchedules[0].segunda antes: ${newSchedules[0].segunda.abre}`)
             newSchedules[0] = objt
-            //console.log(`newSchedules[0].segunda depois: ${newSchedules[0].segunda.abre}`)
-            //newSchedules[0].segunda.abre = objt.abre
-            //newSchedules[0].segunda.fecha = objt.fecha
-            //newSchedules[0].segunda.status = objt.status
-
             return newSchedules
         } else if(editDay.dia == 'Terça-Feira'){
-
+            newSchedules[1] = objt
+            return newSchedules
         } else if(editDay.dia == 'Quarta-Feira'){
-            
+            newSchedules[2] = objt
+            return newSchedules
         } else if(editDay.dia == 'Quinta-Feira'){
-            
+            newSchedules[3] = objt
+            return newSchedules
         } else if(editDay.dia == 'Sexta-Feira'){
-            
-        } else if(editDay.dia == 'Sábado-Feira'){
-            
+            newSchedules[4] = objt
+            return newSchedules
+        } else if(editDay.dia == 'Sábado'){
+            newSchedules[5] = objt
+            return newSchedules
         }
-        return dataHorario
+        newSchedules[6] = objt
+        return newSchedules
     }
 
     const registerEditFirebase = async (objtData) => {
-        //console.log(`novos dados: ${objtData}`)
         const data = {
-            segunda: objtData[0].status ? objtData[0] : {status: false},
-            terca: objtData[1].status ? objtData[1] : {status: false},
-            quarta: objtData[2].status ? objtData[2] : {status: false},
-            quinta: objtData[3].status ? objtData[3] : {status: false},
-            sexta: objtData[4].status ? objtData[4] : {status: false},
-            sabado: objtData[5].status ? objtData[5] : {status: false},
-            domingo: objtData[6].status ? objtData[6] : {status: false}
+            segunda: objtData[0],
+            terca: objtData[1],
+            quarta: objtData[2],
+            quinta: objtData[3],
+            sexta: objtData[4],
+            sabado: objtData[5],
+            domingo: objtData[6]
         };
-        objtData.forEach((item, index) => {
-            console.log(`dia: ${index} - item: ${item.status}`)
-        })
         try{
             
             const docRef = doc(db, `loja/configuracoes/horarios`, 'horarios');
@@ -357,6 +352,54 @@ export default function Configuracoes() {
         } catch (error){
             console.error('Erro ao adicionar dado:', error);
         }
+    }
+
+    const deleteDayFirebase = async (objtData) => {
+        const data = {
+            segunda: objtData[0],
+            terca: objtData[1],
+            quarta: objtData[2],
+            quinta: objtData[3],
+            sexta: objtData[4],
+            sabado: objtData[5],
+            domingo: objtData[6]
+        };
+        try{
+            
+            const docRef = doc(db, `loja/configuracoes/horarios`, 'horarios');
+            await updateDoc(docRef, data);
+            console.log('horário atualizado com sucesso!')
+        } catch (error){
+            console.error('Erro ao adicionar dado:', error);
+        }
+    }
+
+    const deleteDay = () => {
+        if(editDay.abre != 'null' && editDay.fecha != 'null'){
+            const objtTime = dataHorario
+            if(editDay.dia == 'Segunda-Feira'){
+                objtTime[0] = {status: false}
+            } else if (editDay.dia == 'Terça-Feira'){
+                objtTime[1] = {status: false}
+            } else if (editDay.dia == 'Quarta-Feira'){
+                objtTime[2] = {status: false}
+            } else if (editDay.dia == 'Quinta-Feira'){
+                objtTime[3] = {status: false}
+            } else if (editDay.dia == 'Sexta-Feira'){
+                objtTime[4] = {status: false}
+            } else if (editDay.dia == 'Sábado'){
+                objtTime[5] = {status: false}
+            } else {
+                objtTime[6] = {status: false}
+            }
+            deleteDayFirebase(objtTime)
+            setHorario(objtTime)
+        }
+        handleClose()
+    }
+
+    const closeApp = () => {
+        console.log('fechar app')
     }
 
     return(
@@ -393,7 +436,7 @@ export default function Configuracoes() {
                                 </tbody>
                             </table>
                             <div className={styles.opa}>
-                                <div className={styles.buttonLock}>
+                                <div className={styles.buttonLock} onClick={closeApp}>
                                     <p>Fechar o aplicativo momentaneamente</p>
                                     <span class="material-symbols-outlined">lock</span>
                                 </div>
@@ -427,8 +470,8 @@ export default function Configuracoes() {
                                     </Form>
                                 </Modal.Body>
                                 <Modal.Footer>
-                                <Button variant="secondary" onClick={handleClose}>
-                                    Close
+                                <Button variant="secondary" onClick={deleteDay}>
+                                    Fechar este dia
                                 </Button>
                                 <Button variant="primary" onClick={registerTime}>
                                     Salvar
