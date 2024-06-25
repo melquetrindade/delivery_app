@@ -15,6 +15,7 @@ export default function Configuracoes() {
     const [dataHorario, setHorario] = useState()
     const [dataEndereco, setEndereco] = useState()
     const [dataContato, setContato] = useState()
+    const [fechaApp, setFechaApp] = useState()
     const [dayOpen, setDay] = useState({
         segunda: false,
         terca: false,
@@ -38,6 +39,22 @@ export default function Configuracoes() {
 
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const loadFechaApp = async () => {
+        try{
+            const querySnapshot = await getDoc(doc(db, `loja/configuracoes/close`, 'closeApp'));
+            if(querySnapshot){
+                const snapData = querySnapshot.data()
+                console.log(snapData)
+                setFechaApp(snapData.fecha)
+            }
+            else{
+                setFechaApp(false)
+            }
+        } catch(error){
+            console.error('Erro ao adicionar dado:', error);
+        }
+    }
 
     const loadHorario = async () => {
         try{
@@ -109,6 +126,7 @@ export default function Configuracoes() {
 
     useEffect(() => {
         loadHorario()
+        loadFechaApp()
         setLoading('ok')
     }, []);
 
@@ -398,8 +416,28 @@ export default function Configuracoes() {
         handleClose()
     }
 
-    const closeApp = () => {
-        console.log('fechar app')
+    const closeApp = async () => {
+        //console.log('fechar app')
+        try{
+            const querySnapshot = await getDoc(doc(db, `loja/configuracoes/close`, 'closeApp'));
+            const snapData = querySnapshot.data()
+            if(snapData){
+                console.log('tem o doc')
+                console.log(snapData)
+                
+            } else {
+                console.log('não tem o doc')
+                const docRef = doc(db, `loja/configuracoes/close`, 'closeApp');
+                await setDoc(docRef, {
+                    fechar: true
+                });
+                console.log('deu certo')
+            }
+            //await setDoc(querySnapshot, data);
+            //console.log('horarios add com sucesso')
+        } catch(error) {
+            console.error('Erro ao adicionar dado:', error);
+        }
     }
 
     return(
