@@ -297,7 +297,7 @@ class _ComponenteEnderecoState extends State<ComponenteEndereco> {
                             child: Container(
                               width: double.infinity,
                               child: Text(
-                                'Rua: ${widget.localizacaoLoja.rua}, ${widget.localizacaoLoja.num} - ${widget.localizacaoLoja.complemento}',
+                                'Rua: ${widget.localizacaoLoja.rua}, ${widget.localizacaoLoja.num}',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 14),

@@ -206,7 +206,7 @@ class _VendaPageState extends State<VendaPage> {
     profile = context.read<PerfilRepository>();
     carrinho = context.read<CarrinhoRepository>();
     historicoPedidos = context.read<HistoricoRepository>();
-    enderecoDaLoja = context.read<EnderecoLojaRepository>();
+    enderecoDaLoja = context.watch<EnderecoLojaRepository>();
     localizacaoLoja = enderecoDaLoja.enderecoLoja;
     calcQuantidade();
     calcPreco();

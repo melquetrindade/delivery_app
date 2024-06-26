@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:delivery_app/databases/db_firestore.dart';
 import 'package:flutter/material.dart';
 
 class EnderecoLoja {
@@ -5,29 +7,22 @@ class EnderecoLoja {
   String cidade;
   String bairro;
   String num;
-  String complemento;
   double frete;
 
   EnderecoLoja(
-    {required this.rua,
-    required this.cidade,
-    required this.bairro,
-    required this.num,
-    required this.complemento,
-    required this.frete
-  });
+      {required this.rua,
+      required this.cidade,
+      required this.bairro,
+      required this.num,
+      required this.frete});
 }
 
 class EnderecoLojaRepository extends ChangeNotifier {
-  late EnderecoLoja _endereco;
-  EnderecoLoja _dbFirebase = EnderecoLoja(
-    rua: '7 de Setembro',
-    cidade: 'Parelhas',
-    bairro: 'Centro',
-    num: '91',
-    complemento: 'Casa',
-    frete: 5.0
-  );
+  late EnderecoLoja _endereco =
+      EnderecoLoja(rua: '', cidade: '', bairro: '', num: '', frete: 0);
+  late FirebaseFirestore db;
+  bool loading = true;
+  bool jaCarregou = false;
 
   EnderecoLojaRepository() {
     iniciarState();
@@ -35,13 +30,37 @@ class EnderecoLojaRepository extends ChangeNotifier {
 
   EnderecoLoja get enderecoLoja => _endereco;
 
-  iniciarState() {
-    _endereco = _dbFirebase;
+  _startFirestore() {
+    db = DBFirestore.get();
   }
 
-  addEndereco() {}
+  iniciarState() async {
+    //loading = true;
+    //_endereco = _dbFirebase;
+    await _startFirestore();
+    await readEndereco();
+    //loading = false;
+  }
 
-  deleteEndereco() {}
+  readEndereco() async {
+    final snapshot = await db
+        .collection('loja/configuracoes/endereco')
+        .doc('endereco')
+        .get();
+    if (snapshot.exists) {
+      //print(snapshot['bairro']);
+      _endereco = EnderecoLoja(
+        bairro: snapshot['bairro'],
+        cidade: snapshot['cidade'],
+        num: snapshot['num'],
+        rua: snapshot['rua'],
+        frete: double.parse(snapshot['frete'].replaceAll(',', '.')),
+      );
+    } else {
+      _endereco =
+          EnderecoLoja(bairro: '', cidade: '', frete: 0, num: '', rua: '');
+    }
 
-  updateEndereco() {}
+    notifyListeners();
+  }
 }

@@ -29,8 +29,9 @@ class _InfoPageState extends State<InfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    enderecoDaLoja = context.read<EnderecoLojaRepository>();
+    enderecoDaLoja = context.watch<EnderecoLojaRepository>();
     localizacaoLoja = enderecoDaLoja.enderecoLoja;
+    print(localizacaoLoja.bairro);
 
     return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -186,7 +187,7 @@ class _InfoPageState extends State<InfoPage> {
                                     child: Container(
                                       width: double.infinity,
                                       child: Text(
-                                        'Rua: ${localizacaoLoja.rua}, Nº ${localizacaoLoja.num} - ${localizacaoLoja.complemento}',
+                                        'Rua: ${localizacaoLoja.rua}, Nº ${localizacaoLoja.num}',
                                         textAlign: TextAlign.left,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w500,
@@ -327,31 +328,5 @@ class _InfoPageState extends State<InfoPage> {
 
 
 /*
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  minimumSize: MaterialStatePropertyAll(Size.zero),
-                                  padding: MaterialStatePropertyAll(EdgeInsets.zero),
-                                  backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Colors.red),
-                                  shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.all(Radius.circular(10)), // Raio dos cantos
-                                        side: BorderSide.none, // Remove a borda
-                                      ),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  print('ver mapa');
-                                },
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 15, bottom: 15),
-                                  child: Text(
-                                    'Ver Mapa',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 12),
-                                  ),
-                                ),*/
+'Rua: ${localizacaoLoja.rua}, Nº ${localizacaoLoja.num} - ${localizacaoLoja.complemento}'
+*/
