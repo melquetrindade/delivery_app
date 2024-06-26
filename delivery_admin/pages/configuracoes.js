@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, collection, getDoc, doc, setDoc, updateDoc} from 'firebase/firestore';
+import { getDocs, collection, getDoc, doc, setDoc, updateDoc, deleteDoc} from 'firebase/firestore';
 import styles from '../styles/configuracoes.module.css'
 import { db } from '../utils/firebase/firebaseService';
 
@@ -20,7 +20,7 @@ export default function Configuracoes() {
         num: '',
         frete: ''
     })
-    const [dataContato, setContato] = useState()
+    const [dataContato, setContato] = useState([])
     const [fechaApp, setFechaApp] = useState()
     const [dayOpen, setDay] = useState({
         segunda: false,
@@ -40,12 +40,18 @@ export default function Configuracoes() {
         [dayOpen.sabado, 'abtrSabado', 'fchSabado'],
         [dayOpen.domingo, 'abtrDomingo', 'fchDomingo'],
     ]
-
     const [editDay, setEditDay] = useState({})
-    const [show, setShow] = useState(false);
+    const [inputTell, setTell] = useState('')
 
+    // modal para os horários
+    const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    // modal para os telefones
+    const [show2, setShow2] = useState(false);
+    const handleClose2 = () => setShow2(false);
+    const handleShow2 = () => setShow2(true);
 
     const loadFechaApp = async () => {
         try{
@@ -111,14 +117,12 @@ export default function Configuracoes() {
     const loadContato = async () => {
         try{
             var newData = []
-
-            const querySnapshot = await getDocs(collection(db, `loja/owner/vendas`));
+            const querySnapshot = await getDocs(collection(db, `loja/configuracoes/contato`));
             querySnapshot.forEach((doc) => {
                 var docData = doc.data();
                 newData.push(docData);
             })
-
-            setVendas(newData)
+            setContato(newData)
         } catch(error){
             console.error('Erro ao adicionar dado:', error);
             //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
@@ -129,13 +133,9 @@ export default function Configuracoes() {
         loadHorario()
         loadFechaApp()
         loadEndereco()
+        loadContato()
         setLoading('ok')
     }, []);
-    /*
-    if(dataEndereco != undefined){
-        //console.log('não tem nada em dataEndereco')
-        console.log(dataEndereco)
-    }*/
 
     const registerTimeFirebase = async (objt) => {
         try{
@@ -548,275 +548,389 @@ export default function Configuracoes() {
         }
     }
 
+    const handleInputTell = (e) => {
+        const inputText = e.target.value
+
+        if (/^[() . -- 0-9 ']+$/.test(inputText) || inputText === '') {
+            setTell(inputText)
+        }
+    }
+
+    const addTelefoneFirebase = async (tell, docTell) => {
+        try{
+            const querySnapshot = await getDoc(doc(db, `loja/configuracoes/contato`, `${docTell}`));
+            
+            if(querySnapshot.data()){
+                console.log('este tell já foi cadastrado')
+            } else {
+                console.log('este tell não foi cadastrado')
+                
+                const docRef = doc(db, `loja/configuracoes/contato`, `${docTell}`);
+                await setDoc(docRef, {
+                    telefone: tell
+                });
+                var newDataContato = dataContato
+                newDataContato.push({
+                    telefone: tell
+                })
+                setContato(newDataContato)
+                setTell('')
+            }
+        } catch(error) {
+            console.error('Erro ao adicionar dado:', error);
+        }
+    }
+
+    const addTelefone = () => {
+        const tellFormatado = inputTell.replace(/\D/g, '');
+        if(tellFormatado.length == 11){
+            addTelefoneFirebase(inputTell, tellFormatado)
+        } else {
+            console.log('o tell não tem 11 dígitos')
+        }
+        handleClose2()
+    }
+
+    const removeTeleone = async (telefone) => {
+        const tellFormatado = telefone.replace(/\D/g, '');
+        try{
+            await deleteDoc(doc(db, `loja/configuracoes/contato`, tellFormatado));
+            const newLista = dataContato.filter(item => item.telefone !== telefone);
+            setContato(newLista)
+            console.log('deletou')
+        } catch(error){
+            console.error('Erro ao deletar o doc:', error);
+            //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
+        }
+    }
+
     return(
         <main className={styles.main}>
-            <div>
-                <div className={styles.sessaoHorarios}>
-                    <h1 className={styles.title}>Horários de Funcionamento</h1>
-                    <hr style={{marginBottom: '3%'}}></hr>
-                    {
-                        dataHorario
-                        ?
-                        <>
-                            <table responsive="sm" className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Dia</th>
-                                        <th>Horário</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        dataHorario.map((day, index) => (
-                                            <tr key={index}>
-                                                <td className={styles.tdStatus} style={day.status ? {color: 'rgb(47, 218, 0)'} : {color: 'red'}}>{day.status ? `Aberto` : `Fechado`}</td>
-                                                <td>{verificaDia(index)}</td>
-                                                <td>{day.status ? `${day.abre} - ${day.fecha}` : `---`}</td>
-                                                <td className={styles.buttonDetails} onClick={() => funcSetDay(verificaDia(index), day.status ? day.abre : 'null', day.status ? day.fecha : 'null')}>
-                                                    <span class="material-symbols-outlined">edit</span>
-                                                </td>
+            {
+                loading == 'load'
+                ?
+                <Load/>
+                :
+                <div>
+                    <div className={styles.sessaoHorarios}>
+                        <h1 className={styles.title}>Horários de Funcionamento</h1>
+                        <hr style={{marginBottom: '3%'}}></hr>
+                        {
+                            dataHorario
+                            ?
+                            <>
+                                <table responsive="sm" className={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th>Status</th>
+                                            <th>Dia</th>
+                                            <th>Horário</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            dataHorario.map((day, index) => (
+                                                <tr key={index}>
+                                                    <td className={styles.tdStatus} style={day.status ? {color: 'rgb(47, 218, 0)'} : {color: 'red'}}>{day.status ? `Aberto` : `Fechado`}</td>
+                                                    <td>{verificaDia(index)}</td>
+                                                    <td>{day.status ? `${day.abre} - ${day.fecha}` : `---`}</td>
+                                                    <td className={styles.buttonDetails} onClick={() => funcSetDay(verificaDia(index), day.status ? day.abre : 'null', day.status ? day.fecha : 'null')}>
+                                                        <span class="material-symbols-outlined">edit</span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        }
+                                    </tbody>
+                                </table>
+                                <div className={styles.opa}>
+                                    <div className={styles.buttonLock} onClick={closeApp}>
+                                        <p>{fechaApp ? 'Reabrir o aplicativo' : 'Fechar o aplicativo momentaneamente'}</p>
+                                        <span class="material-symbols-outlined">lock</span>
+                                    </div>
+                                </div>
+                                <Modal show={show} onHide={handleClose}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Editar Horarios</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <p>{editDay.dia}</p>
+                                        <Form>
+                                            <Row className="mb-3">
+                                                <Form.Group as={Col} controlId="inputAbre">
+                                                    <Form.Label>Abre às:</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        placeholder="18:00"
+                                                        autoFocus
+                                                    />
+                                                </Form.Group>
+                                                <Form.Group as={Col} controlId="inputFecha">
+                                                    <Form.Label>Fecha às:</Form.Label>
+                                                    <Form.Control
+                                                        type="text"
+                                                        placeholder="23:00"
+                                                        autoFocus
+                                                    />
+                                                </Form.Group>
+                                            </Row>
+                                        
+                                        </Form>
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                    <Button variant="secondary" onClick={deleteDay}>
+                                        Fechar este dia
+                                    </Button>
+                                    <Button variant="primary" onClick={registerTime}>
+                                        Salvar
+                                    </Button>
+                                    </Modal.Footer>
+                                </Modal>
+                            </>
+                            :
+                            <>
+                                <table className={styles.tableForm}>
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2"></th>
+                                            <th>Segunda-Feira</th>
+                                            <th>Terça-Feira</th>
+                                            <th>Quarta-Feira</th>
+                                            <th>Quinta-Feira</th>
+                                            <th>Sexta-Feira</th>
+                                            <th>Sábado</th>
+                                            <th>Domingo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <th rowspan="2" scope="rowgroup">Horários</th>
+                                            <th scope="row">Abre às</th>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrSegunda" disabled={!dayOpen.segunda} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrTerca"  disabled={!dayOpen.terca} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrQuarta" disabled={!dayOpen.quarta} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrQuinta" disabled={!dayOpen.quinta} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrSexta" disabled={!dayOpen.sexta} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrSabado" disabled={!dayOpen.sabado} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="abtrDomingo" disabled={!dayOpen.domingo} placeholder="ex: 18:00"></input>
+                                                </form>
+                                            </td>
+                                            
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Fecha às</th>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchSegunda" disabled={!dayOpen.segunda} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchTerca" disabled={!dayOpen.terca} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchQuarta" disabled={!dayOpen.quarta} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchQuinta" disabled={!dayOpen.quinta} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchSexta" disabled={!dayOpen.sexta} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchSabado" disabled={!dayOpen.sabado} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                            <td className={styles.tdInput}>
+                                                <form>
+                                                    <input type="text" id="fchDomingo" disabled={!dayOpen.domingo} placeholder="ex: 23:00"></input>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <tr className={styles.rowCheck}>
+                                            <th colspan="2" scope="row">Abrir</th>
+                                            <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(0)}>{dayOpen.segunda ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="terca" class="material-symbols-outlined" onClick={() => opCheckBox(1)}>{dayOpen.terca ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="quarta" class="material-symbols-outlined" onClick={() => opCheckBox(2)}>{dayOpen.quarta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="quinta" class="material-symbols-outlined" onClick={() => opCheckBox(3)}>{dayOpen.quinta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="sexta" class="material-symbols-outlined" onClick={() => opCheckBox(4)}>{dayOpen.sexta ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="sabado" class="material-symbols-outlined" onClick={() => opCheckBox(5)}>{dayOpen.sabado ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                            <td><span id="domingo" class="material-symbols-outlined" onClick={() => opCheckBox(6)}>{dayOpen.domingo ? 'check_box' : 'check_box_outline_blank'}</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className={styles.opa}>
+                                    <div className={styles.buttonLock} onClick={registerTime2}>
+                                        <p>Registrar Horários</p>
+                                        <span class="material-symbols-outlined">schedule</span>
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        
+                    </div>
+                    <div className={styles.sessaoEndereco}>
+                        <h1 className={styles.title}>Endereço e Frete</h1>
+                        <hr style={{marginBottom: '3%'}}></hr>
+                        <div className={styles.contForm}>
+                            <Form>
+                                <Row className="mb-3">
+                                    <Form.Group as={Col} controlId="formGridCity">
+                                        <Form.Label>Cidade</Form.Label>
+                                        <Form.Control type="text" placeholder="ex: Rio de Janeiro" value={dataEndereco.cidade} onChange={handleInputCidade}/>
+                                    </Form.Group>
+        
+                                    <Form.Group as={Col} controlId="formGridNeighborhood" >
+                                        <Form.Label>Bairro</Form.Label>
+                                        <Form.Control type="text" placeholder="ex: Centro" value={dataEndereco.bairro} onChange={handleInputBairro}/>
+                                    </Form.Group>
+                                </Row>
+        
+                                <Row className="mb-3">
+                                    <Col xs={7}>
+                                        <Form.Group as={Col} controlId="formGridRoad">
+                                            <Form.Label>Rua</Form.Label>
+                                            <Form.Control placeholder="ex: 7 de Setembro" value={dataEndereco.rua} onChange={handleInputRua}/>
+                                        </Form.Group>
+                                    </Col>
+            
+                                    <Col>
+                                        <Form.Group as={Col} controlId="formGridNumber">
+                                            <Form.Label>Nº</Form.Label>
+                                            <Form.Control placeholder="ex: 311" value={dataEndereco.num} onChange={handleInputNum}/>
+                                        </Form.Group>
+                                    </Col>
+
+                                    <Col>
+                                        <Form.Group as={Col} controlId="formGridFrete">
+                                            <Form.Label>Frete</Form.Label>
+                                            <Form.Control placeholder="ex: 5,00" value={dataEndereco.frete} onChange={handleInputFrete}/>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+        
+                                <Button variant="primary" onClick={saveAddress}>
+                                    Salvar
+                                </Button>
+                            </Form>
+                        </div>
+                    </div>
+                    <div className={styles.sessaoContato} styles={{marginBottom: '5%'}}>
+                        <h1 className={styles.title}>Contato</h1>
+                        <hr style={{marginBottom: '3%'}}></hr>
+                        {
+                            dataContato.length != 0
+                            ?
+                                <>
+                                    <table responsive="sm" className={styles.tableContato}>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Telefone</th>
                                             </tr>
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                            <div className={styles.opa}>
-                                <div className={styles.buttonLock} onClick={closeApp}>
-                                    <p>{fechaApp ? 'Reabrir o aplicativo' : 'Fechar o aplicativo momentaneamente'}</p>
-                                    <span class="material-symbols-outlined">lock</span>
+                                            </thead>
+                                        <tbody>
+                                            {dataContato.map((item, index) => (
+                                                <tr key={index}>
+                                                    <td>{index + 1}</td>
+                                                    <td>{item.telefone}</td>
+                                                    <td className={styles.buttonDelete} onClick={() => removeTeleone(item.telefone)}>
+                                                        <span class="material-symbols-outlined">delete</span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                    <div className={styles.opa}>
+                                        <div className={styles.buttonLock} onClick={handleShow2}>
+                                            <p>Adicionar Telefone</p>
+                                            <span class="material-symbols-outlined">add_call</span>
+                                        </div>
+                                    </div>
+                                </>
+                            :
+                            <div className={styles.divAddTell}>
+                                <h1>Ainda não tem telefones cadastrados. Adicione agora!</h1>
+                                <div className={styles.opa}>
+                                    <div className={styles.buttonLock} onClick={handleShow2}>
+                                        <p>Adicionar Telefone</p>
+                                        <span class="material-symbols-outlined">add_call</span>
+                                    </div>
                                 </div>
                             </div>
-                            <Modal show={show} onHide={handleClose}>
+                        }
+                        <>
+                            <Modal show={show2} onHide={handleClose2}>
                                 <Modal.Header closeButton>
-                                    <Modal.Title>Editar Horarios</Modal.Title>
+                                    <Modal.Title>Adicione um novo Telefone</Modal.Title>
                                 </Modal.Header>
                                 <Modal.Body>
-                                    <p>{editDay.dia}</p>
                                     <Form>
-                                        <Row className="mb-3">
-                                            <Form.Group as={Col} controlId="inputAbre">
-                                                <Form.Label>Abre às:</Form.Label>
-                                                <Form.Control
-                                                    type="text"
-                                                    placeholder="18:00"
-                                                    autoFocus
-                                                />
-                                            </Form.Group>
-                                            <Form.Group as={Col} controlId="inputFecha">
-                                                <Form.Label>Fecha às:</Form.Label>
-                                                <Form.Control
-                                                    type="text"
-                                                    placeholder="23:00"
-                                                    autoFocus
-                                                />
-                                            </Form.Group>
-                                        </Row>
-                                    
+                                        <Form.Group className="mb-3" controlId="telefone">
+                                        <Form.Label>Telefone</Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="(XX) X.XXXX-XXXX"
+                                            autoFocus
+                                            value={inputTell}
+                                            onChange={handleInputTell}
+                                        />
+                                        </Form.Group>
                                     </Form>
                                 </Modal.Body>
                                 <Modal.Footer>
-                                <Button variant="secondary" onClick={deleteDay}>
-                                    Fechar este dia
-                                </Button>
-                                <Button variant="primary" onClick={registerTime}>
-                                    Salvar
-                                </Button>
+                                    <Button variant="primary" onClick={addTelefone}>
+                                        Salvar
+                                    </Button>
                                 </Modal.Footer>
                             </Modal>
                         </>
-                        :
-                        <>
-                            <table className={styles.tableForm}>
-                                <thead>
-                                    <tr>
-                                        <th colspan="2"></th>
-                                        <th>Segunda-Feira</th>
-                                        <th>Terça-Feira</th>
-                                        <th>Quarta-Feira</th>
-                                        <th>Quinta-Feira</th>
-                                        <th>Sexta-Feira</th>
-                                        <th>Sábado</th>
-                                        <th>Domingo</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th rowspan="2" scope="rowgroup">Horários</th>
-                                        <th scope="row">Abre às</th>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrSegunda" disabled={!dayOpen.segunda} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrTerca"  disabled={!dayOpen.terca} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrQuarta" disabled={!dayOpen.quarta} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrQuinta" disabled={!dayOpen.quinta} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrSexta" disabled={!dayOpen.sexta} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrSabado" disabled={!dayOpen.sabado} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="abtrDomingo" disabled={!dayOpen.domingo} placeholder="ex: 18:00"></input>
-                                            </form>
-                                        </td>
-                                        
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Fecha às</th>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchSegunda" disabled={!dayOpen.segunda} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchTerca" disabled={!dayOpen.terca} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchQuarta" disabled={!dayOpen.quarta} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchQuinta" disabled={!dayOpen.quinta} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchSexta" disabled={!dayOpen.sexta} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchSabado" disabled={!dayOpen.sabado} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                        <td className={styles.tdInput}>
-                                            <form>
-                                                <input type="text" id="fchDomingo" disabled={!dayOpen.domingo} placeholder="ex: 23:00"></input>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    <tr className={styles.rowCheck}>
-                                        <th colspan="2" scope="row">Abrir</th>
-                                        <td><span id="segunda" class="material-symbols-outlined" onClick={() => opCheckBox(0)}>{dayOpen.segunda ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="terca" class="material-symbols-outlined" onClick={() => opCheckBox(1)}>{dayOpen.terca ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="quarta" class="material-symbols-outlined" onClick={() => opCheckBox(2)}>{dayOpen.quarta ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="quinta" class="material-symbols-outlined" onClick={() => opCheckBox(3)}>{dayOpen.quinta ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="sexta" class="material-symbols-outlined" onClick={() => opCheckBox(4)}>{dayOpen.sexta ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="sabado" class="material-symbols-outlined" onClick={() => opCheckBox(5)}>{dayOpen.sabado ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                        <td><span id="domingo" class="material-symbols-outlined" onClick={() => opCheckBox(6)}>{dayOpen.domingo ? 'check_box' : 'check_box_outline_blank'}</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <div className={styles.opa}>
-                                <div className={styles.buttonLock} onClick={registerTime2}>
-                                    <p>Registrar Horários</p>
-                                    <span class="material-symbols-outlined">schedule</span>
-                                </div>
-                            </div>
-                        </>
-                    }
-                    
-                </div>
-                <div className={styles.sessaoEndereco}>
-                    <h1 className={styles.title}>Endereço e Frete</h1>
-                    <hr style={{marginBottom: '3%'}}></hr>
-                    <div className={styles.contForm}>
-                        <Form>
-                            <Row className="mb-3">
-                                <Form.Group as={Col} controlId="formGridCity">
-                                    <Form.Label>Cidade</Form.Label>
-                                    <Form.Control type="text" placeholder="ex: Rio de Janeiro" value={dataEndereco.cidade} onChange={handleInputCidade}/>
-                                </Form.Group>
-    
-                                <Form.Group as={Col} controlId="formGridNeighborhood" >
-                                    <Form.Label>Bairro</Form.Label>
-                                    <Form.Control type="text" placeholder="ex: Centro" value={dataEndereco.bairro} onChange={handleInputBairro}/>
-                                </Form.Group>
-                            </Row>
-    
-                            <Row className="mb-3">
-                                <Col xs={7}>
-                                    <Form.Group as={Col} controlId="formGridRoad">
-                                        <Form.Label>Rua</Form.Label>
-                                        <Form.Control placeholder="ex: 7 de Setembro" value={dataEndereco.rua} onChange={handleInputRua}/>
-                                    </Form.Group>
-                                </Col>
-        
-                                <Col>
-                                    <Form.Group as={Col} controlId="formGridNumber">
-                                        <Form.Label>Nº</Form.Label>
-                                        <Form.Control placeholder="ex: 311" value={dataEndereco.num} onChange={handleInputNum}/>
-                                    </Form.Group>
-                                </Col>
-
-                                <Col>
-                                    <Form.Group as={Col} controlId="formGridFrete">
-                                        <Form.Label>Frete</Form.Label>
-                                        <Form.Control placeholder="ex: 5,00" value={dataEndereco.frete} onChange={handleInputFrete}/>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-    
-                            <Button variant="primary" onClick={saveAddress}>
-                                Salvar
-                            </Button>
-                        </Form>
                     </div>
                 </div>
-                <div className={styles.sessaoContato} styles={{marginBottom: '5%'}}>
-                    <h1 className={styles.title}>Contato</h1>
-                    <hr style={{marginBottom: '3%'}}></hr>
-                    <table responsive="sm" className={styles.tableContato}>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Telefone</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>84 9.9811-3464</td>
-                                <td className={styles.buttonDelete}>
-                                    <span class="material-symbols-outlined">delete</span>
-                                </td>
-                            </tr>
-                            <tr>
-                            <td>1</td>
-                                <td>84 9.9822-3432</td>
-                                <td className={styles.buttonDelete}>
-                                    <span class="material-symbols-outlined">delete</span>
-                                </td>
-                            </tr>
-                            
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            }
         </main>
     );
 }
+
+function Load(){
+    return(
+        <div className={styles.fade}>
+            <div class="spinner-border text-info" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    )
+  }
