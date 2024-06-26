@@ -136,7 +136,7 @@ export default function Vendas() {
             <div>
                 <div className={styles.contTitle}>
                     <h3>Tabela de Vendas</h3>
-                        <DropdownButton title="Filter" id="bg-nested-dropdown">
+                        <DropdownButton title="Filtro" id="bg-nested-dropdown">
                             <Dropdown.Item eventKey="1" onClick={() => filterSales(1)}>Mais Recente</Dropdown.Item>
                             <Dropdown.Item eventKey="2" onClick={() => filterSales(2)}>Menos Recente</Dropdown.Item>
                             <Dropdown.Item eventKey="3" onClick={() => filterSales(3)}>Maior Valor</Dropdown.Item>

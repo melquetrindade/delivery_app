@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from "react";
-import { getDocs, collection, getDoc, doc, addDoc, setDoc, updateDoc} from 'firebase/firestore';
+import { getDocs, collection, getDoc, doc, setDoc, updateDoc} from 'firebase/firestore';
 import styles from '../styles/configuracoes.module.css'
 import { db } from '../utils/firebase/firebaseService';
 
@@ -13,7 +13,13 @@ import Modal from 'react-bootstrap/Modal';
 export default function Configuracoes() {
     const [loading, setLoading] = useState('load')
     const [dataHorario, setHorario] = useState()
-    const [dataEndereco, setEndereco] = useState()
+    const [dataEndereco, setEndereco] = useState({
+        cidade: '',
+        bairro: '',
+        rua: '',
+        num: '',
+        frete: ''
+    })
     const [dataContato, setContato] = useState()
     const [fechaApp, setFechaApp] = useState()
     const [dayOpen, setDay] = useState({
@@ -34,6 +40,7 @@ export default function Configuracoes() {
         [dayOpen.sabado, 'abtrSabado', 'fchSabado'],
         [dayOpen.domingo, 'abtrDomingo', 'fchDomingo'],
     ]
+
     const [editDay, setEditDay] = useState({})
     const [show, setShow] = useState(false);
 
@@ -43,10 +50,9 @@ export default function Configuracoes() {
     const loadFechaApp = async () => {
         try{
             const querySnapshot = await getDoc(doc(db, `loja/configuracoes/close`, 'closeApp'));
-            if(querySnapshot){
+            if(querySnapshot.data()){
                 const snapData = querySnapshot.data()
-                console.log(snapData)
-                setFechaApp(snapData.fecha)
+                setFechaApp(snapData.fechar)
             }
             else{
                 setFechaApp(false)
@@ -92,18 +98,13 @@ export default function Configuracoes() {
 
     const loadEndereco = async () => {
         try{
-            var newData = []
-
-            const querySnapshot = await getDocs(collection(db, `loja/owner/vendas`));
-            querySnapshot.forEach((doc) => {
-                var docData = doc.data();
-                newData.push(docData);
-            })
-
-            setVendas(newData)
+            const querySnapshot = await getDoc(doc(db, `loja/configuracoes/endereco`, 'endereco'));
+            if(querySnapshot.data()){
+                const snapData = querySnapshot.data()
+                setEndereco(snapData)
+            }
         } catch(error){
             console.error('Erro ao adicionar dado:', error);
-            //openNotification({placement: 'topRight', title: 'ERRO', descricao: 'NÃO FOI POSSÍVEL CONTINUAR, TENTE NOVAMENTE!'})
         }
     }
 
@@ -127,12 +128,14 @@ export default function Configuracoes() {
     useEffect(() => {
         loadHorario()
         loadFechaApp()
+        loadEndereco()
         setLoading('ok')
     }, []);
-
-    if(dataHorario != undefined){
-        console.log(dataHorario)
-    }
+    /*
+    if(dataEndereco != undefined){
+        //console.log('não tem nada em dataEndereco')
+        console.log(dataEndereco)
+    }*/
 
     const registerTimeFirebase = async (objt) => {
         try{
@@ -417,26 +420,131 @@ export default function Configuracoes() {
     }
 
     const closeApp = async () => {
-        //console.log('fechar app')
         try{
             const querySnapshot = await getDoc(doc(db, `loja/configuracoes/close`, 'closeApp'));
-            const snapData = querySnapshot.data()
-            if(snapData){
-                console.log('tem o doc')
-                console.log(snapData)
-                
+            if(querySnapshot.data()){
+                const docRef = doc(db, `loja/configuracoes/close`, 'closeApp');
+                await updateDoc(docRef, {
+                    fechar: !fechaApp
+                });
+                setFechaApp(!fechaApp)
+                console.log('deu certo o update')
             } else {
-                console.log('não tem o doc')
                 const docRef = doc(db, `loja/configuracoes/close`, 'closeApp');
                 await setDoc(docRef, {
-                    fechar: true
+                    fechar: !fechaApp
                 });
-                console.log('deu certo')
+                console.log('deu certo o set')
             }
-            //await setDoc(querySnapshot, data);
-            //console.log('horarios add com sucesso')
         } catch(error) {
             console.error('Erro ao adicionar dado:', error);
+        }
+    }
+
+    const saveAddress = () => {
+        const inputCidade = document.getElementById('formGridCity').value
+        const inputBairro = document.getElementById('formGridNeighborhood').value
+        const inputRua = document.getElementById('formGridRoad').value
+        const inputNum = document.getElementById('formGridNumber').value
+        const inputFrete = document.getElementById('formGridFrete').value
+        var objtEndereco = {}
+
+        if(inputCidade && inputBairro && inputRua && inputNum && inputFrete){
+            objtEndereco = {
+                cidade: inputCidade,
+                bairro: inputBairro,
+                rua: inputRua,
+                num: inputNum,
+                frete: inputFrete
+            }
+            saveAddressFirebase(objtEndereco)
+        }
+    }
+
+    const saveAddressFirebase = async (data) => {
+        try{
+            const querySnapshot = await getDoc(doc(db, `loja/configuracoes/endereco`, 'endereco'));
+            if(querySnapshot.data()){
+                const docRef = doc(db, `loja/configuracoes/endereco`, 'endereco');
+                await updateDoc(docRef, data);
+                setEndereco(data)
+            } else {
+                const docRef = doc(db, `loja/configuracoes/endereco`, 'endereco');
+                await setDoc(docRef, data);
+                setEndereco(data)
+            }
+        } catch(error) {
+            console.error('Erro ao adicionar dado:', error);
+        }
+    }
+
+    const handleInputCidade = (e) => {
+        const inputText = e.target.value
+
+        if (/^[a-zA-ZÀ-ÖØ-öø-ÿ 0-9 ']+$/.test(inputText) || inputText === '') {
+            setEndereco({
+                cidade: inputText,
+                bairro: dataEndereco.bairro,
+                rua: dataEndereco.rua,
+                num: dataEndereco.num,
+                frete: dataEndereco.frete,
+            })
+        }
+    }
+
+    const handleInputBairro = (e) => {
+        const inputText = e.target.value
+
+        if (/^[a-zA-ZÀ-ÖØ-öø-ÿ 0-9 ']+$/.test(inputText) || inputText === '') {
+            setEndereco({
+                cidade: dataEndereco.cidade,
+                bairro: inputText,
+                rua: dataEndereco.rua,
+                num: dataEndereco.num,
+                frete: dataEndereco.frete
+            })
+        }
+    }
+
+    const handleInputRua = (e) => {
+        const inputText = e.target.value
+
+        if (/^[a-zA-ZÀ-ÖØ-öø-ÿ 0-9 ']+$/.test(inputText) || inputText === '') {
+            setEndereco({
+                cidade: dataEndereco.cidade,
+                bairro: dataEndereco.bairro,
+                rua: inputText,
+                num: dataEndereco.num,
+                frete: dataEndereco.frete
+            })
+        }
+    }
+
+    const handleInputNum = (e) => {
+        const inputText = e.target.value
+
+        if (/^[a-zA-Z 0-9 ']+$/.test(inputText) || inputText === '') {
+            setEndereco({
+                cidade: dataEndereco.cidade,
+                bairro: dataEndereco.bairro,
+                rua: dataEndereco.rua,
+                num: inputText,
+                frete: dataEndereco.frete,
+            })
+        }
+    }
+
+    const handleInputFrete = (e) => {
+        const inputText = e.target.value
+
+        if (/^[0-9 , .']+$/.test(inputText) || inputText === '') {
+            setEndereco({
+                cidade: dataEndereco.cidade,
+                bairro: dataEndereco.bairro,
+                rua: dataEndereco.rua,
+                num: dataEndereco.num,
+                frete: inputText,
+            })
         }
     }
 
@@ -475,7 +583,7 @@ export default function Configuracoes() {
                             </table>
                             <div className={styles.opa}>
                                 <div className={styles.buttonLock} onClick={closeApp}>
-                                    <p>Fechar o aplicativo momentaneamente</p>
+                                    <p>{fechaApp ? 'Reabrir o aplicativo' : 'Fechar o aplicativo momentaneamente'}</p>
                                     <span class="material-symbols-outlined">lock</span>
                                 </div>
                             </div>
@@ -641,39 +749,39 @@ export default function Configuracoes() {
                             <Row className="mb-3">
                                 <Form.Group as={Col} controlId="formGridCity">
                                     <Form.Label>Cidade</Form.Label>
-                                    <Form.Control type="text" placeholder="ex: Rio de Janeiro" />
+                                    <Form.Control type="text" placeholder="ex: Rio de Janeiro" value={dataEndereco.cidade} onChange={handleInputCidade}/>
                                 </Form.Group>
     
-                                <Form.Group as={Col} controlId="formGridNeighborhood">
+                                <Form.Group as={Col} controlId="formGridNeighborhood" >
                                     <Form.Label>Bairro</Form.Label>
-                                    <Form.Control type="text" placeholder="ex: Centro" />
+                                    <Form.Control type="text" placeholder="ex: Centro" value={dataEndereco.bairro} onChange={handleInputBairro}/>
                                 </Form.Group>
                             </Row>
     
                             <Row className="mb-3">
-                                <Col xs={8}>
+                                <Col xs={7}>
                                     <Form.Group as={Col} controlId="formGridRoad">
                                         <Form.Label>Rua</Form.Label>
-                                        <Form.Control placeholder="ex: 7 de Setembro" />
+                                        <Form.Control placeholder="ex: 7 de Setembro" value={dataEndereco.rua} onChange={handleInputRua}/>
                                     </Form.Group>
                                 </Col>
         
                                 <Col>
                                     <Form.Group as={Col} controlId="formGridNumber">
                                         <Form.Label>Nº</Form.Label>
-                                        <Form.Control placeholder="ex: 311" />
+                                        <Form.Control placeholder="ex: 311" value={dataEndereco.num} onChange={handleInputNum}/>
                                     </Form.Group>
                                 </Col>
 
                                 <Col>
-                                    <Form.Group as={Col} controlId="formGridNumber">
+                                    <Form.Group as={Col} controlId="formGridFrete">
                                         <Form.Label>Frete</Form.Label>
-                                        <Form.Control placeholder="ex: 5,00" />
+                                        <Form.Control placeholder="ex: 5,00" value={dataEndereco.frete} onChange={handleInputFrete}/>
                                     </Form.Group>
                                 </Col>
                             </Row>
     
-                            <Button variant="primary">
+                            <Button variant="primary" onClick={saveAddress}>
                                 Salvar
                             </Button>
                         </Form>
@@ -712,202 +820,3 @@ export default function Configuracoes() {
         </main>
     );
 }
-
-
-/*
-{
-                                        dataHorario.map((day, index) => (
-                                            <tr key={index}>
-                                                <td className={styles.tdStatus}>Aberto</td>
-                                                <td>Segunda-Feira</td>
-                                                <td>18:00 - 23:00</td>
-                                                <td className={styles.buttonDetails}>
-                                                    <span class="material-symbols-outlined">edit</span>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    }
-
-<table responsive="sm" className={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th>Status</th>
-                                        <th>Dia</th>
-                                        <th>Horário</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Segunda-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Terça-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Quarta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Quinta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Sexta-Feira</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Sábado</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}>
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td className={styles.tdStatus}>Aberto</td>
-                                        <td>Domingo</td>
-                                        <td>18:00 - 23:00</td>
-                                        <td className={styles.buttonDetails}><span class="material-symbols-outlined">edit</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-
-
-
-const registerTime = () => {
-        var tudoOk = true
-        var objtHorarios = []
-
-        const abtrSegunda = document.getElementById('abtrSegunda').value;
-        const abtrTerca = document.getElementById('abtrTerca').value;
-        const abtrQuarta = document.getElementById('abtrQuarta').value;
-        const abtrQuinta = document.getElementById('abtrQuinta').value;
-        const abtrSexta = document.getElementById('abtrSexta').value;
-        const abtrSabado = document.getElementById('abtrSabado').value;
-        const abtrDomingo = document.getElementById('abtrDomingo').value;
-        const fchSegunda = document.getElementById('fchSegunda').value;
-        const fchTerca = document.getElementById('fchTerca').value;
-        const fchQuarta = document.getElementById('fchQuarta').value;
-        const fchQuinta = document.getElementById('fchQuinta').value;
-        const fchSexta = document.getElementById('fchSexta').value;
-        const fchSabado = document.getElementById('fchSabado').value;
-        const fchDomingo = document.getElementById('fchDomingo').value;
-
-        if(dayOpen.segunda){
-            if(abtrSegunda && fchSegunda && formataHorario(abtrSegunda) && formataHorario(fchSegunda)){
-                objtHorarios.push({
-                    segunda: {
-                        abre: abtrSegunda,
-                        fecha: fchSegunda,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.terca){
-            if(abtrTerca && fchTerca && formataHorario(abtrTerca) && formataHorario(fchTerca)){
-                objtHorarios.push({
-                    terca: {
-                        abre: abtrTerca,
-                        fecha: fchTerca,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.quarta){
-            if(abtrQuarta && fchQuarta && formataHorario(abtrQuarta) && formataHorario(fchQuarta)){
-                objtHorarios.push({
-                    quarta: {
-                        abre: abtrQuarta,
-                        fecha: fchQuarta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.quinta){
-            if(abtrQuinta && fchQuinta && formataHorario(abtrQuinta) && formataHorario(fchQuinta)){
-                objtHorarios.push({
-                    quita: {
-                        abre: abtrQuinta,
-                        fecha: fchQuinta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.sexta){
-            if(abtrSexta && fchSexta && formataHorario(abtrSexta) && formataHorario(fchSexta)){
-                objtHorarios.push({
-                    sexta: {
-                        abre: abtrSexta,
-                        fecha: fchSexta,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.sabado){
-            if(abtrSabado && fchSabado && formataHorario(abtrSabado) && formataHorario(fchSabado)){
-                objtHorarios.push({
-                    sabado: {
-                        abre: abtrSabado,
-                        fecha: fchSabado,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        } if(dayOpen.domingo) {
-            if(abtrDomingo && fchDomingo && formataHorario(abtrDomingo) && formataHorario(fchDomingo)){
-                objtHorarios.push({
-                    domingo: {
-                        abre: abtrDomingo,
-                        fecha: fchDomingo,
-                        status: true
-                    }
-                })
-            } else{
-                tudoOk = false
-            }
-        }
-
-        if(tudoOk){
-            console.log('registrar no firebase')
-            console.log(objtHorarios)
-        }
-        else{
-            console.log('apresentar um notificação para preencher corretamente os horários de atendimento')
-        }
-    }
-*/
