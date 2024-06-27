@@ -14,6 +14,7 @@ class InfoPage extends StatefulWidget {
 class _InfoPageState extends State<InfoPage> {
   late EnderecoLoja localizacaoLoja;
   late EnderecoLojaRepository enderecoDaLoja;
+  late List<Horario> horarios;
   bool isCheck = false;
 
   void _launchMaps(double lat, double lng) async {
@@ -31,7 +32,10 @@ class _InfoPageState extends State<InfoPage> {
   Widget build(BuildContext context) {
     enderecoDaLoja = context.watch<EnderecoLojaRepository>();
     localizacaoLoja = enderecoDaLoja.enderecoLoja;
-    print(localizacaoLoja.bairro);
+    horarios = enderecoDaLoja.horariosLoja;
+    horarios.forEach((dia) {
+      print(dia.dia);
+    });
 
     return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -79,34 +83,8 @@ class _InfoPageState extends State<InfoPage> {
                               color: Colors.transparent), // Remove as bordas
                         ),
                         children: [
-                          ListTile(
-                            title: Text('Segunda-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Terça-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Quarta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Quinta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Sexta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:30'),
-                          ),
-                          ListTile(
-                            title: Text('Sábado'),
-                            subtitle: Text('Das 18:00 às 23:30'),
-                          ),
-                          ListTile(
-                            title: Text('Domingo'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
+                          for (var i = 0; i < horarios.length; i++)
+                            listaHorarios(i)
                         ],
                       ),
                     ],
@@ -324,9 +302,54 @@ class _InfoPageState extends State<InfoPage> {
           ),
         ));
   }
+
+  Widget listaHorarios(int index) {
+    String diaSemana() {
+      if (horarios[index].dia == 'segunda') {
+        return 'Segunda-Feira';
+      } else if (horarios[index].dia == 'terca') {
+        return 'Terça-Feira';
+      } else if (horarios[index].dia == 'quarta') {
+        return 'Quarta-Feira';
+      } else if (horarios[index].dia == 'quinta') {
+        return 'Quinta-Feira';
+      } else if (horarios[index].dia == 'sexta') {
+        return 'Sexta-Feira';
+      } else if (horarios[index].dia == 'sabado') {
+        return 'Sábado';
+      }
+      return 'Domingo';
+    }
+
+    return ListTile(
+      title: Text(diaSemana()),
+      subtitle: Text(horarios[index].status ? 'Das ${horarios[index].abre} às ${horarios[index].fecha}' : 'Fechado'),
+    );
+  }
 }
 
-
 /*
-'Rua: ${localizacaoLoja.rua}, Nº ${localizacaoLoja.num} - ${localizacaoLoja.complemento}'
-*/
+                          ListTile(
+                            title: Text('Terça-Feira'),
+                            subtitle: Text('Das 18:00 às 23:00'),
+                          ),
+                          ListTile(
+                            title: Text('Quarta-Feira'),
+                            subtitle: Text('Das 18:00 às 23:00'),
+                          ),
+                          ListTile(
+                            title: Text('Quinta-Feira'),
+                            subtitle: Text('Das 18:00 às 23:00'),
+                          ),
+                          ListTile(
+                            title: Text('Sexta-Feira'),
+                            subtitle: Text('Das 18:00 às 23:30'),
+                          ),
+                          ListTile(
+                            title: Text('Sábado'),
+                            subtitle: Text('Das 18:00 às 23:30'),
+                          ),
+                          ListTile(
+                            title: Text('Domingo'),
+                            subtitle: Text('Das 18:00 às 23:00'),
+                          ),*/
