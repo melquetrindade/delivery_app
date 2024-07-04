@@ -34,6 +34,7 @@ class EnderecoLojaRepository extends ChangeNotifier {
   late EnderecoLoja _endereco =
       EnderecoLoja(rua: '', cidade: '', bairro: '', num: '', frete: 0);
   late List<Horario> _horarios = [];
+  late List<String> _telefones = [];
   late FirebaseFirestore db;
   bool loading = true;
   bool jaCarregou = false;
@@ -53,6 +54,7 @@ class EnderecoLojaRepository extends ChangeNotifier {
 
   EnderecoLoja get enderecoLoja => _endereco;
   List<Horario> get horariosLoja => _horarios;
+  List<String> get telefonesLoja => _telefones;
 
   _startFirestore() {
     db = DBFirestore.get();
@@ -62,32 +64,15 @@ class EnderecoLojaRepository extends ChangeNotifier {
     await _startFirestore();
     await readEndereco();
     await readHorarios();
+    await readTelefones();
   }
 
-  readHorarios() async {
-    print('entrou para ler os horarios');
-    final snapshot = await db
-        .collection('loja/configuracoes/horarios')
-        .doc('horarios')
-        .get();
-    if (snapshot.exists) {
-      dias.forEach((dia) {
-        if (snapshot[dia]['status'] == true) {
-          _horarios.add(Horario(
-              dia: dia,
-              abre: snapshot[dia]['abre'],
-              fecha: snapshot[dia]['fecha'],
-              status: snapshot[dia]["status"]));
-        } else {
-          _horarios.add(Horario(
-              dia: dia,
-              abre: '',
-              fecha: '',
-              status: snapshot[dia]["status"]));
-        }
+  readTelefones() async {
+    final snapshot = await db.collection('loja/configuracoes/contato').get();
+    if(snapshot.docs.length != 0){
+      snapshot.docs.forEach((item) {
+        _telefones.add(item['telefone']);
       });
-      //print(snapshot['domingo']);
-      //_horarios = Horario(dia: dia, abre: abre, fecha: fecha, status: status)
     }
     notifyListeners();
   }
@@ -98,7 +83,6 @@ class EnderecoLojaRepository extends ChangeNotifier {
         .doc('endereco')
         .get();
     if (snapshot.exists) {
-      //print(snapshot['bairro']);
       _endereco = EnderecoLoja(
         bairro: snapshot['bairro'],
         cidade: snapshot['cidade'],
@@ -112,4 +96,27 @@ class EnderecoLojaRepository extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  readHorarios() async {
+    final snapshot = await db
+        .collection('loja/configuracoes/horarios')
+        .doc('horarios')
+        .get();
+    if (snapshot.exists) {
+      dias.forEach((itemDia) {
+        if (snapshot[itemDia]['status'] == true) {
+          _horarios.add(Horario(
+              dia: itemDia,
+              abre: snapshot[itemDia]['abre'],
+              fecha: snapshot[itemDia]['fecha'],
+              status: snapshot[itemDia]["status"]));
+        } else {
+          _horarios.add(Horario(dia: itemDia, abre: '', fecha: '', status: snapshot[itemDia]["status"]));
+        }
+      });
+    }
+    notifyListeners();
+  }
+
+  
 }

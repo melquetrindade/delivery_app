@@ -15,6 +15,7 @@ class _InfoPageState extends State<InfoPage> {
   late EnderecoLoja localizacaoLoja;
   late EnderecoLojaRepository enderecoDaLoja;
   late List<Horario> horarios;
+  late List<String> telefones;
   bool isCheck = false;
 
   void _launchMaps(double lat, double lng) async {
@@ -33,9 +34,7 @@ class _InfoPageState extends State<InfoPage> {
     enderecoDaLoja = context.watch<EnderecoLojaRepository>();
     localizacaoLoja = enderecoDaLoja.enderecoLoja;
     horarios = enderecoDaLoja.horariosLoja;
-    horarios.forEach((dia) {
-      print(dia.dia);
-    });
+    telefones = enderecoDaLoja.telefonesLoja;
 
     return Scaffold(
         backgroundColor: Colors.grey[50],
@@ -209,7 +208,7 @@ class _InfoPageState extends State<InfoPage> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 30),
+                  padding: const EdgeInsets.only(top: 20),
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -222,37 +221,44 @@ class _InfoPageState extends State<InfoPage> {
                         ),
                       ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 17),
-                                child: Icon(
-                                  Icons.call,
-                                  size: 27,
-                                ),
-                              ),
-                              Text(
-                                'Telefones',
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.w500),
-                              )
-                            ],
+                    child: Column(
+                      children: [
+                        ExpansionTile(
+                          title: Text(
+                            'Telefones',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.w500),
                           ),
-                          Container(
-                            width: double.infinity,
-                            child: ListTile(
-                              title: Text('Telefone 01'),
-                              subtitle: Text('(84) 99811-3464'),
-                            ),
-                          )
-                        ],
-                      ),
+                          leading: Icon(
+                            Icons.call,
+                          ),
+                          childrenPadding:
+                              EdgeInsets.symmetric(horizontal: 16.0),
+                          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                                color: Colors.transparent), // Remove as bordas
+                          ),
+                          children: [
+                            telefones.isEmpty
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'A loja não possui telefones cadastrados!',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w400),
+                                    ),
+                                  )
+                                : Column(
+                                    children:
+                                        telefones.asMap().entries.map((entry) {
+                                      int index = entry.key;
+                                      return listaTelefones(index);
+                                    }).toList(),
+                                  ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -323,33 +329,16 @@ class _InfoPageState extends State<InfoPage> {
 
     return ListTile(
       title: Text(diaSemana()),
-      subtitle: Text(horarios[index].status ? 'Das ${horarios[index].abre} às ${horarios[index].fecha}' : 'Fechado'),
+      subtitle: Text(horarios[index].status
+          ? 'Das ${horarios[index].abre} às ${horarios[index].fecha}'
+          : 'Fechado'),
+    );
+  }
+
+  Widget listaTelefones(int index) {
+    return ListTile(
+      title: Text('Telefone ${index + 1}'),
+      subtitle: Text(telefones[index]),
     );
   }
 }
-
-/*
-                          ListTile(
-                            title: Text('Terça-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Quarta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Quinta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),
-                          ListTile(
-                            title: Text('Sexta-Feira'),
-                            subtitle: Text('Das 18:00 às 23:30'),
-                          ),
-                          ListTile(
-                            title: Text('Sábado'),
-                            subtitle: Text('Das 18:00 às 23:30'),
-                          ),
-                          ListTile(
-                            title: Text('Domingo'),
-                            subtitle: Text('Das 18:00 às 23:00'),
-                          ),*/
